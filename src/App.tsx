@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Activity, AlertTriangle, Archive, BarChart3, Bot, BrainCircuit, Check, ChevronDown, Clock3, Crosshair,
   Map, Music, Music2, RotateCcw, Save, Search, Sparkles, Swords, Target, Trash2, TrendingUp, Wifi,
-  WifiOff, X,
+  X,
 } from 'lucide-react'
 import { analyzeDraft, type Dimension, type MatchupAnalysis } from './analysisEngine'
 import { chooseHero, DRAFT_ORDER, teamName } from './draftEngine'
@@ -330,7 +330,7 @@ function TeamRail({ team, actions }: { team: Team; actions: DraftAction[] }) {
   )
 }
 
-function StartScreen({ onStart, live }: { onStart: (mode: DraftMode) => void; live: boolean }) {
+function StartScreen({ onStart, heroLive }: { onStart: (mode: DraftMode) => void; heroLive: boolean }) {
   return (
     <main className="start-screen">
       <div className="start-noise" />
@@ -351,7 +351,7 @@ function StartScreen({ onStart, live }: { onStart: (mode: DraftMode) => void; li
         </div>
 
         <div className="start-meta">
-          <span className={live ? 'online' : 'offline'}>{live ? <Wifi size={13} /> : <WifiOff size={13} />}{live ? 'Live OpenDota meta' : 'Offline roster'}</span>
+          <span className={heroLive ? 'online' : 'local'}>{heroLive ? <Wifi size={13} /> : <Archive size={13} />}{heroLive ? 'Live OpenDota roster' : 'Bundled roster ready'}</span>
           <span>No login</span><span>Free to practice</span><span>Local feedback</span>
         </div>
       </section>
@@ -917,7 +917,7 @@ export default function App() {
 
   if (!mode) return (
     <>
-      <StartScreen onStart={startDraft} live={live} />
+      <StartScreen onStart={startDraft} heroLive={live} />
       <audio ref={audioRef} src={DRAFT_BGM_SOURCE} preload="auto" />
     </>
   )
@@ -927,6 +927,11 @@ export default function App() {
   const updateMode = (partial: Partial<DraftMode>) => setMode((current) => current ? { ...current, ...partial } : current)
   const activeReserve = step ? reserveTime[step.team] : 0
   const isReserveActive = countdown === 0 && activeReserve > 0
+  const metaStatus = metaLoading
+    ? { className: '', icon: <Activity size={13} />, label: 'Loading pro meta' }
+    : recentMeta
+      ? { className: 'online', icon: <Wifi size={13} />, label: `${recentMeta.matchesAnalyzed} pro drafts` }
+      : { className: 'local', icon: <Archive size={13} />, label: 'Role model fallback' }
 
   return (
     <div className="app-shell">
@@ -938,7 +943,7 @@ export default function App() {
           <span className="draft-progress" aria-label={`${actions.length} of ${DRAFT_ORDER.length} draft actions complete`}><i style={{ width: `${actions.length / DRAFT_ORDER.length * 100}%` }} /></span>
         </div>
         <div className="top-actions">
-          <span className={`data-status ${live ? 'online' : ''}`}>{live ? <Wifi size={13} /> : <WifiOff size={13} />}{loading ? 'Loading meta' : live ? 'Live meta' : 'Offline'}</span>
+          <span className={`data-status ${metaStatus.className}`}>{metaStatus.icon}{metaStatus.label}</span>
           <button onClick={toggleMusic} aria-pressed={musicEnabled}>{musicEnabled ? <Music2 size={15} /> : <Music size={15} />}<span>{musicEnabled ? 'Audio on' : 'Audio off'}</span></button>
           <button onClick={() => setShowSavedReports(true)}><Archive size={15} /><span>Reports ({savedReports.length})</span></button>
           <button onClick={restart}><RotateCcw size={15} /><span>Restart</span></button>

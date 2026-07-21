@@ -60,6 +60,10 @@ const MICRO = ['arc_warden', 'beastmaster', 'brewmaster', 'broodmother', 'chen',
 const BLINK = ['axe', 'centaur', 'earthshaker', 'enigma', 'legion_commander', 'lion', 'magnataur', 'mars', 'sand_king', 'slardar', 'tidehunter', 'tiny']
 const AURA = ['beastmaster', 'chen', 'dark_seer', 'death_prophet', 'enigma', 'lycan', 'tidehunter', 'underlord', 'visage']
 const BATTLE_FURY = ['antimage', 'juggernaut', 'phantom_assassin', 'ursa']
+const SAVE = ['abaddon', 'dazzle', 'oracle', 'shadow_demon', 'tusk', 'vengefulspirit', 'winter_wyvern', 'wisp']
+const TEAMFIGHT_ULT = ['ancient_apparition', 'dark_seer', 'disruptor', 'earthshaker', 'enigma', 'faceless_void', 'magnataur', 'mars', 'phoenix', 'sand_king', 'tidehunter', 'warlock']
+const SPLIT_PUSH = ['arc_warden', 'broodmother', 'furion', 'lone_druid', 'lycan', 'naga_siren', 'terrorblade', 'tinker']
+const BKB_PIERCING = ['axe', 'bane', 'beastmaster', 'batrider', 'doom_bringer', 'enigma', 'faceless_void', 'legion_commander', 'magnataur', 'pudge', 'shadow_demon', 'spirit_breaker']
 
 const key = (hero: Hero) => hero.name.replace('npc_dota_hero_', '')
 const inList = (hero: Hero, list: string[]) => list.includes(key(hero))
@@ -67,6 +71,8 @@ const roleCount = (heroes: Hero[], role: string) => heroes.filter((h) => h.roles
 const listCount = (heroes: Hero[], list: string[]) => heroes.filter((h) => inList(h, list)).length
 const clamp = (value: number) => Math.max(18, Math.min(96, Math.round(value)))
 const mean = (values: number[]) => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0
+const names = (heroes: Hero[], limit = 2) => heroes.slice(0, limit).map((hero) => hero.localizedName).join(' + ')
+const scoreDelta = (team: TeamAnalysis, opponent: TeamAnalysis, dimension: Dimension) => team.scores[dimension] - opponent.scores[dimension]
 
 function scoreTeam(heroes: Hero[]): Record<Dimension, number> {
   const ranged = heroes.filter((h) => h.attackType === 'Ranged').length
@@ -80,13 +86,17 @@ function scoreTeam(heroes: Hero[]): Record<Dimension, number> {
   const pushers = roleCount(heroes, 'Pusher') + listCount(heroes, PUSH)
   const hardCarry = listCount(heroes, HARD_CARRY)
   const micro = listCount(heroes, MICRO)
+  const saves = listCount(heroes, SAVE)
+  const teamfightUltimates = listCount(heroes, TEAMFIGHT_ULT)
+  const splitPush = listCount(heroes, SPLIT_PUSH)
+  const bkbPierce = listCount(heroes, BKB_PIERCING)
 
   return {
-    Laning: clamp(34 + ranged * 7 + supports * 7 + nukers * 5 - Math.max(0, carries - 3) * 5),
-    Teamfight: clamp(28 + initiators * 12 + disablers * 7 + durable * 4 + supports * 2),
-    Pickoff: clamp(27 + disablers * 9 + nukers * 6 + escape * 3 + listCount(heroes, PICKOFF) * 7),
-    Push: clamp(24 + pushers * 10 + carries * 3),
-    Sustain: clamp(28 + supports * 9 + durable * 5),
+    Laning: clamp(34 + ranged * 7 + supports * 7 + nukers * 5 + saves * 3 - Math.max(0, carries - 3) * 5),
+    Teamfight: clamp(28 + initiators * 10 + disablers * 6 + durable * 4 + supports * 2 + teamfightUltimates * 8),
+    Pickoff: clamp(27 + disablers * 8 + nukers * 5 + escape * 3 + listCount(heroes, PICKOFF) * 7 + bkbPierce * 4),
+    Push: clamp(24 + pushers * 10 + carries * 3 + splitPush * 6),
+    Sustain: clamp(28 + supports * 8 + durable * 5 + saves * 9),
     Scaling: clamp(27 + carries * 8 + hardCarry * 11 + heroes.filter((h) => h.primaryAttr === 'agi').length * 3),
     Roshan: clamp(24 + listCount(heroes, ROSHAN) * 14 + carries * 4 + durable * 3),
     Execution: clamp(88 - micro * 14 - Math.max(0, carries - 2) * 7 + disablers * 2),
@@ -96,13 +106,16 @@ function scoreTeam(heroes: Hero[]): Record<Dimension, number> {
 function buildSpikes(heroes: Hero[]): PowerSpike[] {
   return heroes.flatMap((hero): PowerSpike[] => {
     if (inList(hero, BLINK)) return [{ hero, label: 'Blink Dagger initiation', minuteStart: 12, minuteEnd: 17, impact: 'major' }]
+    if (inList(hero, SAVE)) return [{ hero, label: 'First save item / defensive level timing', minuteStart: 13, minuteEnd: 20, impact: 'major' }]
     if (inList(hero, BATTLE_FURY)) return [
       { hero, label: 'Farming accelerator', minuteStart: 12, minuteEnd: 16, impact: 'supporting' },
       { hero, label: 'BKB + damage threshold', minuteStart: 24, minuteEnd: 30, impact: 'major' },
     ]
     if (inList(hero, AURA)) return [{ hero, label: 'First team aura', minuteStart: 15, minuteEnd: 21, impact: 'major' }]
-    if (hero.roles.includes('Carry')) return [{ hero, label: 'BKB / second core item', minuteStart: 21, minuteEnd: 28, impact: 'major' }]
-    if (hero.roles.includes('Support')) return [{ hero, label: 'Force / Glimmer utility', minuteStart: 16, minuteEnd: 23, impact: 'supporting' }]
+    if (inList(hero, ROSHAN)) return [{ hero, label: 'Roshan damage item / sustain threshold', minuteStart: 14, minuteEnd: 22, impact: 'major' }]
+    if (inList(hero, SPLIT_PUSH)) return [{ hero, label: 'Wave-control and map-split timing', minuteStart: 18, minuteEnd: 26, impact: 'major' }]
+    if (hero.roles.includes('Carry')) return [{ hero, label: 'BKB / second core item timing', minuteStart: 21, minuteEnd: 28, impact: 'major' }]
+    if (hero.roles.includes('Support')) return [{ hero, label: 'Force / Glimmer / shard utility window', minuteStart: 16, minuteEnd: 23, impact: 'supporting' }]
     return [{ hero, label: 'First major utility item', minuteStart: 17, minuteEnd: 23, impact: 'supporting' }]
   }).sort((a, b) => a.minuteStart - b.minuteStart)
 }
@@ -252,6 +265,98 @@ function responseItems(opponent: TeamAnalysis) {
   return items.slice(0, 4).length ? items.slice(0, 4) : ['Flexible dispel and mobility items']
 }
 
+function matchupWinConditions(team: TeamAnalysis, opponent: TeamAnalysis, heroes: Hero[], opponentHeroes: Hero[]) {
+  const cores = heroes.filter((hero) => hero.roles.includes('Carry'))
+  const catchHeroes = heroes.filter((hero) => hero.roles.includes('Disabler') || inList(hero, PICKOFF))
+  const enemyScalingCores = opponentHeroes.filter((hero) => hero.roles.includes('Carry') || inList(hero, HARD_CARRY))
+  const conditions: string[] = []
+
+  if (scoreDelta(team, opponent, 'Laning') >= 8) {
+    conditions.push(`Win at least two lanes, then convert the lane lead into rune control and the first tower before ${names(enemyScalingCores, 1) || 'the enemy cores'} stabilize.`)
+  } else if (scoreDelta(team, opponent, 'Laning') <= -8) {
+    conditions.push(`Keep the first ten minutes low-loss: protect ${names(cores, 1) || 'the main core'} and avoid giving rotation kills into the enemy lane advantage.`)
+  } else {
+    conditions.push('Play lanes for parity; the draft edge comes from cleaner rotations and first objective conversion, not raw lane dominance.')
+  }
+
+  if (scoreDelta(team, opponent, 'Teamfight') >= 8) {
+    conditions.push('Force grouped fights around vision and major cooldowns; do not let the opponent split the map before your initiation lands.')
+  } else if (scoreDelta(team, opponent, 'Pickoff') >= 8) {
+    conditions.push(`Use ${names(catchHeroes) || 'catch heroes'} to break formation first; every smoke should create a numbers advantage before towers or Roshan.`)
+  } else if (team.scores.Push >= 62) {
+    conditions.push('Convert catapult waves and won skirmishes into tower damage immediately; the draft loses value if kills do not become map control.')
+  } else {
+    conditions.push('Delay direct objective attempts until a key enemy cooldown or mobility spell is forced out.')
+  }
+
+  if (scoreDelta(team, opponent, 'Scaling') >= 8) {
+    conditions.push(`Trade space intelligently and protect ${names(cores, 2) || 'core item timings'}; late-game structure favors this lineup if the map is not collapsed early.`)
+  } else if (scoreDelta(team, opponent, 'Scaling') <= -8) {
+    conditions.push('End the farming phase early: claim Roshan or two outer towers before the opponent reaches their third major core item.')
+  } else {
+    conditions.push(`Hit the ${team.peakWindow} window with smoke, wards, and buyback discipline; the draft is timing-sensitive rather than purely late-game favored.`)
+  }
+
+  return conditions
+}
+
+function matchupObjectivePlan(team: TeamAnalysis, opponent: TeamAnalysis): ObjectiveStep[] {
+  const laneDelta = scoreDelta(team, opponent, 'Laning')
+  const pushDelta = scoreDelta(team, opponent, 'Push')
+  const roshanDelta = scoreDelta(team, opponent, 'Roshan')
+  const fightDelta = scoreDelta(team, opponent, 'Teamfight')
+
+  return [
+    {
+      window: '0-10',
+      action: laneDelta >= 8
+        ? 'Pressure both side lanes, secure power runes, and force defensive teleports before the first catapult.'
+        : laneDelta <= -8
+          ? 'Prioritize lane survival, pull equilibrium back, and protect the weakest core from first rotation pressure.'
+          : 'Keep lanes even and save first smoke for the strongest level-six or first-ultimate timing.',
+    },
+    {
+      window: '10-18',
+      action: pushDelta >= 8
+        ? 'Group with catapult waves and convert the first pickoff into two outer towers.'
+        : team.scores.Pickoff >= opponent.scores.Teamfight
+          ? 'Smoke through deep vision, kill the wave-clear hero, then pressure the nearest tower.'
+          : 'Avoid blind tower dives; farm toward the first defensive or teamfight item and fight on your ward line.',
+    },
+    {
+      window: '18-26',
+      action: roshanDelta >= 8
+        ? 'Set Roshan vision early, force one cooldown, then take the pit with buyback and teleport advantage.'
+        : fightDelta >= 8
+          ? 'Bait the opponent into a grouped fight outside Roshan before committing to the pit.'
+          : 'Cut waves and delay Roshan until a pickoff or enemy smoke failure gives a safe entry.',
+    },
+    {
+      window: team.peakWindow,
+      action: scoreDelta(team, opponent, 'Scaling') >= 8
+        ? 'Take protected map control while cores complete late-game items; avoid coin-flip high-ground pushes.'
+        : 'Use the lineup peak to claim Aegis, remove outer map access, and force high ground before scaling falls off.',
+    },
+  ]
+}
+
+function refineMatchupPlans(team: TeamAnalysis, opponent: TeamAnalysis, heroes: Hero[], opponentHeroes: Hero[]) {
+  team.winConditions = matchupWinConditions(team, opponent, heroes, opponentHeroes)
+  team.objectivePlan = matchupObjectivePlan(team, opponent)
+
+  if (scoreDelta(team, opponent, 'Roshan') <= -10) {
+    team.gaps.unshift('Roshan access is contested; this lineup likely needs a pickoff or ward advantage before entering the pit.')
+  }
+  if (scoreDelta(team, opponent, 'Teamfight') <= -10 && team.scores.Pickoff < 62) {
+    team.gaps.unshift('Teamfight deficit without enough catch means the draft must dodge fair five-on-five engagements.')
+  }
+  if (scoreDelta(team, opponent, 'Push') <= -10) {
+    team.gaps.unshift('Tower damage is slower than the opponent; objective conversion must come from clean kills or Aegis.')
+  }
+
+  team.gaps = Array.from(new Set(team.gaps)).slice(0, 5)
+}
+
 function analyzeTeam(heroes: Hero[], meta?: RecentProMeta | null): TeamAnalysis {
   const scores = scoreTeam(heroes)
   const lanes = inferLanes(heroes, meta)
@@ -347,19 +452,39 @@ function rolePenalty(team: TeamAnalysis) {
   return confidencePenalty + riskPenalty
 }
 
+function dimensionImpact(dimension: Dimension) {
+  switch (dimension) {
+    case 'Laning': return 'stronger opening lanes should decide rune control and the first tower tempo'
+    case 'Teamfight': return 'cleaner five-on-five tools make Roshan and high-ground fights easier to force'
+    case 'Pickoff': return 'better catch can create numbers advantages before committing to objectives'
+    case 'Push': return 'tower damage converts won fights into map control faster'
+    case 'Sustain': return 'more save/reset tools should extend fights and punish over-commitment'
+    case 'Scaling': return 'the draft has a clearer late-game insurance policy if the map stays playable'
+    case 'Roshan': return 'Aegis access is easier, especially after the first clean kill or cooldown trade'
+    case 'Execution': return 'the lineup is easier to execute under pressure and less punished by messy fights'
+    default: return 'this edge changes how the draft should be played'
+  }
+}
+
 export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: RecentProMeta | null): MatchupAnalysis {
   const radiant = analyzeTeam(radiantHeroes, meta)
   const dire = analyzeTeam(direHeroes, meta)
   radiant.responseItems = responseItems(dire)
   dire.responseItems = responseItems(radiant)
+  refineMatchupPlans(radiant, dire, radiantHeroes, direHeroes)
+  refineMatchupPlans(dire, radiant, direHeroes, radiantHeroes)
   const observedR = observedDraftScore(radiantHeroes, direHeroes, meta)
   const observedD = observedDraftScore(direHeroes, radiantHeroes, meta)
-  const earlyR = radiant.scores.Laning * 0.55 + radiant.scores.Pickoff * 0.25 + radiant.scores.Push * 0.2 + observedR - rolePenalty(radiant)
-  const earlyD = dire.scores.Laning * 0.55 + dire.scores.Pickoff * 0.25 + dire.scores.Push * 0.2 + observedD - rolePenalty(dire)
-  const midR = radiant.scores.Teamfight * 0.35 + radiant.scores.Pickoff * 0.25 + radiant.scores.Push * 0.25 + radiant.scores.Roshan * 0.15 + observedR - rolePenalty(radiant) * 0.7
-  const midD = dire.scores.Teamfight * 0.35 + dire.scores.Pickoff * 0.25 + dire.scores.Push * 0.25 + dire.scores.Roshan * 0.15 + observedD - rolePenalty(dire) * 0.7
-  const lateR = radiant.scores.Scaling * 0.52 + radiant.scores.Teamfight * 0.28 + radiant.scores.Sustain * 0.2 + observedR - rolePenalty(radiant) * 0.35
-  const lateD = dire.scores.Scaling * 0.52 + dire.scores.Teamfight * 0.28 + dire.scores.Sustain * 0.2 + observedD - rolePenalty(dire) * 0.35
+  const laneFitR = roleFitScore(radiant.lanePlan)
+  const laneFitD = roleFitScore(dire.lanePlan)
+  const matchupFitR = observedR + (laneFitR - 50) * 0.06 - rolePenalty(radiant)
+  const matchupFitD = observedD + (laneFitD - 50) * 0.06 - rolePenalty(dire)
+  const earlyR = radiant.scores.Laning * 0.5 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.18 + radiant.scores.Sustain * 0.1 + matchupFitR
+  const earlyD = dire.scores.Laning * 0.5 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.18 + dire.scores.Sustain * 0.1 + matchupFitD
+  const midR = radiant.scores.Teamfight * 0.32 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.22 + radiant.scores.Roshan * 0.16 + radiant.scores.Execution * 0.08 + matchupFitR * 0.75
+  const midD = dire.scores.Teamfight * 0.32 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.22 + dire.scores.Roshan * 0.16 + dire.scores.Execution * 0.08 + matchupFitD * 0.75
+  const lateR = radiant.scores.Scaling * 0.48 + radiant.scores.Teamfight * 0.25 + radiant.scores.Sustain * 0.18 + radiant.scores.Execution * 0.09 + matchupFitR * 0.35
+  const lateD = dire.scores.Scaling * 0.48 + dire.scores.Teamfight * 0.25 + dire.scores.Sustain * 0.18 + dire.scores.Execution * 0.09 + matchupFitD * 0.35
   const seed = [...radiantHeroes, ...direHeroes].reduce((sum, hero, index) => sum + hero.id * (index + 3), 17)
   const random = seeded(seed)
   const simulationRuns = 25_000
@@ -392,9 +517,16 @@ export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: R
     .map((dimension) => ({ dimension, delta: radiant.scores[dimension] - dire.scores[dimension] }))
     .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
     .slice(0, 3)
-  const decidingFactors = dimensions.map(({ dimension, delta }) => `${delta > 0 ? 'Radiant' : 'Dire'} leads ${dimension.toLowerCase()} by ${Math.abs(delta)} points.`)
+  const decidingFactors = dimensions.map(({ dimension, delta }) => {
+    const leader = delta > 0 ? 'Radiant' : 'Dire'
+    return `${leader} leads ${dimension.toLowerCase()} by ${Math.abs(delta)}: ${dimensionImpact(dimension)}.`
+  })
+  const confidence = Math.abs(radiantProbability - 50) >= 14 ? 'high' : Math.abs(radiantProbability - 50) >= 8 ? 'moderate' : 'thin'
+  const laneFitInsight = `Lane model confidence: Radiant ${Math.round(laneFitR)}% fit (${radiant.laneEvidence}) vs Dire ${Math.round(laneFitD)}% fit (${dire.laneEvidence}).`
   const simulationInsights = [
+    `Win estimate confidence is ${confidence}; read small edges as draft pressure, not a guaranteed result.`,
     `Duration model: ${Math.round(weights.early * 100)}% early, ${Math.round(weights.mid * 100)}% mid, ${Math.round(weights.late * 100)}% late-game trials.`,
+    laneFitInsight,
     `Role pressure: Radiant ${radiant.riskLevel.toLowerCase()} risk vs Dire ${dire.riskLevel.toLowerCase()} risk.`,
     meta ? `Pro overlap: Radiant ${proCoverage(radiantHeroes, meta)}/5 heroes and Dire ${proCoverage(direHeroes, meta)}/5 heroes appear in the current patch sample.` : 'Pro overlap is unavailable, so this run uses role-tag estimates only.',
   ]
