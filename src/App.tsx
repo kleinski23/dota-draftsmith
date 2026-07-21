@@ -54,6 +54,14 @@ type ReportTeam = {
   spikes: { hero: string; label: string; window: string; impact: string }[]
 }
 
+type ReportSequenceEntry = {
+  order: number
+  type: 'pick' | 'ban'
+  team: Team
+  hero: string
+  phase: number
+}
+
 type SavedDraftReport = {
   id: string
   createdAt: number
@@ -67,6 +75,7 @@ type SavedDraftReport = {
   modelBasis: string
   decidingFactors: string[]
   simulationInsights: string[]
+  sequence?: ReportSequenceEntry[]
   radiant: ReportTeam
   dire: ReportTeam
 }
@@ -129,6 +138,13 @@ function buildReportSnapshot(actions: DraftAction[], analysis: MatchupAnalysis, 
     modelBasis: analysis.modelBasis,
     decidingFactors: analysis.decidingFactors,
     simulationInsights: analysis.simulationInsights,
+    sequence: actions.map((action, index) => ({
+      order: index + 1,
+      type: action.type,
+      team: action.team,
+      hero: action.hero.localizedName,
+      phase: action.phase,
+    })),
     radiant: summarizeTeam('radiant'),
     dire: summarizeTeam('dire'),
   }
@@ -147,11 +163,17 @@ function reportStamp(report: SavedDraftReport) {
   return new Date(report.createdAt).toISOString().slice(0, 16).replace(/[:T]/g, '-')
 }
 
-function buildReportHtml(report: SavedDraftReport) {
+export function buildReportHtml(report: SavedDraftReport) {
   const dimensions = Object.keys(report.radiant.scores) as Dimension[]
   const list = (items: string[]) => items.map((item) => `<li>${htmlEscape(item)}</li>`).join('')
   const pills = (items: string[]) => items.map((item) => `<span>${htmlEscape(item)}</span>`).join('')
   const lineup = (team: ReportTeam, side: Team) => `<div class="lineup ${side}"><small>${side.toUpperCase()}</small>${team.heroes.map((hero, index) => `<span><b>${index + 1}</b>${htmlEscape(hero)}</span>`).join('')}</div>`
+  const sequenceItems = (report.sequence ?? []).map((entry) => `
+    <li class="${entry.type} ${entry.team}"><small>#${entry.order} · ${entry.team === 'radiant' ? 'Radiant' : 'Dire'} ${entry.type}</small><span>${htmlEscape(entry.hero)}</span></li>
+  `).join('')
+  const sequenceSection = sequenceItems ? `
+    <section class="panel sequence-panel"><h3>Draft sequence</h3><ol class="sequence">${sequenceItems}</ol></section>
+  ` : ''
   const lanes = (team: ReportTeam) => team.lanes.map((lane) => `
     <tr><th>${htmlEscape(lane.lane)}</th><td>${htmlEscape(lane.heroes)}</td><td>${htmlEscape(lane.evidence)}</td></tr>
   `).join('')
@@ -215,12 +237,21 @@ function buildReportHtml(report: SavedDraftReport) {
     .lineup span { min-height:54px; display:flex; flex-direction:column; justify-content:space-between; border:1px solid #ddd7c8; background:#f7f2e7; padding:8px; font-weight:900; font-size:13px; line-height:1.05; text-transform:uppercase; }
     .lineup span b { color:var(--muted); font-size:10px; }
     .lineup.radiant { border-top:5px solid var(--radiant); }.lineup.dire { border-top:5px solid var(--dire); }
-    .mast { display:grid; grid-template-columns:1fr auto; gap:24px; padding-bottom:6px; }
+    .mast { display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end; padding-bottom:10px; }
     .kicker, h3 { color:var(--gold); font-size:11px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
     h1 { margin:6px 0 8px; font-size:34px; line-height:.95; letter-spacing:-.03em; text-transform:uppercase; }
+    .read-title { margin:4px 0 0; font-size:19px; line-height:1; letter-spacing:.01em; text-transform:uppercase; }
     p { color:var(--muted); line-height:1.5; }
-    .model { min-width:290px; border:1px solid var(--line); background:var(--panel); padding:14px; }
-    .model strong { display:block; font-size:18px; }
+    .model { max-width:520px; text-align:right; }
+    .model p { margin:0; font-size:11px; }
+    .sequence-panel { margin-bottom:14px; }
+    .sequence { list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+    .sequence li { border:1px solid var(--line); border-left-width:4px; background:#fff; padding:6px 8px; display:flex; flex-direction:column; gap:2px; }
+    .sequence li.radiant { border-left-color:var(--radiant); }
+    .sequence li.dire { border-left-color:var(--dire); }
+    .sequence li small { color:var(--muted); font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .sequence li span { font-size:12px; font-weight:900; text-transform:uppercase; line-height:1.1; }
+    .sequence li.ban span { color:#8a918d; font-weight:700; text-decoration:line-through; text-decoration-thickness:1px; }
     .prob { display:grid; grid-template-columns:100px 1fr 100px; align-items:center; gap:12px; margin:22px 0; font-weight:900; font-size:28px; }
     .prob small { display:block; font-size:10px; color:var(--muted); letter-spacing:.12em; }
     .prob .dire { text-align:right; color:var(--dire); }.prob .radiant { color:var(--radiant); }
@@ -237,8 +268,8 @@ function buildReportHtml(report: SavedDraftReport) {
     .grid-two { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; } h3 em { color:var(--muted); font-style:normal; font-weight:600; letter-spacing:0; text-transform:none; }
     .pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }.objectives { list-style:none; padding-left:0; }.objectives li { display:grid; grid-template-columns:54px 1fr; gap:8px; }
     .foot { margin-top:18px; border-top:1px solid var(--line); padding-top:10px; color:#7b837f; font-size:11px; }
-    @media print { body { background:#fff; } .sheet { margin:0; max-width:none; box-shadow:none; padding:18mm; } .print-actions { display:none; } @page { size:A4; margin:10mm; } }
-    @media (max-width:800px) { .sheet { margin:0; padding:18px; } .mast,.summary,.teams,.grid-two,.lineup-grid { grid-template-columns:1fr; } .lineup { grid-template-columns:1fr; } .lineup-title { display:block; } .lineup-title p { text-align:left; } .prob { grid-template-columns:72px 1fr 72px; font-size:22px; } }
+    @media print { body { background:#fff; } .sheet { margin:0; max-width:none; box-shadow:none; padding:12mm; } .print-actions { display:none; } .sequence-panel { break-inside:avoid; } @page { size:A4; margin:10mm; } }
+    @media screen and (max-width:800px) { .sheet { margin:0; padding:18px; } .mast,.summary,.teams,.grid-two,.lineup-grid { grid-template-columns:1fr; } .lineup { grid-template-columns:1fr; } .lineup-title { display:block; } .lineup-title p { text-align:left; } .model { text-align:left; } .sequence { grid-template-columns:1fr 1fr; } .prob { grid-template-columns:72px 1fr 72px; font-size:22px; } }
   </style>
 </head>
 <body>
@@ -254,14 +285,13 @@ function buildReportHtml(report: SavedDraftReport) {
     <header class="mast">
       <div>
         <div class="kicker">Matchup simulation</div>
-        <h1>Draft read</h1>
-        <p>Use this sheet to review lanes, timing windows, objective pressure, missing tools, and item responses.</p>
+        <h2 class="read-title">Draft read</h2>
       </div>
       <aside class="model">
-        <strong>${report.simulationRuns.toLocaleString()} synthetic trials</strong>
-        <p>${htmlEscape(report.modelBasis)}<br/>±${report.samplingMargin} point sampling error<br/>Generated ${htmlEscape(new Date(report.createdAt).toLocaleString())}</p>
+        <p>${report.simulationRuns.toLocaleString()} synthetic trials · ${htmlEscape(report.modelBasis)} · ±${report.samplingMargin} point sampling error<br/>Generated ${htmlEscape(new Date(report.createdAt).toLocaleString())}</p>
       </aside>
     </header>
+    ${sequenceSection}
     <section class="prob"><div class="radiant">${report.probability.radiant}%<small>Radiant</small></div><div class="bar"><i style="width:${report.probability.radiant}%"></i></div><div class="dire">${report.probability.dire}%<small>Dire</small></div></section>
     <section class="stage"><div><span>Early</span><b>${htmlEscape(report.stageEdge.early)}</b></div><div><span>Mid</span><b>${htmlEscape(report.stageEdge.mid)}</b></div><div><span>Late</span><b>${htmlEscape(report.stageEdge.late)}</b></div></section>
     <section class="summary"><div class="panel"><h3>Deciding factors</h3><ul>${list(report.decidingFactors)}</ul></div><div class="panel"><h3>Simulation read</h3><ul>${list(report.simulationInsights)}</ul></div></section>
