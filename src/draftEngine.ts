@@ -172,10 +172,47 @@ export function chooseHero(
       }
       for (const enemy of enemyPicks) score += (recentMeta.counters[`${hero.id}:${enemy.id}`] ?? 0) * 16
     }
-    if (strategy === 'meta') score += presence * 0.45 + recentPresence * (step.type === 'ban' ? 0.55 : 1.15) + (recentSignal?.firstPhase ?? 0) * (isOpeningBan ? 0.45 : 2)
-    if (strategy === 'balanced') score += hero.roles.length * 2
-    if (strategy === 'cheese') score += hasAny(hero, CHEESE) ? (step.phase === 3 ? 45 : 20) : 0
-    if (strategy === 'counter') score += step.type === 'ban' ? presence * 0.7 : hero.roles.includes('Disabler') ? 12 : 0
+    if (strategy === 'meta') {
+      // Chase what is currently winning: contested first-phase heroes, high pick/ban rates,
+      // and heroes overperforming in the Divine+ sample.
+      score += presence * 0.45 + recentPresence * (step.type === 'ban' ? 0.55 : 1.15) + (recentSignal?.firstPhase ?? 0) * (isOpeningBan ? 0.45 : 2)
+      score += Math.max(0, publicEdge) * 30 + (step.type === 'pick' ? recentWinRate * 0.6 : 0)
+    }
+    if (strategy === 'balanced') {
+      // Adaptive: fill role gaps harder, respond to revealed enemy picks, and prefer
+      // heroes observed in multiple positions (they hide the plan longer).
+      score += hero.roles.length * 2
+      if (step.type === 'pick') {
+        score += roleNeedScore(hero, teamPicks) * 0.6
+        for (const enemy of enemyPicks) score += (recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 10
+        const observedPositions = recentMeta?.positionSignals?.[hero.id]
+        if (observedPositions?.samples) {
+          const flexible = observedPositions.positions.filter((count) => count / observedPositions.samples >= 0.2).length
+          if (flexible >= 2) score += 7
+        }
+      }
+    }
+    if (strategy === 'cheese') {
+      // Narrow lineups plus off-meta overperformers: strong Divine+ win rate with low pro
+      // presence means the opponent likely has not practiced the answer.
+      score += hasAny(hero, CHEESE) ? (step.phase === 3 ? 45 : 20) : 0
+      if (step.type === 'pick') {
+        const surprise = Math.max(0, publicEdge) * Math.max(0, 1 - recentPresence / 20)
+        score += surprise * (step.phase === 3 ? 55 : 30)
+      }
+    }
+    if (strategy === 'counter') {
+      if (step.type === 'pick') {
+        // Weight observed matchup edges against every revealed enemy pick much harder.
+        for (const enemy of enemyPicks) score += (recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 24
+        score += hero.roles.includes('Disabler') ? 8 : 0
+        if (!enemyPicks.length) score += hero.roles.length * 1.5
+      } else {
+        score += presence * 0.7
+        // Deny answers: ban heroes with a strong observed record against our own picks.
+        for (const ally of teamPicks) score += Math.max(0, recentMeta?.counters[`${hero.id}:${ally.id}`] ?? 0) * 20
+      }
+    }
     return { hero, score }
   }).sort((a, b) => b.score - a.score)
 

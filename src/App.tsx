@@ -11,10 +11,10 @@ import { loadRecentProMeta } from './recentMeta'
 import type { DraftAction, DraftMode, Hero, RecentProMeta, Strategy, Team } from './types'
 
 const strategies: { id: Strategy; label: string; description: string; icon: typeof BrainCircuit }[] = [
-  { id: 'balanced', label: 'Adaptive', description: 'Roles, synergy & flexibility', icon: BrainCircuit },
-  { id: 'meta', label: 'Meta', description: 'Pro presence weighted', icon: Sparkles },
-  { id: 'counter', label: 'Counter', description: 'Punish revealed ideas', icon: Target },
-  { id: 'cheese', label: 'Cheese', description: 'Greedy, narrow answers', icon: Swords },
+  { id: 'balanced', label: 'Adaptive', description: 'Fills gaps, reacts to reveals', icon: BrainCircuit },
+  { id: 'meta', label: 'Meta', description: 'Current-patch winners', icon: Sparkles },
+  { id: 'counter', label: 'Counter', description: 'Targets & denies matchups', icon: Target },
+  { id: 'cheese', label: 'Cheese', description: 'Off-meta surprise threats', icon: Swords },
 ]
 
 const attrLabels = { str: 'Strength', agi: 'Agility', int: 'Intelligence', all: 'Universal' }
@@ -452,7 +452,9 @@ function DraftComplete({
               {dimensions.map((dimension) => {
                 const radiantScore = analysis.radiant.scores[dimension]
                 const direScore = analysis.dire.scores[dimension]
-                return <div className="dimension-row" key={dimension}><strong>{radiantScore}</strong><div><small>{dimension}</small><span><i className="r-bar" style={{ width: `${radiantScore / 2}%` }} /><i className="d-bar" style={{ width: `${direScore / 2}%` }} /></span></div><strong>{direScore}</strong></div>
+                const delta = radiantScore - direScore
+                const lead = delta >= 8 ? 'lead-radiant' : delta <= -8 ? 'lead-dire' : ''
+                return <div className="dimension-row" key={dimension}><strong>{radiantScore}</strong><div><small className={lead}>{dimension}{lead && <b>{delta > 0 ? `+${delta}` : delta}</b>}</small><span><i className="r-bar" style={{ width: `${radiantScore / 2}%` }} /><i className="d-bar" style={{ width: `${direScore / 2}%` }} /></span></div><strong>{direScore}</strong></div>
               })}
             </div>
             <div className="factor-panel"><small>DECIDING FACTORS</small>{analysis.decidingFactors.map((factor) => <p key={factor}><TrendingUp size={13} />{factor}</p>)}</div>
@@ -1017,6 +1019,7 @@ export default function App() {
               ))}
             </div>
           </div>
+          <div className="grid-zone">
           <div className="hero-grid" aria-busy={thinking}>
             {filtered.map((hero) => {
               const unavailable = used.has(hero.id) || !isHumanTurn
@@ -1030,18 +1033,19 @@ export default function App() {
           <div className={`selection-dock ${selected ? 'visible' : ''}`}>
             {selected ? <><HeroImage hero={selected} /><div><small>SELECTED HERO</small><strong>{selected.localizedName}</strong><span>{selected.roles.slice(0, 3).join(' · ')}</span></div><button onClick={confirm}>{step?.type === 'ban' ? 'Confirm ban' : 'Lock in hero'} <Check size={16} /></button></> : <span>Select a hero to continue</span>}
           </div>
+          </div>
+
+          <section className={`intel-bar ${showIntel ? '' : 'collapsed'}`}>
+            <button className="intel-toggle" onClick={() => setShowIntel((value) => !value)} aria-expanded={showIntel}><BrainCircuit size={16} /> DRAFT INTELLIGENCE <ChevronDown size={14} /></button>
+            {showIntel && <div className="intel-content">
+              <div className="ai-avatar"><Bot size={20} /><i /></div>
+              <div className="ai-thought"><small>SYSTEM DRAFTER · {mode.strategy.toUpperCase()} PROFILE</small><p>{thinking ? 'Ranking pro presence, lane pairs, role economy, counter bans, and timing fit…' : lastAiAction?.reason ?? 'Waiting for enough draft information to form a read.'}</p></div>
+              <div className="intel-metrics"><span><small>PRO MODEL{recentMeta?.patch ? ` · PATCH ${recentMeta.patch}` : ''}</small><strong>{metaLoading ? 'SYNCING' : recentMeta ? `${recentMeta.matchesAnalyzed} DRAFTS` : 'UNAVAILABLE'}</strong></span><span><small>ROLE EVIDENCE</small><strong>{recentMeta?.matchesWithPositions ? `${recentMeta.matchesWithPositions} MATCHES` : 'BACKFILLING'}</strong></span><span><small>MODEL BASIS</small><strong>{recentMeta ? 'OBSERVED + ROLE TAGS' : 'ROLE TAGS'}</strong></span></div>
+            </div>}
+          </section>
         </main>
         <TeamRail team="dire" actions={actions} />
       </div>
-
-      <section className={`intel-bar ${showIntel ? '' : 'collapsed'}`}>
-        <button className="intel-toggle" onClick={() => setShowIntel((value) => !value)} aria-expanded={showIntel}><BrainCircuit size={16} /> DRAFT INTELLIGENCE <ChevronDown size={14} /></button>
-        {showIntel && <div className="intel-content">
-          <div className="ai-avatar"><Bot size={20} /><i /></div>
-          <div className="ai-thought"><small>SYSTEM DRAFTER · {mode.strategy.toUpperCase()} PROFILE</small><p>{thinking ? 'Ranking pro presence, lane pairs, role economy, counter bans, and timing fit…' : lastAiAction?.reason ?? 'Waiting for enough draft information to form a read.'}</p></div>
-          <div className="intel-metrics"><span><small>PRO MODEL{recentMeta?.patch ? ` · PATCH ${recentMeta.patch}` : ''}</small><strong>{metaLoading ? 'SYNCING' : recentMeta ? `${recentMeta.matchesAnalyzed} DRAFTS` : 'UNAVAILABLE'}</strong></span><span><small>ROLE EVIDENCE</small><strong>{recentMeta?.matchesWithPositions ? `${recentMeta.matchesWithPositions} MATCHES` : 'BACKFILLING'}</strong></span><span><small>MODEL BASIS</small><strong>{recentMeta ? 'OBSERVED + ROLE TAGS' : 'ROLE TAGS'}</strong></span></div>
-        </div>}
-      </section>
 
       <footer>
         <span>Unofficial fan project. Dota 2, its hero imagery, and all draft announcer voice lines &amp; sound effects are trademarks and &copy; Valve Corporation. Audio is used for non-commercial fan purposes only; not affiliated with or endorsed by Valve.</span>
