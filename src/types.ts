@@ -76,6 +76,10 @@ export interface ModelCalibration {
   brier: number
   /** Least-squares factor mapping raw probability edges to observed edges; applied as 50 + (p - 50) * shrink. */
   shrink: number
+  /** Shrink fitted on pro Captain's Mode drafts only (the mode this app simulates). */
+  shrinkPro?: number
+  /** Shrink fitted on high-rank pub matches only (execution-dominated; systematically lower). */
+  shrinkPublic?: number
   buckets: Array<{ range: string; matches: number; expected: number; actual: number }>
   evaluatedAt: number
 }

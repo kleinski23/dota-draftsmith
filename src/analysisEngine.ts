@@ -14,6 +14,7 @@ export interface LaneAssignment {
   lane: 'Safe lane' | 'Mid lane' | 'Off lane'
   heroes: Hero[]
   evidence: string
+  matchup?: string
 }
 
 export interface ObjectiveStep {
@@ -64,6 +65,10 @@ const SAVE = ['abaddon', 'dazzle', 'oracle', 'shadow_demon', 'tusk', 'vengefulsp
 const TEAMFIGHT_ULT = ['ancient_apparition', 'dark_seer', 'disruptor', 'earthshaker', 'enigma', 'faceless_void', 'magnataur', 'mars', 'phoenix', 'sand_king', 'tidehunter', 'warlock']
 const SPLIT_PUSH = ['arc_warden', 'broodmother', 'furion', 'lone_druid', 'lycan', 'naga_siren', 'terrorblade', 'tinker']
 const BKB_PIERCING = ['axe', 'bane', 'beastmaster', 'batrider', 'doom_bringer', 'enigma', 'faceless_void', 'legion_commander', 'magnataur', 'pudge', 'shadow_demon', 'spirit_breaker']
+// Common position 4/5 flex picks whose OpenDota role tags lack 'Support' (e.g. Bounty Hunter
+// is tagged Escape/Nuker only). Without this prior, heroes with no pro sample default toward
+// a core slot and can steal mid or safe lane from an observed core.
+const SUPPORT_FLEX = ['bounty_hunter', 'clockwerk', 'earth_spirit', 'mirana', 'nyx_assassin', 'riki', 'spirit_breaker', 'techies', 'tusk']
 
 const key = (hero: Hero) => hero.name.replace('npc_dota_hero_', '')
 const inList = (hero: Hero, list: string[]) => list.includes(key(hero))
@@ -74,7 +79,7 @@ const mean = (values: number[]) => values.length ? values.reduce((sum, value) =>
 const names = (heroes: Hero[], limit = 2) => heroes.slice(0, limit).map((hero) => hero.localizedName).join(' + ')
 const scoreDelta = (team: TeamAnalysis, opponent: TeamAnalysis, dimension: Dimension) => team.scores[dimension] - opponent.scores[dimension]
 
-function scoreTeam(heroes: Hero[]): Record<Dimension, number> {
+export function scoreTeam(heroes: Hero[]): Record<Dimension, number> {
   const ranged = heroes.filter((h) => h.attackType === 'Ranged').length
   const supports = roleCount(heroes, 'Support')
   const disablers = roleCount(heroes, 'Disabler')
@@ -124,31 +129,38 @@ function strongest(scores: Record<Dimension, number>) {
   return (Object.entries(scores) as [Dimension, number][]).sort((a, b) => b[1] - a[1]).slice(0, 3)
 }
 
+// 15 for tagged supports, 10 for known support-flex picks, 0 otherwise — used wherever the
+// heuristic needs a position 4/5 prior.
+const supportAffinity = (hero: Hero) => hero.roles.includes('Support') ? 15 : inList(hero, SUPPORT_FLEX) ? 10 : 0
+
 function coreScore(hero: Hero, position: 1 | 2 | 3) {
   const carry = hero.roles.includes('Carry') ? 12 : 0
   const nuker = hero.roles.includes('Nuker') ? 9 : 0
   const initiator = hero.roles.includes('Initiator') ? 10 : 0
   const durable = hero.roles.includes('Durable') ? 8 : 0
-  const support = hero.roles.includes('Support') ? -7 : 0
+  const support = hero.roles.includes('Support') ? -7 : inList(hero, SUPPORT_FLEX) ? -5 : 0
   if (position === 1) return carry + (inList(hero, HARD_CARRY) ? 16 : 0) + (hero.primaryAttr === 'agi' ? 5 : 0) + support
   if (position === 2) return nuker + carry * 0.6 + (hero.roles.includes('Escape') ? 7 : 0) + (hero.attackType === 'Ranged' ? 3 : 0) + support
   return initiator + durable + (hero.primaryAttr === 'str' ? 4 : 0) + support * 0.3
 }
 
 function laneProbability(hero: Hero, lane: 0 | 1 | 2, meta?: RecentProMeta | null) {
-  const observed = meta?.laneSignals?.[hero.id]
-  if (observed && observed.samples >= 0.5) {
-    const values = [observed.safe + observed.roam * 0.5, observed.mid, observed.off + observed.roam * 0.5]
-    return (values[lane] + 0.6) / (values.reduce((sum, value) => sum + value, 0) + 1.8)
-  }
-  const supportFlex = hero.roles.includes('Support') ? 12 : 0
+  const supportFlex = supportAffinity(hero) ? 12 : 0
   const fallback = [coreScore(hero, 1) + supportFlex, coreScore(hero, 2), coreScore(hero, 3) + supportFlex]
   const shifted = fallback.map((value) => Math.max(1, value + 12))
-  return shifted[lane] / shifted.reduce((sum, value) => sum + value, 0)
+  const heuristic = shifted[lane] / shifted.reduce((sum, value) => sum + value, 0)
+  const observed = meta?.laneSignals?.[hero.id]
+  if (!observed?.samples) return heuristic
+  const values = [observed.safe + observed.roam * 0.5, observed.mid, observed.off + observed.roam * 0.5]
+  const observedProbability = (values[lane] + 0.6) / (values.reduce((sum, value) => sum + value, 0) + 1.8)
+  // A fraction of one decayed match should not override the role prior outright; blend by
+  // evidence volume so tiny samples nudge rather than dictate the lane read.
+  const evidenceWeight = Math.min(0.85, observed.samples / (observed.samples + 1.5))
+  return heuristic * (1 - evidenceWeight) + observedProbability * evidenceWeight
 }
 
 function positionProbability(hero: Hero, position: 0 | 1 | 2 | 3 | 4, meta?: RecentProMeta | null) {
-  const support = hero.roles.includes('Support') ? 15 : 0
+  const support = supportAffinity(hero)
   const disabler = hero.roles.includes('Disabler') ? 6 : 0
   const initiator = hero.roles.includes('Initiator') ? 6 : 0
   const fallback = [
@@ -254,14 +266,38 @@ function riskLevel(scores: Record<Dimension, number>, laneFit: number): TeamAnal
   return risks >= 2 ? 'High' : risks === 1 ? 'Medium' : 'Low'
 }
 
-function responseItems(opponent: TeamAnalysis) {
+// Safe lane faces the enemy off lane and vice versa; mid faces mid.
+const OPPOSING_LANE = [2, 1, 0] as const
+
+// Projected head-to-head read for one lane: observed hero counters where the sample exists,
+// plus a role-based laning-power heuristic and the numbers advantage in that lane.
+function laneMatchup(mine: Hero[], theirs: Hero[], meta?: RecentProMeta | null): string | undefined {
+  if (!mine.length || !theirs.length) return undefined
+  const observed: number[] = []
+  for (const hero of mine) for (const enemy of theirs) {
+    const value = meta?.counters?.[`${hero.id}:${enemy.id}`]
+    if (value !== undefined) observed.push(value)
+  }
+  const power = (heroes: Hero[]) => heroes.reduce((sum, hero) => sum
+    + (hero.attackType === 'Ranged' ? 2 : 0)
+    + (hero.roles.includes('Nuker') ? 2 : 0)
+    + (hero.roles.includes('Disabler') ? 1.5 : 0)
+    + (hero.roles.includes('Durable') ? 1.2 : 0)
+    + (supportAffinity(hero) ? 1 : 0), 0)
+  const edgeScore = (observed.length ? mean(observed) * 22 : 0) + power(mine) - power(theirs) + (mine.length - theirs.length) * 2
+  const label = edgeScore >= 2.5 ? 'Favored' : edgeScore <= -2.5 ? 'Tough' : 'Even'
+  return `${label} vs ${names(theirs, 2)}`
+}
+
+function responseItems(opponent: TeamAnalysis, opponentHeroes: Hero[]) {
   const items: string[] = []
-  if (opponent.scores.Pickoff >= 65) items.push('Force Staff / Linken’s Sphere')
-  if (opponent.scores.Teamfight >= 65) items.push('Black King Bar / Pipe')
-  if (opponent.scores.Sustain >= 65) items.push('Spirit Vessel / Shiva’s Guard')
-  if (opponent.scores.Scaling >= 65) items.push('Heaven’s Halberd / armor')
-  if (opponent.scores.Push >= 60) items.push('Wave clear / Boots of Travel')
-  if (opponent.scores.Roshan >= 65) items.push('Early vision around Roshan')
+  const vs = (drivers: Hero[]) => drivers.length ? ` (${names(drivers, 2)})` : ''
+  if (opponent.scores.Pickoff >= 65) items.push(`Force Staff / Linken’s Sphere${vs(opponentHeroes.filter((hero) => inList(hero, PICKOFF)))}`)
+  if (opponent.scores.Teamfight >= 65) items.push(`Black King Bar / Pipe${vs(opponentHeroes.filter((hero) => inList(hero, TEAMFIGHT_ULT)))}`)
+  if (opponent.scores.Sustain >= 65) items.push(`Spirit Vessel / Shiva’s Guard${vs(opponentHeroes.filter((hero) => inList(hero, SAVE)))}`)
+  if (opponent.scores.Scaling >= 65) items.push(`Heaven’s Halberd / armor${vs(opponentHeroes.filter((hero) => inList(hero, HARD_CARRY)))}`)
+  if (opponent.scores.Push >= 60) items.push(`Wave clear / Boots of Travel${vs(opponentHeroes.filter((hero) => inList(hero, PUSH) || hero.roles.includes('Pusher')))}`)
+  if (opponent.scores.Roshan >= 65) items.push(`Early vision around Roshan${vs(opponentHeroes.filter((hero) => inList(hero, ROSHAN)))}`)
   return items.slice(0, 4).length ? items.slice(0, 4) : ['Flexible dispel and mobility items']
 }
 
@@ -300,19 +336,26 @@ function matchupWinConditions(team: TeamAnalysis, opponent: TeamAnalysis, heroes
   return conditions
 }
 
-function matchupObjectivePlan(team: TeamAnalysis, opponent: TeamAnalysis): ObjectiveStep[] {
+function matchupObjectivePlan(team: TeamAnalysis, opponent: TeamAnalysis, heroes: Hero[], opponentHeroes: Hero[]): ObjectiveStep[] {
   const laneDelta = scoreDelta(team, opponent, 'Laning')
   const pushDelta = scoreDelta(team, opponent, 'Push')
   const roshanDelta = scoreDelta(team, opponent, 'Roshan')
   const fightDelta = scoreDelta(team, opponent, 'Teamfight')
+  // Name the heroes the plan actually revolves around so each window reads as an instruction,
+  // not a template: our farming core, our catch/pit heroes, their carry and wave-clear.
+  const ownCore = heroes.find((hero) => inList(hero, HARD_CARRY)) ?? heroes.find((hero) => hero.roles.includes('Carry'))
+  const catchHero = heroes.find((hero) => inList(hero, PICKOFF)) ?? heroes.find((hero) => hero.roles.includes('Disabler'))
+  const roshanHero = heroes.find((hero) => inList(hero, ROSHAN))
+  const enemyCarry = opponentHeroes.find((hero) => inList(hero, HARD_CARRY)) ?? opponentHeroes.find((hero) => hero.roles.includes('Carry'))
+  const enemyClear = opponentHeroes.find((hero) => inList(hero, PUSH)) ?? opponentHeroes.find((hero) => hero.roles.includes('Nuker') && hero.attackType === 'Ranged')
 
   return [
     {
       window: '0-10',
       action: laneDelta >= 8
-        ? 'Pressure both side lanes, secure power runes, and force defensive teleports before the first catapult.'
+        ? `Pressure both side lanes${enemyCarry ? `, deny ${enemyCarry.localizedName}'s opening farm,` : ', secure power runes,'} and force defensive teleports before the first catapult.`
         : laneDelta <= -8
-          ? 'Prioritize lane survival, pull equilibrium back, and protect the weakest core from first rotation pressure.'
+          ? `Prioritize lane survival, pull equilibrium back, and shield ${ownCore ? ownCore.localizedName : 'the weakest core'} from first rotation pressure.`
           : 'Keep lanes even and save first smoke for the strongest level-six or first-ultimate timing.',
     },
     {
@@ -320,29 +363,34 @@ function matchupObjectivePlan(team: TeamAnalysis, opponent: TeamAnalysis): Objec
       action: pushDelta >= 8
         ? 'Group with catapult waves and convert the first pickoff into two outer towers.'
         : team.scores.Pickoff >= opponent.scores.Teamfight
-          ? 'Smoke through deep vision, kill the wave-clear hero, then pressure the nearest tower.'
+          ? `Smoke through deep vision${catchHero ? ` with ${catchHero.localizedName}` : ''}, remove ${enemyClear ? enemyClear.localizedName : 'the wave-clear hero'} first, then pressure the nearest tower.`
           : 'Avoid blind tower dives; farm toward the first defensive or teamfight item and fight on your ward line.',
     },
     {
       window: '18-26',
       action: roshanDelta >= 8
-        ? 'Set Roshan vision early, force one cooldown, then take the pit with buyback and teleport advantage.'
+        ? `Set Roshan vision early, force one cooldown, then take the pit${roshanHero ? ` behind ${roshanHero.localizedName}'s pit speed` : ''} with buyback and teleport advantage.`
         : fightDelta >= 8
           ? 'Bait the opponent into a grouped fight outside Roshan before committing to the pit.'
-          : 'Cut waves and delay Roshan until a pickoff or enemy smoke failure gives a safe entry.',
+          : `Cut waves and delay Roshan until a pickoff${enemyCarry ? ` on ${enemyCarry.localizedName}` : ''} or enemy smoke failure gives a safe entry.`,
     },
     {
       window: team.peakWindow,
       action: scoreDelta(team, opponent, 'Scaling') >= 8
-        ? 'Take protected map control while cores complete late-game items; avoid coin-flip high-ground pushes.'
+        ? `Take protected map control while ${ownCore ? ownCore.localizedName : 'the cores'} completes late-game items; avoid coin-flip high-ground pushes.`
         : 'Use the lineup peak to claim Aegis, remove outer map access, and force high ground before scaling falls off.',
     },
   ]
 }
 
-function refineMatchupPlans(team: TeamAnalysis, opponent: TeamAnalysis, heroes: Hero[], opponentHeroes: Hero[]) {
+function refineMatchupPlans(team: TeamAnalysis, opponent: TeamAnalysis, heroes: Hero[], opponentHeroes: Hero[], meta?: RecentProMeta | null) {
   team.winConditions = matchupWinConditions(team, opponent, heroes, opponentHeroes)
-  team.objectivePlan = matchupObjectivePlan(team, opponent)
+  team.objectivePlan = matchupObjectivePlan(team, opponent, heroes, opponentHeroes)
+  team.lanePlan = team.lanePlan.map((lane, laneIndex) => {
+    const enemyLane = opponent.lanePlan[OPPOSING_LANE[laneIndex]]
+    const matchup = laneMatchup(lane.heroes, enemyLane?.heroes ?? [], meta)
+    return matchup ? { ...lane, matchup } : lane
+  })
 
   if (scoreDelta(team, opponent, 'Roshan') <= -10) {
     team.gaps.unshift('Roshan access is contested; this lineup likely needs a pickoff or ward advantage before entering the pit.')
@@ -500,10 +548,10 @@ function dimensionImpact(dimension: Dimension) {
 export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: RecentProMeta | null): MatchupAnalysis {
   const radiant = analyzeTeam(radiantHeroes, meta)
   const dire = analyzeTeam(direHeroes, meta)
-  radiant.responseItems = responseItems(dire)
-  dire.responseItems = responseItems(radiant)
-  refineMatchupPlans(radiant, dire, radiantHeroes, direHeroes)
-  refineMatchupPlans(dire, radiant, direHeroes, radiantHeroes)
+  radiant.responseItems = responseItems(dire, direHeroes)
+  dire.responseItems = responseItems(radiant, radiantHeroes)
+  refineMatchupPlans(radiant, dire, radiantHeroes, direHeroes, meta)
+  refineMatchupPlans(dire, radiant, direHeroes, radiantHeroes, meta)
   const observedR = observedDraftScore(radiantHeroes, direHeroes, meta)
   const observedD = observedDraftScore(direHeroes, radiantHeroes, meta)
   const laneFitR = roleFitScore(radiant.lanePlan)

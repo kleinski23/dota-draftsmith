@@ -5,7 +5,7 @@ import {
   X,
 } from 'lucide-react'
 import { analyzeDraft, type Dimension, type MatchupAnalysis } from './analysisEngine'
-import { chooseHero, DRAFT_ORDER, teamName } from './draftEngine'
+import { chooseHero, coachSuggestions, DRAFT_ORDER, teamName } from './draftEngine'
 import { fallbackHeroes, loadHeroes } from './heroData'
 import { loadRecentProMeta } from './recentMeta'
 import type { DraftAction, DraftMode, Hero, RecentProMeta, Strategy, Team } from './types'
@@ -113,7 +113,7 @@ function buildReportSnapshot(actions: DraftAction[], analysis: MatchupAnalysis, 
       riskLevel: side.riskLevel,
       peakWindow: side.peakWindow,
       laneEvidence: side.laneEvidence,
-      lanes: side.lanePlan.map((lane) => ({ lane: lane.lane, heroes: lane.heroes.map((hero) => hero.localizedName).join(' + ') || 'Unassigned', evidence: lane.evidence })),
+      lanes: side.lanePlan.map((lane) => ({ lane: lane.lane, heroes: lane.heroes.map((hero) => hero.localizedName).join(' + ') || 'Unassigned', evidence: lane.matchup ? `${lane.evidence} · ${lane.matchup}` : lane.evidence })),
       scores: side.scores,
       strengths: side.strengths,
       gaps: side.gaps,
@@ -219,7 +219,7 @@ export function buildReportHtml(report: SavedDraftReport) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Draftsmith Intelligence Report</title>
+  <title>DraftGG Intelligence Report</title>
   <style>
     :root { --ink:#17201e; --muted:#66716e; --line:#d8ddd9; --paper:#fbfaf4; --panel:#ffffff; --radiant:#6f9636; --dire:#bf493e; --gold:#b9924f; }
     * { box-sizing:border-box; }
@@ -277,7 +277,7 @@ export function buildReportHtml(report: SavedDraftReport) {
     <div class="print-actions"><button onclick="window.print()">Print / Save as PDF</button></div>
     <section class="lineup-hero">
       <div class="lineup-title">
-        <div><div class="kicker">Draftsmith Intelligence Report</div><h1>Radiant vs Dire hero lineup</h1></div>
+        <div><div class="kicker">DraftGG Intelligence Report</div><h1>Radiant vs Dire hero lineup</h1></div>
         <p>${htmlEscape(report.headline)}</p>
       </div>
       <div class="lineup-grid">${lineup(report.radiant, 'radiant')}${lineup(report.dire, 'dire')}</div>
@@ -365,7 +365,7 @@ function StartScreen({ onStart, heroLive }: { onStart: (mode: DraftMode) => void
     <main className="start-screen">
       <div className="start-noise" />
       <section className="start-content">
-        <div className="wordmark large"><span className="mark">DS</span><div>DRAFT<strong>SMITH</strong></div></div>
+        <div className="wordmark large"><img className="brand-logo" src="/logo.png" alt="DraftGG" /></div>
         <div className="eyebrow"><span /> INTELLIGENT CAPTAIN'S MODE <span /></div>
         <h1>Outdraft the<br /><em>machine.</em></h1>
         <p className="intro">A frictionless Dota 2 draft room with an adaptive system captain. Read the meta, build a plan, or force something weird.</p>
@@ -468,8 +468,8 @@ function DraftComplete({
             {(['radiant', 'dire'] as const).map((team) => <section key={team}><header><strong>{teamName(team)}</strong><span>{analysis[team].archetype} · {analysis[team].riskLevel} risk</span></header><div className="condition-group profile"><small>PRESSURE PROFILE</small><p><Activity size={13} />{analysis[team].pressureProfile}</p></div><div className="condition-group"><small>WIN CONDITIONS</small>{analysis[team].winConditions.map((item) => <p key={item}><Check size={13} />{item}</p>)}</div><div className="condition-group gaps"><small>WHAT'S LACKING</small>{analysis[team].gaps.map((item) => <p key={item}><AlertTriangle size={13} />{item}</p>)}</div></section>)}
           </div>}
           {tab === 'plan' && <div className="plan-columns">
-            {(['radiant', 'dire'] as const).map((team) => <section key={team} className={team}><header><div><strong>{teamName(team)}</strong><span>{analysis[team].damageProfile}</span></div><small>{analysis[team].laneEvidence}</small></header><div className="lane-plan"><small>LIKELY LANES</small>{analysis[team].lanePlan.map((lane) => <div key={lane.lane}><strong>{lane.lane}</strong><span>{lane.heroes.map((hero) => hero.localizedName).join(' + ')}</span><em>{lane.evidence}</em></div>)}</div><div className="response-items"><small>PRIORITY RESPONSES</small><div>{analysis[team].responseItems.map((item) => <span key={item}>{item}</span>)}</div></div><div className="objective-plan"><small>OBJECTIVE SEQUENCE</small>{analysis[team].objectivePlan.map((step) => <p key={`${step.window}-${step.action}`}><time>{step.window}</time><span>{step.action}</span></p>)}</div></section>)}
-            <p className="estimate-note"><AlertTriangle size={13} /> Lane grouping uses observed pro lane and farm-priority roles where available, with role-tag estimates for low-sample heroes. Role-fit percentages expose uncertainty.</p>
+            {(['radiant', 'dire'] as const).map((team) => <section key={team} className={team}><header><div><strong>{teamName(team)}</strong><span>{analysis[team].damageProfile}</span></div><small>{analysis[team].laneEvidence}</small></header><div className="lane-plan"><small>LIKELY LANES</small>{analysis[team].lanePlan.map((lane) => <div key={lane.lane}><strong>{lane.lane}</strong><span>{lane.heroes.map((hero) => hero.localizedName).join(' + ')}</span><em>{lane.evidence}</em>{lane.matchup && <i className={lane.matchup.startsWith('Favored') ? 'edge-favored' : lane.matchup.startsWith('Tough') ? 'edge-tough' : 'edge-even'}>{lane.matchup}</i>}</div>)}</div><div className="response-items"><small>PRIORITY RESPONSES</small><div>{analysis[team].responseItems.map((item) => <span key={item}>{item}</span>)}</div></div><div className="objective-plan"><small>OBJECTIVE SEQUENCE</small>{analysis[team].objectivePlan.map((step) => <p key={`${step.window}-${step.action}`}><time>{step.window}</time><span>{step.action}</span></p>)}</div></section>)}
+            <p className="estimate-note"><AlertTriangle size={13} /> Lane grouping uses observed pro lane and farm-priority roles where available, with role-tag estimates for low-sample heroes. Role-fit percentages expose uncertainty; lane edges blend observed hero counters with laning-power heuristics.</p>
           </div>}
         </div>
         <div className="feedback-row">
@@ -829,6 +829,11 @@ export default function App() {
     const matchesRole = role === 'All roles' || hero.roles.includes(role)
     return matchesQuery && matchesAttr && matchesRole
   }), [heroes, query, attr, role])
+  const coachAdvice = useMemo(
+    () => step && mode?.playerTeam && mode.playerTeam === step.team ? coachSuggestions(heroes, actions, step, mode.playerTeam, recentMeta, 4) : [],
+    [heroes, actions, step, mode?.playerTeam, recentMeta],
+  )
+  const suggestedIds = useMemo(() => new Set(coachAdvice.map((suggestion) => suggestion.hero.id)), [coachAdvice])
 
   const playTurnCue = (currentStep: typeof step, draftMode = mode) => {
     if (!currentStep || !draftMode || !musicEnabled) return
@@ -968,7 +973,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <button className="wordmark" onClick={restart} aria-label="Start new draft"><span className="mark">DS</span><div>DRAFT<strong>SMITH</strong></div></button>
+        <button className="wordmark" onClick={restart} aria-label="Start new draft"><img className="brand-logo small" src="/logo.png" alt="DraftGG" /></button>
         <div className="phase-status">
           <small>CAPTAIN'S MODE · PHASE {step?.phase ?? 3}</small>
           <div><i className="radiant-dot" /> {step ? `${teamName(step.team)} to ${step.type}` : 'Draft complete'} <i className="dire-dot" /></div>
@@ -1023,7 +1028,7 @@ export default function App() {
           <div className="hero-grid" aria-busy={thinking}>
             {filtered.map((hero) => {
               const unavailable = used.has(hero.id) || !isHumanTurn
-              return <button key={hero.id} className={`hero-card ${selectedId === hero.id ? 'selected' : ''} ${used.has(hero.id) ? 'used' : ''}`} onClick={() => !unavailable && setSelectedId(hero.id)} disabled={unavailable} title={`${hero.localizedName} · ${attrLabels[hero.primaryAttr]} · ${hero.roles.join(', ')}`}>
+              return <button key={hero.id} className={`hero-card ${selectedId === hero.id ? 'selected' : ''} ${used.has(hero.id) ? 'used' : ''} ${isHumanTurn && suggestedIds.has(hero.id) ? 'suggested' : ''}`} onClick={() => !unavailable && setSelectedId(hero.id)} disabled={unavailable} title={`${hero.localizedName} · ${attrLabels[hero.primaryAttr]} · ${hero.roles.join(', ')}`}>
                 <HeroImage hero={hero} />
                 <span>{hero.localizedName}</span><i className={`attr ${hero.primaryAttr}`} />
               </button>
@@ -1036,10 +1041,22 @@ export default function App() {
           </div>
 
           <section className={`intel-bar ${showIntel ? '' : 'collapsed'}`}>
-            <button className="intel-toggle" onClick={() => setShowIntel((value) => !value)} aria-expanded={showIntel}><BrainCircuit size={16} /> DRAFT INTELLIGENCE <ChevronDown size={14} /></button>
+            <button className="intel-toggle" onClick={() => setShowIntel((value) => !value)} aria-expanded={showIntel}><BrainCircuit size={16} /> {coachAdvice.length ? "COACH'S GUIDE" : 'DRAFT INTELLIGENCE'} <ChevronDown size={14} /></button>
             {showIntel && <div className="intel-content">
-              <div className="ai-avatar"><Bot size={20} /><i /></div>
-              <div className="ai-thought"><small>SYSTEM DRAFTER · {mode.strategy.toUpperCase()} PROFILE</small><p>{thinking ? 'Ranking pro presence, lane pairs, role economy, counter bans, and timing fit…' : lastAiAction?.reason ?? 'Waiting for enough draft information to form a read.'}</p></div>
+              {coachAdvice.length ? <div className="coach-guide">
+                <small><Target size={13} /> COACH'S GUIDE · BEST {step?.type === 'ban' ? 'BANS' : 'PICKS'} THIS TURN</small>
+                <div className="coach-suggestions">
+                  {coachAdvice.map((suggestion) => (
+                    <button key={suggestion.hero.id} className={selectedId === suggestion.hero.id ? 'active' : ''} onClick={() => setSelectedId(suggestion.hero.id)} title={`Select ${suggestion.hero.localizedName}`}>
+                      <HeroImage hero={suggestion.hero} />
+                      <span><strong>{suggestion.hero.localizedName}</strong><em>{suggestion.reason}</em></span>
+                    </button>
+                  ))}
+                </div>
+              </div> : <>
+                <div className="ai-avatar"><Bot size={20} /><i /></div>
+                <div className="ai-thought"><small>SYSTEM DRAFTER · {mode.strategy.toUpperCase()} PROFILE</small><p>{thinking ? 'Ranking pro presence, lane pairs, role economy, counter bans, and timing fit…' : lastAiAction?.reason ?? 'Waiting for enough draft information to form a read.'}</p></div>
+              </>}
               <div className="intel-metrics"><span><small>PRO MODEL{recentMeta?.patch ? ` · PATCH ${recentMeta.patch}` : ''}</small><strong>{metaLoading ? 'SYNCING' : recentMeta ? `${recentMeta.matchesAnalyzed} DRAFTS` : 'UNAVAILABLE'}</strong></span><span><small>ROLE EVIDENCE</small><strong>{recentMeta?.matchesWithPositions ? `${recentMeta.matchesWithPositions} MATCHES` : 'BACKFILLING'}</strong></span><span><small>MODEL BASIS</small><strong>{recentMeta ? 'OBSERVED + ROLE TAGS' : 'ROLE TAGS'}</strong></span></div>
             </div>}
           </section>

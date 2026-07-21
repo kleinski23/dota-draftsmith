@@ -106,7 +106,7 @@ async function writeJsonAtomic(path: string, value: unknown) {
 
 async function fetchJson<T>(url: string, retries = 5): Promise<T> {
   for (let attempt = 0; ; attempt += 1) {
-    const response = await fetch(url, { headers: { 'User-Agent': 'Draftsmith/0.2 pro-meta-ingestion' } })
+    const response = await fetch(url, { headers: { 'User-Agent': 'DraftGG/0.2 pro-meta-ingestion' } })
     if (response.ok) return response.json() as Promise<T>
     if (response.status === 429 && attempt < retries) {
       const retryAfter = Number(response.headers.get('retry-after'))

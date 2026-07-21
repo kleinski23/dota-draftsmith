@@ -40,6 +40,6 @@ if (isDev) {
   app.use((_request, response) => response.sendFile(resolve(root, 'dist', 'index.html')))
 }
 
-app.listen(port, host, () => console.log(`Draftsmith listening on http://${host}:${port}`))
+app.listen(port, host, () => console.log(`DraftGG listening on http://${host}:${port}`))
 void ensureProData().catch((error: unknown) => console.error('Initial pro-meta refresh failed:', error))
 setInterval(() => void ensureProData(true).catch((error: unknown) => console.error('Scheduled pro-meta refresh failed:', error)), 6 * 60 * 60 * 1000).unref()

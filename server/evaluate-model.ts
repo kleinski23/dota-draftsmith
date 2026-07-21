@@ -129,9 +129,19 @@ const publicResults = results.filter((r) => r.source === 'public')
 
 // Least-squares fit (through the 50% center) of predicted edge vs observed outcome:
 // minimizing sum((0.5 + k*(p-0.5)) - y)^2 gives k = sum((p-.5)(y-.5)) / sum((p-.5)^2).
-const shrinkNumerator = results.reduce((sum, r) => sum + (r.radiantProbability - 0.5) * ((r.radiantWin ? 1 : 0) - 0.5), 0)
-const shrinkDenominator = results.reduce((sum, r) => sum + (r.radiantProbability - 0.5) ** 2, 0)
-const shrink = Math.max(0.1, Math.min(1, shrinkDenominator > 0 ? shrinkNumerator / shrinkDenominator : 1))
+const shrinkOf = (subset: Evaluated[]) => {
+  const numerator = subset.reduce((sum, r) => sum + (r.radiantProbability - 0.5) * ((r.radiantWin ? 1 : 0) - 0.5), 0)
+  const denominator = subset.reduce((sum, r) => sum + (r.radiantProbability - 0.5) ** 2, 0)
+  return denominator > 0 ? numerator / denominator : 1
+}
+const shrinkPro = Math.max(0.1, Math.min(1, shrinkOf(proResults)))
+const shrinkPublic = Math.max(0.1, Math.min(1, shrinkOf(publicResults.length ? publicResults : results)))
+// Calibrate the displayed probability against pro Captain's Mode drafts — the mode this app
+// simulates. High-rank pubs are kept for hero-level win rates, but draft edges predict far
+// less there (execution dominates), so pooling them drags the shrink toward zero and pins
+// every displayed probability at ~50%. Fall back to the pooled fit only when the pro sample
+// is too small to fit on its own.
+const shrink = proResults.length >= 150 ? shrinkPro : Math.max(0.1, Math.min(1, shrinkOf(results)))
 const brierShrunk = results.reduce((sum, r) => {
   const calibrated = 0.5 + (r.radiantProbability - 0.5) * shrink
   return sum + (calibrated - (r.radiantWin ? 1 : 0)) ** 2
@@ -144,6 +154,8 @@ const calibration: ModelCalibration = {
   accuracy: accuracyOf(results),
   brier,
   shrink,
+  shrinkPro,
+  shrinkPublic,
   buckets,
   evaluatedAt: Date.now(),
 }
@@ -153,7 +165,7 @@ console.log([
   `Backtested ${results.length} stored matches (${proResults.length} pro, ${publicResults.length} high-rank).`,
   `Favored-side accuracy: ${percent(calibration.accuracy)} overall · ${percent(accuracyOf(proResults))} pro · ${percent(accuracyOf(publicResults))} high-rank.`,
   `Brier score: ${brier.toFixed(4)} raw -> ${brierShrunk.toFixed(4)} after shrink (0.25 = coin flip; lower is better).`,
-  `Probability shrink factor: ${shrink.toFixed(3)} (raw edges are scaled by this before display).`,
+  `Probability shrink factor: ${shrink.toFixed(3)} (fit on pro CM drafts; pro ${shrinkPro.toFixed(3)} vs high-rank ${shrinkPublic.toFixed(3)}).`,
   'Calibration (favored side, raw):',
   ...buckets.map((bucket) => `  ${bucket.range}: model ${percent(bucket.expected)} vs actual ${percent(bucket.actual)} over ${bucket.matches} matches`),
   'Caveat: in-sample — the synergy/counter tables were built from these same matches, so treat these numbers as an upper bound.',

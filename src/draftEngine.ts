@@ -1,3 +1,4 @@
+import { scoreTeam, type Dimension } from './analysisEngine'
 import type { DraftAction, DraftStep, Hero, RecentProMeta, Strategy, Team } from './types'
 
 export const DRAFT_ORDER: DraftStep[] = [
@@ -16,6 +17,32 @@ export const DRAFT_ORDER: DraftStep[] = [
 ]
 
 const CHEESE = ['broodmother', 'meepo', 'huskar', 'tinker', 'arc_warden', 'visage', 'lone_druid', 'lycan', 'chen']
+
+// Curated hard-counter map for heroes whose whole game plan collapses into specific answers
+// (clones, illusions, summons, heal-stacking). The observed counter table only covers pairs
+// that appear in the current sample — notorious matchups pros simply never play (e.g. Meepo
+// into Earthshaker) would otherwise score as neutral and the AI would walk into them.
+// COUNTERED_BY[hero] = heroes that shut that hero down.
+const COUNTERED_BY: Record<string, string[]> = {
+  meepo: ['earthshaker', 'winter_wyvern', 'sven', 'ember_spirit', 'dark_seer', 'magnataur', 'axe', 'crystal_maiden', 'warlock'],
+  broodmother: ['axe', 'underlord', 'earthshaker', 'legion_commander', 'dark_seer', 'batrider'],
+  huskar: ['ancient_apparition', 'axe', 'doom_bringer', 'viper', 'shadow_demon'],
+  tinker: ['storm_spirit', 'spirit_breaker', 'nyx_assassin', 'clockwerk', 'zeus'],
+  arc_warden: ['storm_spirit', 'spirit_breaker', 'ember_spirit', 'clockwerk'],
+  visage: ['crystal_maiden', 'earthshaker', 'winter_wyvern', 'jakiro'],
+  lone_druid: ['axe', 'earthshaker', 'winter_wyvern', 'doom_bringer'],
+  lycan: ['axe', 'winter_wyvern', 'crystal_maiden', 'earthshaker'],
+  chen: ['axe', 'earthshaker', 'crystal_maiden', 'jakiro'],
+  phantom_lancer: ['earthshaker', 'sven', 'dark_seer', 'medusa', 'winter_wyvern'],
+  naga_siren: ['earthshaker', 'sven', 'dark_seer', 'axe', 'winter_wyvern'],
+  chaos_knight: ['earthshaker', 'sven', 'dark_seer', 'shadow_demon'],
+  terrorblade: ['axe', 'legion_commander', 'earthshaker', 'winter_wyvern'],
+  medusa: ['antimage', 'nyx_assassin', 'phantom_lancer', 'invoker'],
+  wraith_king: ['antimage', 'shadow_demon', 'doom_bringer', 'silencer'],
+}
+
+// True when `hero` is a curated hard counter to `target`.
+const hardCounters = (hero: Hero, target: Hero) => COUNTERED_BY[key(target)]?.includes(key(hero)) ?? false
 
 const key = (hero: Hero) => hero.name.replace('npc_dota_hero_', '')
 const hasAny = (hero: Hero, list: string[]) => list.includes(key(hero))
@@ -157,6 +184,14 @@ export function chooseHero(
     if (isOpeningBan) score -= Math.max(0, 8 - openingHistory.indexOf(hero.id)) * (openingHistory.includes(hero.id) ? 3.2 : 0)
     if (step.type === 'pick' && pickHistory.includes(hero.id)) score -= Math.max(6, 34 - pickHistory.indexOf(hero.id) * 2.2)
     if (step.type === 'pick') score += roleNeedScore(hero, teamPicks) + compositionScore(hero, teamPicks) + roleEconomyScore(hero, teamPicks, recentMeta) + lanePairScore(hero, teamPicks, recentMeta)
+    if (step.type === 'pick') {
+      // Never walk into a known hard counter the opponent has already revealed, and lean
+      // toward heroes that hard-counter revealed enemy picks — outdraft, don't coin-flip.
+      for (const enemy of enemyPicks) {
+        if (hardCounters(enemy, hero)) score -= 30
+        if (hardCounters(hero, enemy)) score += 15
+      }
+    }
     if (step.type === 'ban') {
       score += enemyPicks.length * (hero.roles.includes('Carry') ? 2 : 0)
       for (const enemy of enemyPicks) {
@@ -164,6 +199,8 @@ export function chooseHero(
         score += Math.max(0, recentMeta?.synergy[pairKey] ?? 0) * 14
         score += Math.max(0, recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 12
       }
+      // Deny the known answers to our own committed picks before the opponent finds them.
+      for (const ally of teamPicks) if (hardCounters(hero, ally)) score += 14
     }
     if (step.type === 'pick' && recentMeta) {
       for (const ally of teamPicks) {
@@ -194,8 +231,10 @@ export function chooseHero(
     }
     if (strategy === 'cheese') {
       // Narrow lineups plus off-meta overperformers: strong Divine+ win rate with low pro
-      // presence means the opponent likely has not practiced the answer.
-      score += hasAny(hero, CHEESE) ? (step.phase === 3 ? 45 : 20) : 0
+      // presence means the opponent likely has not practiced the answer. A cheese pick whose
+      // hard counter is already on the enemy team is no longer a surprise — skip the bonus.
+      const cheeseAnswered = enemyPicks.some((enemy) => hardCounters(enemy, hero))
+      score += hasAny(hero, CHEESE) && !cheeseAnswered ? (step.phase === 3 ? 45 : 20) : 0
       if (step.type === 'pick') {
         const surprise = Math.max(0, publicEdge) * Math.max(0, 1 - recentPresence / 20)
         score += surprise * (step.phase === 3 ? 55 : 30)
@@ -232,6 +271,141 @@ export function chooseHero(
     ? ` High-rank win rate ≈ ${Math.round((selectedPublic.wins / selectedPublic.picks) * 100)}% in the current Divine+ sample.`
     : ''
   return { hero: selected, reason: `${baseReason}${recentNote}${publicNote}` }
+}
+
+export interface CoachSuggestion {
+  hero: Hero
+  reason: string
+}
+
+// Dimensions a pick can meaningfully shore up, with the short label used in advice text.
+// Execution is excluded (it measures draft difficulty, not a capability to add).
+const NEED_LABELS: Partial<Record<Dimension, string>> = {
+  Laning: 'Stabilizes your lanes',
+  Teamfight: 'Adds needed teamfight',
+  Pickoff: 'Adds catch potential',
+  Push: 'Adds tower pressure',
+  Sustain: 'Adds sustain and saves',
+  Scaling: 'Adds late-game scaling',
+  Roshan: 'Adds Roshan control',
+}
+
+// How much a candidate improves the team's weakest capabilities: gains in a dimension are
+// worth more the further that dimension currently is below a healthy baseline.
+function teamNeedBoost(hero: Hero, teamPicks: Hero[]): { value: number; note?: { weight: number; text: string } } {
+  if (!teamPicks.length) return { value: 0 }
+  const before = scoreTeam(teamPicks)
+  const after = scoreTeam([...teamPicks, hero])
+  let value = 0
+  let best: { weight: number; text: string } | undefined
+  for (const dimension of Object.keys(NEED_LABELS) as Dimension[]) {
+    const gain = after[dimension] - before[dimension]
+    const deficit = Math.max(0, 62 - before[dimension])
+    if (gain <= 0 || deficit <= 0) continue
+    const weight = gain * (deficit / 62)
+    value += weight
+    if (!best || weight > best.weight) best = { weight, text: `${NEED_LABELS[dimension]}` }
+  }
+  return { value, note: best && best.weight >= 4 ? best : undefined }
+}
+
+// Deterministic pick/ban advice for the human captain: rank the best answers to the current
+// board and explain each in one line. Unlike chooseHero this has no randomness and no session
+// memory — the same draft state always yields the same advice.
+export function coachSuggestions(
+  heroes: Hero[],
+  actions: DraftAction[],
+  step: DraftStep,
+  playerTeam: Team,
+  recentMeta?: RecentProMeta | null,
+  count = 4,
+): CoachSuggestion[] {
+  const used = new Set(actions.map((action) => action.hero.id))
+  const available = heroes.filter((hero) => !used.has(hero.id))
+  const teamPicks = actions.filter((a) => a.type === 'pick' && a.team === playerTeam).map((a) => a.hero)
+  const enemyPicks = actions.filter((a) => a.type === 'pick' && a.team !== playerTeam).map((a) => a.hero)
+  const maxRecentPresence = Math.max(1, ...Object.values(recentMeta?.heroSignals ?? {}).map((s) => s.picks + s.bans))
+
+  const scored = available.map((hero) => {
+    const signal = recentMeta?.heroSignals[hero.id]
+    const presence = signal ? ((signal.picks + signal.bans) / maxRecentPresence) * 20 : 0
+    const publicSignal = recentMeta?.publicHeroSignals?.[hero.id]
+    const publicEdge = publicSignal && publicSignal.picks > 0
+      ? (publicSignal.wins / publicSignal.picks - 0.5) * 2 * (publicSignal.picks / (publicSignal.picks + 6))
+      : 0
+    let score = presence + publicEdge * 30
+    const notes: Array<{ weight: number; text: string }> = []
+
+    if (step.type === 'pick') {
+      let counterScore = 0
+      const countered: string[] = []
+      for (const enemy of enemyPicks) {
+        const edge = (recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 30 + (hardCounters(hero, enemy) ? 16 : 0)
+        counterScore += edge
+        if (edge >= 6) countered.push(enemy.localizedName)
+        // Never recommend walking into a counter the enemy already holds.
+        if (hardCounters(enemy, hero)) score -= 40
+        score -= Math.max(0, recentMeta?.counters[`${enemy.id}:${hero.id}`] ?? 0) * 18
+      }
+      score += counterScore
+      if (countered.length) notes.push({ weight: counterScore, text: `Counters ${countered.slice(0, 2).join(' + ')}` })
+
+      // Synergy with your committed picks weighs as much as countering the enemy: observed
+      // pair win rates plus lane-pair fit with the heroes you already locked.
+      let synergyScore = 0
+      const partners: string[] = []
+      for (const ally of teamPicks) {
+        const pairKey = hero.id < ally.id ? `${hero.id}:${ally.id}` : `${ally.id}:${hero.id}`
+        const edge = (recentMeta?.synergy[pairKey] ?? 0) * 30
+        synergyScore += edge
+        if (edge >= 5) partners.push(ally.localizedName)
+      }
+      score += synergyScore
+      if (partners.length) notes.push({ weight: synergyScore, text: `Pairs with ${partners.slice(0, 2).join(' + ')}` })
+
+      const needScore = roleNeedScore(hero, teamPicks)
+      score += needScore + roleEconomyScore(hero, teamPicks, recentMeta) + compositionScore(hero, teamPicks) + lanePairScore(hero, teamPicks, recentMeta)
+      if (needScore >= 14) {
+        const held = new Set(teamPicks.flatMap((pick) => pick.roles))
+        const need = !held.has('Carry') && hero.roles.includes('Carry') ? 'carry' : !held.has('Support') && hero.roles.includes('Support') ? 'support' : 'initiation'
+        notes.push({ weight: needScore, text: `Fills the ${need} slot` })
+      }
+
+      // Cover the draft's weakest capabilities (teamfight, sustain, push, scaling…).
+      const needs = teamNeedBoost(hero, teamPicks)
+      score += needs.value * 1.2
+      if (needs.note) notes.push({ weight: needs.note.weight * 1.2, text: needs.note.text })
+      if (publicEdge * 30 >= 5 && publicSignal) notes.push({ weight: publicEdge * 30, text: `${Math.round((publicSignal.wins / publicSignal.picks) * 100)}% high-rank win rate` })
+    } else {
+      // Ban advice: deny the heroes that punish your committed picks or complete the enemy draft.
+      let threatScore = 0
+      const threatened: string[] = []
+      for (const ally of teamPicks) {
+        const edge = Math.max(0, recentMeta?.counters[`${hero.id}:${ally.id}`] ?? 0) * 32 + (hardCounters(hero, ally) ? 18 : 0)
+        threatScore += edge
+        if (edge >= 6) threatened.push(ally.localizedName)
+      }
+      score += threatScore
+      if (threatened.length) notes.push({ weight: threatScore, text: `Punishes your ${threatened.slice(0, 2).join(' + ')}` })
+
+      let fitScore = 0
+      for (const enemy of enemyPicks) {
+        const pairKey = hero.id < enemy.id ? `${hero.id}:${enemy.id}` : `${enemy.id}:${hero.id}`
+        fitScore += Math.max(0, recentMeta?.synergy[pairKey] ?? 0) * 16
+      }
+      score += fitScore
+      if (fitScore >= 5) notes.push({ weight: fitScore, text: 'Completes the enemy draft' })
+
+      if (signal && step.phase === 1) score += signal.firstPhase * 1.2
+      if (presence >= 12) notes.push({ weight: presence, text: 'Heavily contested in pro drafts' })
+      if (publicEdge * 30 >= 5 && publicSignal) notes.push({ weight: publicEdge * 30, text: `${Math.round((publicSignal.wins / publicSignal.picks) * 100)}% high-rank win rate` })
+    }
+
+    const reason = notes.sort((a, b) => b.weight - a.weight).slice(0, 2).map((note) => note.text).join(' · ') || 'Strong current-patch presence'
+    return { hero, reason, score }
+  }).sort((a, b) => b.score - a.score)
+
+  return scored.slice(0, count).map(({ hero, reason }) => ({ hero, reason }))
 }
 
 export function teamName(team: Team) {
