@@ -290,6 +290,15 @@ const NEED_LABELS: Partial<Record<Dimension, string>> = {
   Roshan: 'Adds Roshan control',
 }
 
+// Deterministic hash of two integers to a stable [0, 1) value — used to reshuffle
+// statistically-equivalent coach suggestions without frame-to-frame flicker.
+function seededUnit(a: number, b: number) {
+  let h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x165667b1, 0xc2b2ae35)
+  h = Math.imul(h ^ (h >>> 13), 0x27d4eb2f)
+  h ^= h >>> 15
+  return (h >>> 0) / 4294967296
+}
+
 // How much a candidate improves the team's weakest capabilities: gains in a dimension are
 // worth more the further that dimension currently is below a healthy baseline.
 function teamNeedBoost(hero: Hero, teamPicks: Hero[]): { value: number; note?: { weight: number; text: string } } {
@@ -309,9 +318,10 @@ function teamNeedBoost(hero: Hero, teamPicks: Hero[]): { value: number; note?: {
   return { value, note: best && best.weight >= 4 ? best : undefined }
 }
 
-// Deterministic pick/ban advice for the human captain: rank the best answers to the current
-// board and explain each in one line. Unlike chooseHero this has no randomness and no session
-// memory — the same draft state always yields the same advice.
+// Pick/ban advice for the human captain: rank the best answers to the current board and explain
+// each in one line. The ranking is stable for a given (board, seed), but among statistically
+// equivalent candidates it rotates by seed so an empty board no longer shows the same four bans
+// every draft. Variety shrinks to zero as picks reveal a concrete answer to counter.
 export function coachSuggestions(
   heroes: Hero[],
   actions: DraftAction[],
@@ -319,6 +329,7 @@ export function coachSuggestions(
   playerTeam: Team,
   recentMeta?: RecentProMeta | null,
   count = 4,
+  seed = 0,
 ): CoachSuggestion[] {
   const used = new Set(actions.map((action) => action.hero.id))
   const available = heroes.filter((hero) => !used.has(hero.id))
@@ -404,6 +415,23 @@ export function coachSuggestions(
     const reason = notes.sort((a, b) => b.weight - a.weight).slice(0, 2).map((note) => note.text).join(' · ') || 'Strong current-patch presence'
     return { hero, reason, score }
   }).sort((a, b) => b.score - a.score)
+
+  // Variety is only appropriate when the board offers no concrete target: with no heroes
+  // revealed many bans/openers are equally valid, so rotate them by seed. The moment any pick
+  // is on the board a specific answer exists (counters, punishers) and must lock in — so kill
+  // the jitter entirely rather than risk shuffling a real counter out of the list.
+  const revealed = teamPicks.length + enemyPicks.length
+  const contextFactor = Math.max(0, 1 - revealed)
+  if (seed && contextFactor > 0) {
+    // Reshuffle only within the strong pool (top 10) so a bad hero is never promoted; jitter
+    // is multiplicative (±50% at an empty board) so stronger candidates still surface more often.
+    const poolSize = Math.min(scored.length, Math.max(count, 10))
+    const pool = scored.slice(0, poolSize).map((entry, index) => ({
+      ...entry,
+      jittered: entry.score * (1 + contextFactor * (seededUnit(entry.hero.id, seed) - 0.5) + index * 1e-6),
+    })).sort((a, b) => b.jittered - a.jittered)
+    return pool.slice(0, count).map(({ hero, reason }) => ({ hero, reason }))
+  }
 
   return scored.slice(0, count).map(({ hero, reason }) => ({ hero, reason }))
 }

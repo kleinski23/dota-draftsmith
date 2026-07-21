@@ -589,6 +589,7 @@ export default function App() {
   const [reserveTime, setReserveTime] = useState<Record<Team, number>>({ radiant: STARTING_RESERVE_SECONDS, dire: STARTING_RESERVE_SECONDS })
   const [thinking, setThinking] = useState(false)
   const [showIntel, setShowIntel] = useState(true)
+  const [draftSeed, setDraftSeed] = useState(() => (Math.random() * 1e9) | 0)
   const [recentMeta, setRecentMeta] = useState<RecentProMeta | null>(null)
   const [metaLoading, setMetaLoading] = useState(true)
   const [savedReports, setSavedReports] = useState<SavedDraftReport[]>(readSavedReports)
@@ -830,8 +831,8 @@ export default function App() {
     return matchesQuery && matchesAttr && matchesRole
   }), [heroes, query, attr, role])
   const coachAdvice = useMemo(
-    () => step && mode?.playerTeam && mode.playerTeam === step.team ? coachSuggestions(heroes, actions, step, mode.playerTeam, recentMeta, 4) : [],
-    [heroes, actions, step, mode?.playerTeam, recentMeta],
+    () => step && mode?.playerTeam && mode.playerTeam === step.team ? coachSuggestions(heroes, actions, step, mode.playerTeam, recentMeta, 4, draftSeed + actions.length) : [],
+    [heroes, actions, step, mode?.playerTeam, recentMeta, draftSeed],
   )
   const suggestedIds = useMemo(() => new Set(coachAdvice.map((suggestion) => suggestion.hero.id)), [coachAdvice])
 
@@ -920,6 +921,7 @@ export default function App() {
       turnCueTimer.current = null
     }
     setActions([]); setSelectedId(null); setCountdown(TURN_TIME_SECONDS); setReserveTime({ radiant: STARTING_RESERVE_SECONDS, dire: STARTING_RESERVE_SECONDS }); completionLogged.current = false; draftDonePlayed.current = false; lastCueStep.current = -1
+    setDraftSeed((Math.random() * 1e9) | 0)
     if (mode) {
       window.setTimeout(startMusic, 0)
       window.setTimeout(() => playOpeningSequence(mode), 0)
@@ -929,6 +931,7 @@ export default function App() {
   const startDraft = (draftMode: DraftMode) => {
     lastCueStep.current = -1
     draftDonePlayed.current = false
+    setDraftSeed((Math.random() * 1e9) | 0)
     setMode(draftMode)
     window.setTimeout(startMusic, 0)
     window.setTimeout(() => playOpeningSequence(draftMode), 0)
