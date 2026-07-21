@@ -451,6 +451,20 @@ function publicCoverage(heroes: Hero[], meta?: RecentProMeta | null) {
   return heroes.filter((hero) => (meta.publicHeroSignals?.[hero.id]?.picks ?? 0) >= 2).length
 }
 
+// Observed hero win rates conditioned on game length (short/mid/long) sharpen each stage's
+// base strength beyond what role tags imply — e.g. a hard carry's actual long-game record.
+function stageMetaScore(heroes: Hero[], meta: RecentProMeta | null | undefined, bucket: 'short' | 'mid' | 'long') {
+  if (!meta?.durationSignals) return 0
+  const total = heroes.reduce((sum, hero) => {
+    const signal = meta.durationSignals?.[hero.id]?.[bucket]
+    if (!signal || signal.picks <= 0) return sum
+    const winRate = signal.wins / signal.picks
+    const credibility = signal.picks / (signal.picks + 5)
+    return sum + (winRate - 0.5) * 2 * credibility
+  }, 0)
+  return total * 5
+}
+
 function durationWeights(radiant: TeamAnalysis, dire: TeamAnalysis) {
   const tempo = (radiant.scores.Laning + dire.scores.Laning) * 0.2
     + (radiant.scores.Push + dire.scores.Push) * 0.25
@@ -496,12 +510,12 @@ export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: R
   const laneFitD = roleFitScore(dire.lanePlan)
   const matchupFitR = observedR + heroMetaScore(radiantHeroes, meta) + (laneFitR - 50) * 0.06 - rolePenalty(radiant)
   const matchupFitD = observedD + heroMetaScore(direHeroes, meta) + (laneFitD - 50) * 0.06 - rolePenalty(dire)
-  const earlyR = radiant.scores.Laning * 0.5 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.18 + radiant.scores.Sustain * 0.1 + matchupFitR
-  const earlyD = dire.scores.Laning * 0.5 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.18 + dire.scores.Sustain * 0.1 + matchupFitD
-  const midR = radiant.scores.Teamfight * 0.32 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.22 + radiant.scores.Roshan * 0.16 + radiant.scores.Execution * 0.08 + matchupFitR * 0.75
-  const midD = dire.scores.Teamfight * 0.32 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.22 + dire.scores.Roshan * 0.16 + dire.scores.Execution * 0.08 + matchupFitD * 0.75
-  const lateR = radiant.scores.Scaling * 0.48 + radiant.scores.Teamfight * 0.25 + radiant.scores.Sustain * 0.18 + radiant.scores.Execution * 0.09 + matchupFitR * 0.35
-  const lateD = dire.scores.Scaling * 0.48 + dire.scores.Teamfight * 0.25 + dire.scores.Sustain * 0.18 + dire.scores.Execution * 0.09 + matchupFitD * 0.35
+  const earlyR = radiant.scores.Laning * 0.5 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.18 + radiant.scores.Sustain * 0.1 + matchupFitR + stageMetaScore(radiantHeroes, meta, 'short')
+  const earlyD = dire.scores.Laning * 0.5 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.18 + dire.scores.Sustain * 0.1 + matchupFitD + stageMetaScore(direHeroes, meta, 'short')
+  const midR = radiant.scores.Teamfight * 0.32 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.22 + radiant.scores.Roshan * 0.16 + radiant.scores.Execution * 0.08 + matchupFitR * 0.75 + stageMetaScore(radiantHeroes, meta, 'mid')
+  const midD = dire.scores.Teamfight * 0.32 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.22 + dire.scores.Roshan * 0.16 + dire.scores.Execution * 0.08 + matchupFitD * 0.75 + stageMetaScore(direHeroes, meta, 'mid')
+  const lateR = radiant.scores.Scaling * 0.48 + radiant.scores.Teamfight * 0.25 + radiant.scores.Sustain * 0.18 + radiant.scores.Execution * 0.09 + matchupFitR * 0.35 + stageMetaScore(radiantHeroes, meta, 'long')
+  const lateD = dire.scores.Scaling * 0.48 + dire.scores.Teamfight * 0.25 + dire.scores.Sustain * 0.18 + dire.scores.Execution * 0.09 + matchupFitD * 0.35 + stageMetaScore(direHeroes, meta, 'long')
   const seed = [...radiantHeroes, ...direHeroes].reduce((sum, hero, index) => sum + hero.id * (index + 3), 17)
   const random = seeded(seed)
   const simulationRuns = 25_000
@@ -520,7 +534,11 @@ export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: R
     if (baseR + executionR + varianceR > baseD + executionD + varianceD) radiantWins += 1
   }
 
-  const radiantProbability = Math.max(8, Math.min(92, Math.round(radiantWins / simulationRuns * 100)))
+  const rawRadiantProbability = Math.max(8, Math.min(92, radiantWins / simulationRuns * 100))
+  // Backtest-derived shrink: raw simulation edges overstate real outcomes, so scale the
+  // displayed edge by the factor measured against stored match results.
+  const shrink = meta?.calibration ? Math.max(0.1, Math.min(1, meta.calibration.shrink)) : 1
+  const radiantProbability = Math.round(50 + (rawRadiantProbability - 50) * shrink)
   const direProbability = 100 - radiantProbability
   const samplingMargin = Math.max(1, Math.ceil(1.96 * Math.sqrt((radiantProbability / 100) * (1 - radiantProbability / 100) / simulationRuns) * 100))
   const favored: Team | 'even' = Math.abs(radiantProbability - 50) < 4 ? 'even' : radiantProbability > 50 ? 'radiant' : 'dire'
@@ -550,9 +568,15 @@ export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: R
   if (meta?.publicMatchesAnalyzed) {
     simulationInsights.push(`High-rank sample: ${meta.publicMatchesAnalyzed} ranked Divine+ matches back hero win rates (Radiant ${publicCoverage(radiantHeroes, meta)}/5, Dire ${publicCoverage(direHeroes, meta)}/5 heroes well-sampled).`)
   }
+  if (meta?.matchesWithDuration) {
+    simulationInsights.push(`Stage model uses game-length win rates from ${meta.matchesWithDuration.toLocaleString()} matches with known durations.`)
+  }
+  if (meta?.calibration) {
+    simulationInsights.push(`Backtest: the model's favored side won ${Math.round(meta.calibration.accuracy * 100)}% of ${meta.calibration.matches.toLocaleString()} stored real matches (Brier ${meta.calibration.brier.toFixed(3)}).`)
+  }
 
   const modelBasis = meta
-    ? `${meta.matchesAnalyzed} current-patch pro drafts${meta.matchesWithPositions ? ` · ${meta.matchesWithPositions} with role data` : ''}${meta.publicMatchesAnalyzed ? ` · ${meta.publicMatchesAnalyzed} high-rank ranked matches` : ''}`
+    ? `${meta.matchesAnalyzed} current-patch pro drafts${meta.matchesWithPositions ? ` · ${meta.matchesWithPositions} with role data` : ''}${meta.publicMatchesAnalyzed ? ` · ${meta.publicMatchesAnalyzed} high-rank ranked matches` : ''}${meta.calibration ? ` · ${Math.round(meta.calibration.accuracy * 100)}% backtest accuracy on ${meta.calibration.matches.toLocaleString()} matches` : ''}`
     : 'Role-tag estimates only'
   return { radiant, dire, probability: { radiant: radiantProbability, dire: direProbability }, stageEdge, favored, headline, decidingFactors, simulationInsights, simulationRuns, samplingMargin, modelBasis }
 }

@@ -9,6 +9,7 @@
     "start": "tsx server/index.ts",
     "ingest:meta": "tsx server/ingest.ts --force",
     "engine:update": "tsx server/update-engine.ts",
+    "engine:evaluate": "tsx server/evaluate-model.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },

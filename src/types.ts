@@ -57,6 +57,29 @@ export interface RecentPublicHeroSignal {
   wins: number
 }
 
+export interface DurationBucket {
+  picks: number
+  wins: number
+}
+
+export interface RecentDurationSignal {
+  short: DurationBucket
+  mid: DurationBucket
+  long: DurationBucket
+}
+
+export interface ModelCalibration {
+  matches: number
+  proMatches: number
+  publicMatches: number
+  accuracy: number
+  brier: number
+  /** Least-squares factor mapping raw probability edges to observed edges; applied as 50 + (p - 50) * shrink. */
+  shrink: number
+  buckets: Array<{ range: string; matches: number; expected: number; actual: number }>
+  evaluatedAt: number
+}
+
 export interface RecentProMeta {
   heroSignals: Record<number, RecentHeroSignal>
   synergy: Record<string, number>
@@ -75,4 +98,7 @@ export interface RecentProMeta {
   publicDatasetSize?: number
   publicNewestMatchAt?: number
   publicMinRankTier?: number
+  durationSignals?: Record<number, RecentDurationSignal>
+  matchesWithDuration?: number
+  calibration?: ModelCalibration
 }

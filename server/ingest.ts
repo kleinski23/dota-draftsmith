@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { RecentHeroSignal, RecentLaneSignal, RecentPositionSignal, RecentProMeta, RecentPublicHeroSignal } from '../src/types.js'
+import type { RecentDurationSignal, RecentHeroSignal, RecentLaneSignal, RecentPositionSignal, RecentProMeta, RecentPublicHeroSignal } from '../src/types.js'
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const DATA_DIR = resolve(PROJECT_ROOT, 'data')
@@ -39,6 +39,7 @@ interface ProMatchDetail {
   start_time: number
   radiant_win: boolean
   game_mode: number
+  duration?: number
   patch?: number
   leagueid?: number
   picks_bans?: PickBan[]
@@ -65,6 +66,7 @@ interface StoredDraft {
   radiantWin: boolean
   patch: number
   leagueId: number
+  duration?: number
   picksBans: PickBan[]
   positions?: PlayerPosition[]
 }
@@ -86,6 +88,7 @@ interface StoredPublicMatch {
   startTime: number
   radiantWin: boolean
   avgRankTier: number
+  duration?: number
   radiant: number[]
   dire: number[]
 }
@@ -151,6 +154,7 @@ async function fetchHighRankMatches(existingIds: Set<number>, target: number): P
         startTime: row.start_time,
         radiantWin: row.radiant_win,
         avgRankTier: row.avg_rank_tier,
+        duration: row.duration,
         radiant,
         dire,
       })
@@ -174,6 +178,15 @@ function emptyLaneSignal(): RecentLaneSignal {
 
 function emptyPositionSignal(): RecentPositionSignal {
   return { positions: [0, 0, 0, 0, 0], samples: 0 }
+}
+
+// Game-length buckets: short < 25 min, long > 37 min, mid in between.
+function durationBucket(duration: number): keyof RecentDurationSignal {
+  return duration < 1500 ? 'short' : duration > 2220 ? 'long' : 'mid'
+}
+
+function emptyDurationSignal(): RecentDurationSignal {
+  return { short: { picks: 0, wins: 0 }, mid: { picks: 0, wins: 0 }, long: { picks: 0, wins: 0 } }
 }
 
 function positionsFrom(match: ProMatchDetail): PlayerPosition[] {
@@ -230,7 +243,18 @@ function aggregateDrafts(dataset: StoredDraft[], publicDataset: StoredPublicMatc
   const matchupWins: Record<string, number> = {}
   const laneSignals: Record<number, RecentLaneSignal> = {}
   const positionSignals: Record<number, RecentPositionSignal> = {}
+  const durationSignals: Record<number, RecentDurationSignal> = {}
   const now = Date.now() / 1000
+  const recordDuration = (team: number[], won: boolean, duration: number | undefined, weight: number) => {
+    if (!duration) return
+    const bucket = durationBucket(duration)
+    for (const heroId of team) {
+      const signal = durationSignals[heroId] ?? emptyDurationSignal()
+      signal[bucket].picks += weight
+      if (won) signal[bucket].wins += weight
+      durationSignals[heroId] = signal
+    }
+  }
 
   for (const match of pool) {
     // Every stored pro draft comes from a league (tournament) game; the freshest results
@@ -264,6 +288,7 @@ function aggregateDrafts(dataset: StoredDraft[], publicDataset: StoredPublicMatc
       }
     }
     for (const [team, won] of [[radiant, match.radiantWin], [dire, !match.radiantWin]] as const) {
+      recordDuration(team, won, match.duration, weight)
       for (let i = 0; i < team.length; i += 1) for (let j = i + 1; j < team.length; j += 1) {
         const key = pairKey(team[i], team[j])
         pairSamples[key] = (pairSamples[key] ?? 0) + weight
@@ -284,6 +309,7 @@ function aggregateDrafts(dataset: StoredDraft[], publicDataset: StoredPublicMatc
   for (const match of publicPool) {
     const weight = PUBLIC_MATCH_WEIGHT * Math.exp(-Math.max(0, (now - match.startTime) / 86400) / PUBLIC_DECAY_DAYS)
     for (const [team, won] of [[match.radiant, match.radiantWin], [match.dire, !match.radiantWin]] as const) {
+      recordDuration(team, won, match.duration, weight)
       for (const heroId of team) {
         const signal = publicHeroSignals[heroId] ?? { picks: 0, wins: 0 }
         signal.picks += weight
@@ -330,6 +356,8 @@ function aggregateDrafts(dataset: StoredDraft[], publicDataset: StoredPublicMatc
     publicDatasetSize: publicDataset.length,
     publicNewestMatchAt: Math.max(0, ...publicPool.map((match) => match.startTime)),
     publicMinRankTier: HIGH_RANK_MIN_TIER,
+    durationSignals,
+    matchesWithDuration: pool.filter((draft) => draft.duration).length + publicPool.filter((match) => match.duration).length,
   }
 }
 
@@ -350,6 +378,7 @@ async function fetchDraftDetails(summaries: ProMatchSummary[], limit: number, ex
         radiantWin: match.radiant_win,
         patch: match.patch ?? 0,
         leagueId: match.leagueid ?? 0,
+        duration: match.duration ?? 0,
         picksBans: match.picks_bans ?? [],
         positions: positionsFrom(match),
       })
@@ -377,17 +406,22 @@ async function fetchNewDrafts(existingIds: Set<number>) {
 }
 
 async function backfillPositions(drafts: StoredDraft[]) {
-  const pending = drafts.filter((draft) => (draft.positions?.filter((position) => position.position).length ?? 0) < 10).slice(0, POSITION_BACKFILL_SIZE)
-  const updates = new Map<number, PlayerPosition[]>()
+  const needsDetail = (draft: StoredDraft) =>
+    (draft.positions?.filter((position) => position.position).length ?? 0) < 10 || !draft.duration
+  const pending = drafts.filter(needsDetail).slice(0, POSITION_BACKFILL_SIZE)
+  const updates = new Map<number, { positions: PlayerPosition[]; duration: number }>()
   for (let index = 0; index < pending.length; index += 4) {
     if (index > 0) await sleep(DETAIL_BATCH_DELAY_MS)
     const batch = pending.slice(index, index + 4)
     const results = await Promise.allSettled(batch.map((draft) => fetchJson<ProMatchDetail>(`${API_BASE}/matches/${draft.matchId}`)))
     results.forEach((result, resultIndex) => {
-      if (result.status === 'fulfilled') updates.set(batch[resultIndex].matchId, positionsFrom(result.value))
+      if (result.status === 'fulfilled') updates.set(batch[resultIndex].matchId, { positions: positionsFrom(result.value), duration: result.value.duration ?? 0 })
     })
   }
-  return drafts.map((draft) => updates.has(draft.matchId) ? { ...draft, positions: updates.get(draft.matchId) } : draft)
+  return drafts.map((draft) => {
+    const update = updates.get(draft.matchId)
+    return update ? { ...draft, positions: update.positions, duration: update.duration || draft.duration } : draft
+  })
 }
 
 export async function refreshProData(force = false): Promise<RecentProMeta> {
@@ -416,6 +450,8 @@ export async function refreshProData(force = false): Promise<RecentProMeta> {
     .slice(0, HIGH_RANK_DATASET_LIMIT)
   if (!merged.length) throw new Error('No parsed Captain’s Mode drafts are available')
   const meta = aggregateDrafts(merged, mergedPublic)
+  // Backtest calibration is produced by evaluate-model.ts; carry it across refreshes.
+  if (existingMeta?.calibration) meta.calibration = existingMeta.calibration
   await writeJsonAtomic(DRAFTS_PATH, merged)
   await writeJsonAtomic(HIGH_RANK_PATH, mergedPublic)
   await writeJsonAtomic(META_PATH, meta)
