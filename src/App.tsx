@@ -930,7 +930,7 @@ export default function App() {
   const metaStatus = metaLoading
     ? { className: '', icon: <Activity size={13} />, label: 'Loading pro meta' }
     : recentMeta
-      ? { className: 'online', icon: <Wifi size={13} />, label: `${recentMeta.matchesAnalyzed} pro drafts` }
+      ? { className: 'online', icon: <Wifi size={13} />, label: recentMeta.publicMatchesAnalyzed ? `${recentMeta.matchesAnalyzed} pro + ${recentMeta.publicMatchesAnalyzed} high-rank` : `${recentMeta.matchesAnalyzed} pro drafts` }
       : { className: 'local', icon: <Archive size={13} />, label: 'Role model fallback' }
 
   return (
@@ -1013,7 +1013,13 @@ export default function App() {
         </div>}
       </section>
 
-      <footer><span>Unofficial fan project. Dota 2 and hero imagery are trademarks and property of Valve Corporation.</span><span>Meta data by OpenDota · No account required</span></footer>
+      <footer>
+        <span>Unofficial fan project. Dota 2, its hero imagery, and all draft announcer voice lines &amp; sound effects are trademarks and &copy; Valve Corporation. Audio is used for non-commercial fan purposes only; not affiliated with or endorsed by Valve.</span>
+        <span className="footer-data">
+          Match data &copy; <a href="https://www.opendota.com" target="_blank" rel="noreferrer">OpenDota API</a>
+          {recentMeta && <> · Draft model built from <strong>{((recentMeta.datasetSize ?? recentMeta.matchesAnalyzed) + (recentMeta.publicDatasetSize ?? 0)).toLocaleString()}</strong> matches — {(recentMeta.datasetSize ?? recentMeta.matchesAnalyzed).toLocaleString()} pro tournament drafts + {(recentMeta.publicDatasetSize ?? 0).toLocaleString()} Divine+ ranked matches, with recent pro tournament games weighted highest</>}
+        </span>
+      </footer>
       <audio ref={audioRef} src={DRAFT_BGM_SOURCE} preload="auto" />
       {showSavedReports && <SavedReportsDrawer reports={savedReports} onClose={() => setShowSavedReports(false)} onOpen={(report) => { setActiveSavedReport(report); setShowSavedReports(false) }} onDelete={deleteSavedReport} />}
       {activeSavedReport && <SavedReportViewer report={activeSavedReport} onClose={() => setActiveSavedReport(null)} />}

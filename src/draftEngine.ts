@@ -138,6 +138,10 @@ export function chooseHero(
     const recentSignal = recentMeta?.heroSignals[hero.id]
     const recentPresence = recentSignal ? ((recentSignal.picks + recentSignal.bans) / maxRecentPresence) * 34 : 0
     const recentWinRate = recentSignal?.picks ? (recentSignal.wins / recentSignal.picks - 0.5) * 16 : 0
+    const publicSignal = recentMeta?.publicHeroSignals?.[hero.id]
+    const publicEdge = publicSignal && publicSignal.picks > 0
+      ? (publicSignal.wins / publicSignal.picks - 0.5) * 2 * (publicSignal.picks / (publicSignal.picks + 6))
+      : 0
     const isOpeningBan = step.type === 'ban' && enemyPicks.length === 0 && teamPicks.length === 0
     const isOpeningPick = step.type === 'pick' && teamPicks.length === 0
     const openingHistory = isOpeningBan ? recentOpeningBans() : []
@@ -148,6 +152,7 @@ export function chooseHero(
       + presence * (step.type === 'ban' ? 0.45 : 0.55)
       + recentPresence * banPresenceScale * pickPresenceScale
       + (step.type === 'pick' ? recentWinRate : 0)
+      + (step.type === 'pick' ? publicEdge * 45 : Math.max(0, publicEdge) * 28)
       + Math.min(memory, 20) * 0.05
     if (isOpeningBan) score -= Math.max(0, 8 - openingHistory.indexOf(hero.id)) * (openingHistory.includes(hero.id) ? 3.2 : 0)
     if (step.type === 'pick' && pickHistory.includes(hero.id)) score -= Math.max(6, 34 - pickHistory.indexOf(hero.id) * 2.2)
@@ -185,7 +190,11 @@ export function chooseHero(
   const recentNote = selectedRecent && recentObservations > 0
     ? ` Observed in about ${recentObservations} of ${recentMeta?.matchesAnalyzed ?? 0} weighted current-patch pro drafts.`
     : ''
-  return { hero: selected, reason: `${baseReason}${recentNote}` }
+  const selectedPublic = recentMeta?.publicHeroSignals?.[selected.id]
+  const publicNote = selectedPublic && selectedPublic.picks >= 2
+    ? ` High-rank win rate ≈ ${Math.round((selectedPublic.wins / selectedPublic.picks) * 100)}% in the current Divine+ sample.`
+    : ''
+  return { hero: selected, reason: `${baseReason}${recentNote}${publicNote}` }
 }
 
 export function teamName(team: Team) {

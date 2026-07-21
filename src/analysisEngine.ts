@@ -434,6 +434,23 @@ function proCoverage(heroes: Hero[], meta?: RecentProMeta | null) {
   }).length
 }
 
+function heroMetaScore(heroes: Hero[], meta?: RecentProMeta | null) {
+  if (!meta?.publicHeroSignals) return 0
+  const total = heroes.reduce((sum, hero) => {
+    const signal = meta.publicHeroSignals?.[hero.id]
+    if (!signal || signal.picks <= 0) return sum
+    const winRate = signal.wins / signal.picks
+    const credibility = signal.picks / (signal.picks + 6)
+    return sum + (winRate - 0.5) * 2 * credibility
+  }, 0)
+  return total * 6
+}
+
+function publicCoverage(heroes: Hero[], meta?: RecentProMeta | null) {
+  if (!meta?.publicHeroSignals) return 0
+  return heroes.filter((hero) => (meta.publicHeroSignals?.[hero.id]?.picks ?? 0) >= 2).length
+}
+
 function durationWeights(radiant: TeamAnalysis, dire: TeamAnalysis) {
   const tempo = (radiant.scores.Laning + dire.scores.Laning) * 0.2
     + (radiant.scores.Push + dire.scores.Push) * 0.25
@@ -477,8 +494,8 @@ export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: R
   const observedD = observedDraftScore(direHeroes, radiantHeroes, meta)
   const laneFitR = roleFitScore(radiant.lanePlan)
   const laneFitD = roleFitScore(dire.lanePlan)
-  const matchupFitR = observedR + (laneFitR - 50) * 0.06 - rolePenalty(radiant)
-  const matchupFitD = observedD + (laneFitD - 50) * 0.06 - rolePenalty(dire)
+  const matchupFitR = observedR + heroMetaScore(radiantHeroes, meta) + (laneFitR - 50) * 0.06 - rolePenalty(radiant)
+  const matchupFitD = observedD + heroMetaScore(direHeroes, meta) + (laneFitD - 50) * 0.06 - rolePenalty(dire)
   const earlyR = radiant.scores.Laning * 0.5 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.18 + radiant.scores.Sustain * 0.1 + matchupFitR
   const earlyD = dire.scores.Laning * 0.5 + dire.scores.Pickoff * 0.22 + dire.scores.Push * 0.18 + dire.scores.Sustain * 0.1 + matchupFitD
   const midR = radiant.scores.Teamfight * 0.32 + radiant.scores.Pickoff * 0.22 + radiant.scores.Push * 0.22 + radiant.scores.Roshan * 0.16 + radiant.scores.Execution * 0.08 + matchupFitR * 0.75
@@ -530,7 +547,12 @@ export function analyzeDraft(radiantHeroes: Hero[], direHeroes: Hero[], meta?: R
     `Role pressure: Radiant ${radiant.riskLevel.toLowerCase()} risk vs Dire ${dire.riskLevel.toLowerCase()} risk.`,
     meta ? `Pro overlap: Radiant ${proCoverage(radiantHeroes, meta)}/5 heroes and Dire ${proCoverage(direHeroes, meta)}/5 heroes appear in the current patch sample.` : 'Pro overlap is unavailable, so this run uses role-tag estimates only.',
   ]
+  if (meta?.publicMatchesAnalyzed) {
+    simulationInsights.push(`High-rank sample: ${meta.publicMatchesAnalyzed} ranked Divine+ matches back hero win rates (Radiant ${publicCoverage(radiantHeroes, meta)}/5, Dire ${publicCoverage(direHeroes, meta)}/5 heroes well-sampled).`)
+  }
 
-  const modelBasis = meta ? `${meta.matchesAnalyzed} current-patch pro drafts${meta.matchesWithPositions ? ` · ${meta.matchesWithPositions} with role data` : ''}` : 'Role-tag estimates only'
+  const modelBasis = meta
+    ? `${meta.matchesAnalyzed} current-patch pro drafts${meta.matchesWithPositions ? ` · ${meta.matchesWithPositions} with role data` : ''}${meta.publicMatchesAnalyzed ? ` · ${meta.publicMatchesAnalyzed} high-rank ranked matches` : ''}`
+    : 'Role-tag estimates only'
   return { radiant, dire, probability: { radiant: radiantProbability, dire: direProbability }, stageEdge, favored, headline, decidingFactors, simulationInsights, simulationRuns, samplingMargin, modelBasis }
 }

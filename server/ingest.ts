@@ -1,20 +1,25 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { RecentHeroSignal, RecentLaneSignal, RecentPositionSignal, RecentProMeta } from '../src/types.js'
+import type { RecentHeroSignal, RecentLaneSignal, RecentPositionSignal, RecentProMeta, RecentPublicHeroSignal } from '../src/types.js'
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const DATA_DIR = resolve(PROJECT_ROOT, 'data')
 const DRAFTS_PATH = resolve(DATA_DIR, 'pro-drafts.json')
+const HIGH_RANK_PATH = resolve(DATA_DIR, 'high-rank-matches.json')
 const META_PATH = resolve(DATA_DIR, 'recent-pro-meta.json')
 const HEROES_PATH = resolve(DATA_DIR, 'heroes.json')
 const API_BASE = process.env.OPENDOTA_API_BASE ?? 'https://api.opendota.com/api'
 const REFRESH_MS = 6 * 60 * 60 * 1000
 const BATCH_SIZE = Math.max(4, Math.min(160, Number(process.env.PRO_MATCH_BATCH_SIZE ?? 80)))
-const PUBLIC_BATCH_SIZE = Math.max(0, Math.min(160, Number(process.env.PUBLIC_MATCH_BATCH_SIZE ?? 0)))
+const HIGH_RANK_BATCH_SIZE = Math.max(0, Math.min(4000, Number(process.env.HIGH_RANK_BATCH_SIZE ?? process.env.PUBLIC_MATCH_BATCH_SIZE ?? 400)))
+const HIGH_RANK_MIN_TIER = Math.max(10, Math.min(85, Number(process.env.HIGH_RANK_MIN_TIER ?? 75)))
+const HIGH_RANK_DATASET_LIMIT = Math.max(1000, Number(process.env.HIGH_RANK_DATASET_LIMIT ?? 100000))
 const EXPLORER_BATCH_SIZE = Math.max(0, Math.min(400, Number(process.env.EXPLORER_MATCH_BATCH_SIZE ?? 0)))
 const POSITION_BACKFILL_SIZE = Math.max(4, Math.min(240, Number(process.env.PRO_POSITION_BACKFILL_SIZE ?? 120)))
 const DATASET_LIMIT = Math.max(500, Number(process.env.PRO_DATASET_LIMIT ?? 8000))
+// OpenDota free tier allows 60 calls/min; pace detail fetches so batches are not silently dropped as 429s.
+const DETAIL_BATCH_DELAY_MS = Math.max(0, Number(process.env.OPENDOTA_BATCH_DELAY_MS ?? 4500))
 let refreshInFlight: Promise<RecentProMeta> | null = null
 
 interface ProMatchSummary {
@@ -64,6 +69,27 @@ interface StoredDraft {
   positions?: PlayerPosition[]
 }
 
+interface PublicMatchRow {
+  match_id: number
+  radiant_win: boolean
+  start_time: number
+  duration: number
+  lobby_type: number
+  game_mode: number
+  avg_rank_tier: number
+  radiant_team: number[] | string
+  dire_team: number[] | string
+}
+
+interface StoredPublicMatch {
+  matchId: number
+  startTime: number
+  radiantWin: boolean
+  avgRankTier: number
+  radiant: number[]
+  dire: number[]
+}
+
 async function readJson<T>(path: string, fallback: T): Promise<T> {
   try { return JSON.parse(await readFile(path, 'utf8')) as T } catch { return fallback }
 }
@@ -75,16 +101,63 @@ async function writeJsonAtomic(path: string, value: unknown) {
   await rename(temporary, path)
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, { headers: { 'User-Agent': 'Draftsmith/0.2 pro-meta-ingestion' } })
-  if (!response.ok) throw new Error(`OpenDota request failed: ${response.status}`)
-  return response.json() as Promise<T>
+async function fetchJson<T>(url: string, retries = 5): Promise<T> {
+  for (let attempt = 0; ; attempt += 1) {
+    const response = await fetch(url, { headers: { 'User-Agent': 'Draftsmith/0.2 pro-meta-ingestion' } })
+    if (response.ok) return response.json() as Promise<T>
+    if (response.status === 429 && attempt < retries) {
+      const retryAfter = Number(response.headers.get('retry-after'))
+      await new Promise((resolve) => setTimeout(resolve, Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 15000 * (attempt + 1)))
+      continue
+    }
+    throw new Error(`OpenDota request failed: ${response.status}`)
+  }
 }
 
 async function fetchExplorerRows(sql: string): Promise<ProMatchSummary[]> {
   const encoded = encodeURIComponent(sql)
   const result = await fetchJson<{ rows?: ProMatchSummary[] }>(`${API_BASE}/explorer?sql=${encoded}`)
   return result.rows ?? []
+}
+
+const sleep = (ms: number) => ms > 0 ? new Promise((resolve) => setTimeout(resolve, ms)) : Promise.resolve()
+
+function teamHeroIds(team: number[] | string): number[] {
+  const ids = Array.isArray(team) ? team : team.split(',').map(Number)
+  return ids.filter((id) => Number.isInteger(id) && id > 0)
+}
+
+async function fetchHighRankMatches(existingIds: Set<number>, target: number): Promise<StoredPublicMatch[]> {
+  const collected: StoredPublicMatch[] = []
+  const seen = new Set(existingIds)
+  let cursor: number | null = null
+  const maxPages = Math.min(60, Math.ceil(target / 30) + 4)
+  for (let page = 0; page < maxPages && collected.length < target; page += 1) {
+    const cursorClause = cursor ? `&less_than_match_id=${cursor}` : ''
+    const rows = await fetchJson<PublicMatchRow[]>(`${API_BASE}/publicMatches?min_rank=${HIGH_RANK_MIN_TIER}${cursorClause}`)
+    if (!rows.length) break
+    cursor = Math.min(...rows.map((row) => row.match_id))
+    for (const row of rows) {
+      // Ranked matchmaking (lobby 7) All Draft (mode 22) only: no Turbo, no unranked lobbies.
+      if (row.lobby_type !== 7 || row.game_mode !== 22) continue
+      if (row.duration < 600) continue
+      if (seen.has(row.match_id)) continue
+      const radiant = teamHeroIds(row.radiant_team)
+      const dire = teamHeroIds(row.dire_team)
+      if (radiant.length !== 5 || dire.length !== 5) continue
+      seen.add(row.match_id)
+      collected.push({
+        matchId: row.match_id,
+        startTime: row.start_time,
+        radiantWin: row.radiant_win,
+        avgRankTier: row.avg_rank_tier,
+        radiant,
+        dire,
+      })
+    }
+    await sleep(1100)
+  }
+  return collected
 }
 
 function pairKey(a: number, b: number) {
@@ -132,7 +205,19 @@ function positionsFrom(match: ProMatchDetail): PlayerPosition[] {
   })
 }
 
-function aggregateDrafts(dataset: StoredDraft[]): RecentProMeta {
+// Pro drafts carry full weight; high-rank pubs are a broader but noisier sample, so each
+// match contributes less and decays faster (the public meta shifts quicker than pro).
+const PUBLIC_MATCH_WEIGHT = 0.35
+const PUBLIC_DECAY_DAYS = 10
+const PRO_DECAY_DAYS = 21
+
+function shrunkEdge(wins: number, samples: number): number {
+  const winRate = (wins + 2) / (samples + 4)
+  const credibility = samples / (samples + 5)
+  return (winRate - 0.5) * 2 * credibility
+}
+
+function aggregateDrafts(dataset: StoredDraft[], publicDataset: StoredPublicMatch[] = []): RecentProMeta {
   const newestPatch = dataset.find((draft) => draft.patch > 0)?.patch
   const patchPool = newestPatch ? dataset.filter((draft) => draft.patch === newestPatch) : dataset
   const pool = patchPool.slice(0, 2500)
@@ -148,7 +233,11 @@ function aggregateDrafts(dataset: StoredDraft[]): RecentProMeta {
   const now = Date.now() / 1000
 
   for (const match of pool) {
-    const weight = Math.exp(-Math.max(0, (now - match.startTime) / 86400) / 21)
+    // Every stored pro draft comes from a league (tournament) game; the freshest results
+    // carry extra weight so the model tracks the current tournament meta quickly.
+    const ageDays = Math.max(0, (now - match.startTime) / 86400)
+    const freshBoost = ageDays <= 14 ? 1.35 : 1
+    const weight = freshBoost * Math.exp(-ageDays / PRO_DECAY_DAYS)
     const radiant = match.picksBans.filter((a) => a.is_pick && a.team === 0).map((a) => a.hero_id)
     const dire = match.picksBans.filter((a) => a.is_pick && a.team === 1).map((a) => a.hero_id)
     for (const action of match.picksBans) {
@@ -190,13 +279,37 @@ function aggregateDrafts(dataset: StoredDraft[]): RecentProMeta {
     }
   }
 
+  const publicPool = publicDataset.slice(0, HIGH_RANK_DATASET_LIMIT)
+  const publicHeroSignals: Record<number, RecentPublicHeroSignal> = {}
+  for (const match of publicPool) {
+    const weight = PUBLIC_MATCH_WEIGHT * Math.exp(-Math.max(0, (now - match.startTime) / 86400) / PUBLIC_DECAY_DAYS)
+    for (const [team, won] of [[match.radiant, match.radiantWin], [match.dire, !match.radiantWin]] as const) {
+      for (const heroId of team) {
+        const signal = publicHeroSignals[heroId] ?? { picks: 0, wins: 0 }
+        signal.picks += weight
+        if (won) signal.wins += weight
+        publicHeroSignals[heroId] = signal
+      }
+      for (let i = 0; i < team.length; i += 1) for (let j = i + 1; j < team.length; j += 1) {
+        const key = pairKey(team[i], team[j])
+        pairSamples[key] = (pairSamples[key] ?? 0) + weight
+        if (won) pairWins[key] = (pairWins[key] ?? 0) + weight
+      }
+    }
+    for (const radiantHero of match.radiant) for (const direHero of match.dire) {
+      for (const [hero, enemy, won] of [[radiantHero, direHero, match.radiantWin], [direHero, radiantHero, !match.radiantWin]] as const) {
+        const key = `${hero}:${enemy}`
+        matchupSamples[key] = (matchupSamples[key] ?? 0) + weight
+        if (won) matchupWins[key] = (matchupWins[key] ?? 0) + weight
+      }
+    }
+  }
+
   for (const [key, samples] of Object.entries(pairSamples)) {
-    const winRate = ((pairWins[key] ?? 0) + 1.5) / (samples + 3)
-    synergy[key] = (winRate - 0.5) * 2 * Math.min(1, samples / 3)
+    synergy[key] = shrunkEdge(pairWins[key] ?? 0, samples)
   }
   for (const [key, samples] of Object.entries(matchupSamples)) {
-    const winRate = ((matchupWins[key] ?? 0) + 1.5) / (samples + 3)
-    counters[key] = (winRate - 0.5) * 2 * Math.min(1, samples / 3)
+    counters[key] = shrunkEdge(matchupWins[key] ?? 0, samples)
   }
 
   return {
@@ -212,6 +325,11 @@ function aggregateDrafts(dataset: StoredDraft[]): RecentProMeta {
     generatedAt: Date.now(),
     datasetSize: dataset.length,
     patch: newestPatch,
+    publicHeroSignals,
+    publicMatchesAnalyzed: publicPool.length,
+    publicDatasetSize: publicDataset.length,
+    publicNewestMatchAt: Math.max(0, ...publicPool.map((match) => match.startTime)),
+    publicMinRankTier: HIGH_RANK_MIN_TIER,
   }
 }
 
@@ -219,6 +337,7 @@ async function fetchDraftDetails(summaries: ProMatchSummary[], limit: number, ex
   const pending = summaries.filter((match) => !existingIds.has(match.match_id)).slice(0, limit)
   const drafts: StoredDraft[] = []
   for (let index = 0; index < pending.length; index += 4) {
+    if (index > 0) await sleep(DETAIL_BATCH_DELAY_MS)
     const batch = pending.slice(index, index + 4)
     const results = await Promise.allSettled(batch.map(({ match_id }) => fetchJson<ProMatchDetail>(`${API_BASE}/matches/${match_id}`)))
     for (const result of results) {
@@ -244,16 +363,6 @@ async function fetchNewDrafts(existingIds: Set<number>) {
   const proDrafts = await fetchDraftDetails(proSummaries, BATCH_SIZE, existingIds)
   const drafts = [...proDrafts]
   const knownIds = new Set([...existingIds, ...proDrafts.map((draft) => draft.matchId)])
-  if (PUBLIC_BATCH_SIZE) {
-    try {
-      const publicSummaries = await fetchJson<ProMatchSummary[]>(`${API_BASE}/publicMatches`)
-      const publicDrafts = await fetchDraftDetails(publicSummaries, PUBLIC_BATCH_SIZE, knownIds)
-      publicDrafts.forEach((draft) => knownIds.add(draft.matchId))
-      drafts.push(...publicDrafts)
-    } catch (error) {
-      console.warn('Public match ingestion skipped:', error instanceof Error ? error.message : error)
-    }
-  }
   if (EXPLORER_BATCH_SIZE) {
     try {
       const oldestKnown = Math.min(...Array.from(existingIds))
@@ -271,6 +380,7 @@ async function backfillPositions(drafts: StoredDraft[]) {
   const pending = drafts.filter((draft) => (draft.positions?.filter((position) => position.position).length ?? 0) < 10).slice(0, POSITION_BACKFILL_SIZE)
   const updates = new Map<number, PlayerPosition[]>()
   for (let index = 0; index < pending.length; index += 4) {
+    if (index > 0) await sleep(DETAIL_BATCH_DELAY_MS)
     const batch = pending.slice(index, index + 4)
     const results = await Promise.allSettled(batch.map((draft) => fetchJson<ProMatchDetail>(`${API_BASE}/matches/${draft.matchId}`)))
     results.forEach((result, resultIndex) => {
@@ -284,18 +394,30 @@ export async function refreshProData(force = false): Promise<RecentProMeta> {
   const existingMeta = await readJson<RecentProMeta | null>(META_PATH, null)
   if (!force && existingMeta && Date.now() - existingMeta.generatedAt < REFRESH_MS) return existingMeta
   const current = await readJson<StoredDraft[]>(DRAFTS_PATH, [])
+  const currentPublic = await readJson<StoredPublicMatch[]>(HIGH_RANK_PATH, [])
   const incoming = await fetchNewDrafts(new Set(current.map((draft) => draft.matchId))).catch((error: unknown) => {
     console.warn('New match ingestion skipped:', error instanceof Error ? error.message : error)
     return [] as StoredDraft[]
   })
+  const incomingPublic = HIGH_RANK_BATCH_SIZE
+    ? await fetchHighRankMatches(new Set(currentPublic.map((match) => match.matchId)), HIGH_RANK_BATCH_SIZE).catch((error: unknown) => {
+        console.warn('High-rank match ingestion skipped:', error instanceof Error ? error.message : error)
+        return [] as StoredPublicMatch[]
+      })
+    : []
   const enrichedCurrent = await backfillPositions(current)
   const merged = [...incoming, ...enrichedCurrent]
     .filter((draft, index, all) => all.findIndex((item) => item.matchId === draft.matchId) === index)
     .sort((a, b) => b.startTime - a.startTime)
     .slice(0, DATASET_LIMIT)
+  const mergedPublic = [...incomingPublic, ...currentPublic]
+    .filter((match, index, all) => all.findIndex((item) => item.matchId === match.matchId) === index)
+    .sort((a, b) => b.startTime - a.startTime)
+    .slice(0, HIGH_RANK_DATASET_LIMIT)
   if (!merged.length) throw new Error('No parsed Captain’s Mode drafts are available')
-  const meta = aggregateDrafts(merged)
+  const meta = aggregateDrafts(merged, mergedPublic)
   await writeJsonAtomic(DRAFTS_PATH, merged)
+  await writeJsonAtomic(HIGH_RANK_PATH, mergedPublic)
   await writeJsonAtomic(META_PATH, meta)
   return meta
 }
@@ -326,6 +448,6 @@ export async function getCachedHeroes() {
 
 if (process.argv[1]?.endsWith('ingest.ts')) {
   refreshProData(process.argv.includes('--force'))
-    .then((meta) => console.log(`Ingested ${meta.datasetSize} stored drafts; ${meta.matchesAnalyzed} in the active patch model.`))
+    .then((meta) => console.log(`Ingested ${meta.datasetSize} stored drafts; ${meta.matchesAnalyzed} in the active patch model; ${meta.publicDatasetSize ?? 0} high-rank matches.`))
     .catch((error: unknown) => { console.error(error); process.exitCode = 1 })
 }

@@ -4,7 +4,8 @@ import type { RecentProMeta } from '../src/types.js'
 
 type CliOptions = {
   proBatch: string
-  publicBatch: string
+  highRankBatch: string
+  highRankLimit: string
   explorerBatch: string
   roleBackfill: string
   datasetLimit: string
@@ -21,7 +22,8 @@ function parseOptions(): CliOptions {
   const args = process.argv.slice(2)
   return {
     proBatch: optionValue(args, '--pro-batch', '120', 0),
-    publicBatch: optionValue(args, '--public-batch', '80', 1),
+    highRankBatch: optionValue(args, '--high-rank-batch', optionValue(args, '--public-batch', '600', 1), 1),
+    highRankLimit: optionValue(args, '--high-rank-limit', '100000', 6),
     explorerBatch: optionValue(args, '--explorer-batch', '240', 2),
     roleBackfill: optionValue(args, '--role-backfill', '220', 3),
     datasetLimit: optionValue(args, '--dataset-limit', '12000', 4),
@@ -40,7 +42,8 @@ async function readCurrentMeta() {
 
 const options = parseOptions()
 process.env.PRO_MATCH_BATCH_SIZE = options.proBatch
-process.env.PUBLIC_MATCH_BATCH_SIZE = options.publicBatch
+process.env.HIGH_RANK_BATCH_SIZE = options.highRankBatch
+process.env.HIGH_RANK_DATASET_LIMIT = options.highRankLimit
 process.env.EXPLORER_MATCH_BATCH_SIZE = options.explorerBatch
 process.env.PRO_POSITION_BACKFILL_SIZE = options.roleBackfill
 process.env.PRO_DATASET_LIMIT = options.datasetLimit
@@ -57,6 +60,7 @@ const meta = await refreshProData(true)
 console.log([
   `Updated draft model: ${meta.matchesAnalyzed} active patch drafts.`,
   `Stored dataset: ${meta.datasetSize ?? meta.matchesAnalyzed} drafts.`,
+  `High-rank matches: ${meta.publicMatchesAnalyzed ?? 0} in model (${meta.publicDatasetSize ?? 0} stored, min tier ${meta.publicMinRankTier ?? '?'}).`,
   `Role evidence: ${meta.matchesWithPositions ?? 0} matches.`,
   `Lane evidence: ${meta.matchesWithLanes ?? 0} matches.`,
   `Patch: ${meta.patch ?? 'unknown'}.`,
@@ -66,6 +70,7 @@ if (before) {
   console.log([
     'Delta:',
     `Drafts ${before.matchesAnalyzed} -> ${meta.matchesAnalyzed}.`,
+    `High-rank ${before.publicMatchesAnalyzed ?? 0} -> ${meta.publicMatchesAnalyzed ?? 0}.`,
     `Role evidence ${before.matchesWithPositions ?? 0} -> ${meta.matchesWithPositions ?? 0}.`,
     `Lane evidence ${before.matchesWithLanes ?? 0} -> ${meta.matchesWithLanes ?? 0}.`,
   ].join('\n'))

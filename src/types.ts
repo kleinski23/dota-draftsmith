@@ -52,6 +52,11 @@ export interface RecentPositionSignal {
   samples: number
 }
 
+export interface RecentPublicHeroSignal {
+  picks: number
+  wins: number
+}
+
 export interface RecentProMeta {
   heroSignals: Record<number, RecentHeroSignal>
   synergy: Record<string, number>
@@ -65,4 +70,9 @@ export interface RecentProMeta {
   generatedAt: number
   datasetSize?: number
   patch?: number
+  publicHeroSignals?: Record<number, RecentPublicHeroSignal>
+  publicMatchesAnalyzed?: number
+  publicDatasetSize?: number
+  publicNewestMatchAt?: number
+  publicMinRankTier?: number
 }
