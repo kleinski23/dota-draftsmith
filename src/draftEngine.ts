@@ -57,6 +57,43 @@ function likelyPositionWeight(hero: Hero, position: 0 | 1 | 2 | 3 | 4, recentMet
   return hero.roles.includes('Support') ? 0.34 : 0.08
 }
 
+// Normalized affinity over the five positions (index 0 = pos 1 … index 4 = pos 5). Observed
+// pro positions dominate when they exist; otherwise a role-tag prior fills in.
+function positionAffinity(hero: Hero, recentMeta?: RecentProMeta | null): number[] {
+  const raw = [0, 1, 2, 3, 4].map((position) => likelyPositionWeight(hero, position as 0 | 1 | 2 | 3 | 4, recentMeta))
+  const total = raw.reduce((sum, value) => sum + value, 0) || 1
+  return raw.map((value) => value / total)
+}
+
+// Best way to seat these heroes in distinct positions (1–5): the maximum total affinity over
+// all assignments. A team stacking one position cannot all get their slot, so its total drops —
+// this is what steers the AI toward a coherent 1-2-3-4-5 core/support spread. Heroes are capped
+// at five, so the brute-force permutation search stays trivial (≤120 arrangements).
+function bestAssignmentFit(heroes: Hero[], recentMeta?: RecentProMeta | null): number {
+  if (!heroes.length) return 0
+  const affinities = heroes.map((hero) => positionAffinity(hero, recentMeta))
+  const used = new Array(5).fill(false)
+  let best = Number.NEGATIVE_INFINITY
+  const search = (index: number, total: number) => {
+    if (index === heroes.length) { if (total > best) best = total; return }
+    for (let position = 0; position < 5; position += 1) {
+      if (used[position]) continue
+      used[position] = true
+      search(index + 1, total + affinities[index][position])
+      used[position] = false
+    }
+  }
+  search(0, 0)
+  return best
+}
+
+// Marginal position-fit a candidate adds to the team: how much the best distinct-position
+// seating improves by including this hero. Filling an open slot scores high; a fifth hero
+// crowding an already-claimed position scores low (someone gets bumped to a dead slot).
+function positionCoherence(hero: Hero, teamPicks: Hero[], recentMeta?: RecentProMeta | null): number {
+  return bestAssignmentFit([...teamPicks, hero], recentMeta) - bestAssignmentFit(teamPicks, recentMeta)
+}
+
 function roleEconomyScore(hero: Hero, teamPicks: Hero[], recentMeta?: RecentProMeta | null) {
   const future = [...teamPicks, hero]
   const carryCount = roleCount(future, 'Carry')
@@ -183,7 +220,15 @@ export function chooseHero(
       + Math.min(memory, 20) * 0.05
     if (isOpeningBan) score -= Math.max(0, 8 - openingHistory.indexOf(hero.id)) * (openingHistory.includes(hero.id) ? 3.2 : 0)
     if (step.type === 'pick' && pickHistory.includes(hero.id)) score -= Math.max(6, 34 - pickHistory.indexOf(hero.id) * 2.2)
-    if (step.type === 'pick') score += roleNeedScore(hero, teamPicks) + compositionScore(hero, teamPicks) + roleEconomyScore(hero, teamPicks, recentMeta) + lanePairScore(hero, teamPicks, recentMeta)
+    if (step.type === 'pick') {
+      score += roleNeedScore(hero, teamPicks) + compositionScore(hero, teamPicks) + roleEconomyScore(hero, teamPicks, recentMeta) + lanePairScore(hero, teamPicks, recentMeta)
+      // Dominant balancer: reward the pick that best fills a still-open position slot so the
+      // finished team resolves to a clean 1-2-3-4-5 spread instead of four stacked carries.
+      // Weight is zero on the opener (it must stay flexible/meta, not lock a hard support) and
+      // ramps steeply so later picks are forced to patch missing roles over raw meta presence.
+      const coherenceWeight = teamPicks.length * 60
+      score += positionCoherence(hero, teamPicks, recentMeta) * coherenceWeight
+    }
     if (step.type === 'pick') {
       // Never walk into a known hard counter the opponent has already revealed, and lean
       // toward heroes that hard-counter revealed enemy picks — outdraft, don't coin-flip.
