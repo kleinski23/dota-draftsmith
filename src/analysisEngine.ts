@@ -22,6 +22,30 @@ export interface ObjectiveStep {
   action: string
 }
 
+export type TraitId =
+  | 'early-aggression'
+  | 'teamfight'
+  | 'pickoff'
+  | 'push'
+  | 'roshan'
+  | 'split-push'
+  | 'scaling'
+  | 'sustain'
+  | 'defense'
+
+export interface DraftTrait {
+  id: TraitId
+  label: string
+  strength: number
+  tier: 'signature' | 'solid' | 'situational'
+  /** What the pattern is for these specific heroes, against these specific opponents. */
+  detail: string
+  /** The concrete play that follows from it. */
+  tactic: string
+  drivers: string[]
+  edge?: 'dominant' | 'even' | 'outmatched'
+}
+
 export interface TeamAnalysis {
   scores: Record<Dimension, number>
   archetype: string
@@ -37,6 +61,9 @@ export interface TeamAnalysis {
   damageProfile: string
   responseItems: string[]
   objectivePlan: ObjectiveStep[]
+  traits: DraftTrait[]
+  identityHeadline: string
+  identitySummary: string
 }
 
 export interface MatchupAnalysis {
@@ -69,6 +96,11 @@ const BKB_PIERCING = ['axe', 'bane', 'beastmaster', 'batrider', 'doom_bringer', 
 // is tagged Escape/Nuker only). Without this prior, heroes with no pro sample default toward
 // a core slot and can steal mid or safe lane from an observed core.
 const SUPPORT_FLEX = ['bounty_hunter', 'clockwerk', 'earth_spirit', 'mirana', 'nyx_assassin', 'riki', 'spirit_breaker', 'techies', 'tusk']
+// Heroes whose kit answers a specific pattern — used to name the hero that punishes or blunts
+// a trait instead of describing the counterplay in the abstract.
+const ANTI_HEAL = ['ancient_apparition', 'necrophos', 'doom_bringer']
+const WAVE_CLEAR = ['death_prophet', 'dragon_knight', 'elder_titan', 'gyrocopter', 'jakiro', 'kunkka', 'leshrac', 'lina', 'luna', 'phoenix', 'pugna', 'sand_king', 'shadow_fiend', 'tinker', 'zuus']
+const SLIPPERY = ['antimage', 'clinkz', 'ember_spirit', 'morphling', 'puck', 'queenofpain', 'riki', 'slark', 'storm_spirit', 'templar_assassin', 'void_spirit', 'weaver']
 
 const key = (hero: Hero) => hero.name.replace('npc_dota_hero_', '')
 const inList = (hero: Hero, list: string[]) => list.includes(key(hero))
@@ -257,6 +289,382 @@ function pressureProfile(scores: Record<Dimension, number>) {
   return 'Can play either direction, but needs clean objective conversion after won fights.'
 }
 
+interface TraitContext {
+  heroes: Hero[]
+  enemies: Hero[]
+  drivers: Hero[]
+  scores: Record<Dimension, number>
+  tier: DraftTrait['tier']
+  edge: DraftTrait['edge']
+  peakWindow: string
+}
+
+const pick = (heroes: Hero[], list: string[]) => heroes.filter((hero) => inList(hero, list))
+const byRole = (heroes: Hero[], role: string) => heroes.filter((hero) => hero.roles.includes(role))
+// Subject-verb agreement: "Pudge + Lion hold the chain" but "Pudge holds the chain".
+const many = (heroes: Hero[], limit = 2) => Math.min(heroes.length, limit) > 1
+const verb = (heroes: Hero[], singular: string, plural: string, limit = 2) => many(heroes, limit) ? plural : singular
+
+// Each trait blends the dimension scores that produce it, ranks the heroes that carry it by how
+// central they actually are, and then writes its own read of the matchup. The wording is
+// assembled from the heroes on both sides, so two different drafts do not get the same sentence.
+const TRAIT_BLUEPRINTS: Array<{
+  id: TraitId
+  label: string
+  weights: Partial<Record<Dimension, number>>
+  // Relevance weight per hero: 0 excludes, higher sorts first. A Pudge is a pickoff hero in a
+  // way a Medusa carrying the Disabler tag is not, and the report should name Pudge.
+  driverWeight: (hero: Hero) => number
+  // How many carrying heroes count as full credit for this pattern. One Lycan is a real
+  // split-push threat; one lone save support is not real fight sustain.
+  full?: number
+  narrate: (context: TraitContext) => { detail: string; tactic: string }
+}> = [
+  {
+    id: 'early-aggression',
+    label: 'Early aggression',
+    weights: { Laning: 0.55, Pickoff: 0.28, Push: 0.17 },
+    driverWeight: (hero) => (hero.roles.includes('Nuker') ? 3 : 0) + (hero.roles.includes('Disabler') ? 2 : 0) + (hero.attackType === 'Ranged' ? 1 : 0),
+    narrate: (c) => {
+      const front = c.drivers
+      const greedy = pick(c.enemies, HARD_CARRY)
+      const enemySupports = byRole(c.enemies, 'Support')
+      const enemyDurable = byRole(c.enemies, 'Durable')
+      if (c.tier === 'situational') {
+        return {
+          detail: `${names(front, 2) || 'This lineup'} ${verb(front, 'can trade hits but has', 'can trade hits but have')} no kill threat before level 6, so lanes produce farm rather than pressure.`,
+          tactic: greedy.length
+            ? `Pull the small camp against ${greedy[0].localizedName} to hold equilibrium — deny the free farm rather than contest a lane you lose.`
+            : 'Stack camps, hold equilibrium, and spend the first smoke defensively instead of on a rotation.',
+        }
+      }
+      return {
+        detail: enemyDurable.length >= 2
+          ? `${names(front, 2)} ${verb(front, 'out-damages', 'out-damage')} the lane on paper, but ${names(enemyDurable, 2)} can absorb that burst and stay on the creep line.`
+          : `${names(front, 2)} ${verb(front, 'out-trades', 'out-trade')} from level 3 and ${verb(front, 'turns', 'turn')} the level-6 timing into a kill rather than a zone.`,
+        tactic: c.scores.Push >= 62
+          ? 'Convert the first lane kill straight into the tower — this draft loses value the moment the game goes quiet.'
+          : greedy.length
+            ? `Push waves into ${greedy[0].localizedName} and rotate onto ${enemySupports[0]?.localizedName ?? 'the enemy support'} — denied farm is worth more here than an early tower.`
+            : 'Take both power runes and force a defensive teleport before the first catapult wave.',
+      }
+    },
+  },
+  {
+    id: 'teamfight',
+    label: 'Big teamfights',
+    weights: { Teamfight: 0.62, Sustain: 0.2, Execution: 0.18 },
+    driverWeight: (hero) => (inList(hero, TEAMFIGHT_ULT) ? 3 : 0) + (hero.roles.includes('Initiator') ? 2 : 0) + (hero.roles.includes('Durable') ? 1 : 0),
+    narrate: (c) => {
+      const ults = pick(c.drivers, TEAMFIGHT_ULT)
+      const front = ults.length ? ults : c.drivers
+      const enemyUlts = pick(c.enemies, TEAMFIGHT_ULT)
+      const enemySaves = pick(c.enemies, SAVE)
+      const anchor = front[0]
+      if (c.tier === 'situational') {
+        return {
+          detail: ults.length
+            ? `${ults[0].localizedName} is the only real AoE ultimate here, so a fair five-on-five turns on who lands the first stun.`
+            : 'No layered AoE ultimate: grouped fights are decided by positioning and cooldowns rather than by anything this draft initiates.',
+          tactic: enemyUlts.length
+            ? `Spread wide around ${names(enemyUlts, 2)} and take the fight only after that ultimate is spent or the enemy is a hero short.`
+            : 'Only fight from a numbers advantage — a pickoff, a buyback gap, or a smoke that lands first.',
+        }
+      }
+      return {
+        detail: (many(front)
+          ? `${names(front, 2)} chain into each other, so a clean initiation is worth more to this draft than any single item it buys.`
+          : `${anchor.localizedName} is the fight-starter, and the draft is only as good as that ultimate's positioning.`)
+          + (enemySaves.length ? ` ${enemySaves[0].localizedName} can undo the first kill, so count that save before committing.` : ''),
+        tactic: c.edge === 'outmatched' && enemyUlts.length
+          ? `${names(enemyUlts, 2)} win the fair version of this fight — engage only on ${anchor.localizedName}'s initiation and hold a dispel for theirs.`
+          : c.scores.Roshan >= 62
+            ? `Start fights at the pit: ${anchor.localizedName}'s initiation plus Aegis pressure forces the opponent to fight where this draft is strongest.`
+            : `Group on ${anchor.localizedName}'s cooldown and fight before the enemy carry finishes BKB; that item closes this window.`,
+      }
+    },
+  },
+  {
+    id: 'pickoff',
+    label: 'Pickoffs',
+    weights: { Pickoff: 0.68, Laning: 0.14, Execution: 0.18 },
+    driverWeight: (hero) => (inList(hero, PICKOFF) ? 3 : 0) + (inList(hero, BLINK) ? 2 : 0) + (hero.roles.includes('Disabler') ? 1 : 0),
+    narrate: (c) => {
+      const chain = c.drivers
+      const slippery = c.enemies.filter((hero) => inList(hero, SLIPPERY) || inList(hero, SPLIT_PUSH))
+      const enemySaves = pick(c.enemies, SAVE)
+      const enemySplit = pick(c.enemies, SPLIT_PUSH)
+      const target = pick(c.enemies, HARD_CARRY)[0] ?? byRole(c.enemies, 'Carry')[0]
+      if (c.tier === 'situational') {
+        return {
+          detail: slippery.length
+            ? `Nothing here reliably catches ${names(slippery, 2)} — they can farm the map without being punished for it.`
+            : 'Catch is thin: kills have to come out of a won fight rather than from hunting a single hero.',
+          tactic: 'Trade the hunt for vision — deny camps and pull wards instead of chasing kills this draft cannot close.',
+        }
+      }
+      return {
+        detail: many(chain)
+          ? `${names(chain, 2)} hold enough chained disable to delete an isolated core outright`
+            + (enemySaves.length ? `, though ${enemySaves[0].localizedName} can buy that target back if the save is up.` : '.')
+          : `${chain[0].localizedName} has to land the opening disable alone, which makes every hunt a one-cooldown gamble`
+            + (enemySaves.length ? ` against ${enemySaves[0].localizedName}'s save.` : '.'),
+        tactic: enemySplit.length
+          ? `Hunt ${enemySplit[0].localizedName} on the side lane rather than the group — removing the second front is worth more than the wave.`
+          : target
+            ? `Smoke toward ${target.localizedName}'s farming triangle before the BKB timing; the same chain stops sticking once that item is finished.`
+            : 'Smoke into deep vision and open on the enemy support first — blinding the map is what makes the next pickoff free.',
+      }
+    },
+  },
+  {
+    id: 'push',
+    label: 'Tower pressure',
+    weights: { Push: 0.68, Teamfight: 0.18, Laning: 0.14 },
+    driverWeight: (hero) => (inList(hero, PUSH) ? 3 : 0) + (hero.roles.includes('Pusher') ? 2 : 0),
+    narrate: (c) => {
+      const clear = c.enemies.filter((hero) => inList(hero, WAVE_CLEAR) || inList(hero, PUSH))
+      const enemyDurable = byRole(c.enemies, 'Durable')
+      if (c.tier === 'situational') {
+        return {
+          detail: clear.length
+            ? `Towers need a full five-man commit, and ${names(clear, 2)} simply clear the wave that would do the damage.`
+            : 'Tower damage is slow: won fights turn into farm and vision rather than into structures.',
+          tactic: 'Take objectives only off a kill — otherwise bank the advantage as camps, wards, and position for the next fight.',
+        }
+      }
+      return {
+        detail: `${names(c.drivers, 2)} ${verb(c.drivers, 'melts', 'melt')} a tower alongside the catapult wave`
+          + (enemyDurable.length ? `, and ${names(enemyDurable, 1)} is the only body that can realistically hold the ramp.` : ', which turns every won fight straight into map.'),
+        tactic: clear.length
+          ? `Bait ${clear[0].localizedName}'s clear on the first wave and commit on the second — that cooldown, not the fight, decides the tower.`
+          : 'Push all three lanes to force teleports, then collapse five-man on the weakest side.',
+      }
+    },
+  },
+  {
+    id: 'roshan',
+    label: 'Roshan control',
+    weights: { Roshan: 0.68, Sustain: 0.18, Teamfight: 0.14 },
+    driverWeight: (hero) => (inList(hero, ROSHAN) ? 3 : 0),
+    full: 1,
+    narrate: (c) => {
+      const enemyPit = pick(c.enemies, ROSHAN)
+      const enemyCatch = pick(c.enemies, PICKOFF)
+      if (c.tier === 'situational') {
+        return {
+          detail: enemyPit.length
+            ? `The pit costs this draft a full team and a long window, while ${enemyPit[0].localizedName} clears it on a raw item timing.`
+            : 'No fast pit damage: Aegis costs a five-man commit and a window the opponent can read in advance.',
+          tactic: 'Ward the pit and contest rather than initiate — enter only after a kill or a burned buyback.',
+        }
+      }
+      return {
+        detail: `${names(c.drivers, 2)} ${verb(c.drivers, 'clears', 'clear')} the pit on an item timing instead of a five-man commit, which makes Aegis a repeatable resource rather than a gamble.`,
+        tactic: enemyCatch.length
+          ? `Clear ${names(enemyCatch, 2)}'s vision line before dropping in, and keep one teleport up for the counter-push.`
+          : 'Take the pit on the first cooldown gap and spend the Aegis immediately on high ground.',
+      }
+    },
+  },
+  {
+    id: 'split-push',
+    label: 'Split push',
+    weights: { Push: 0.42, Scaling: 0.32, Execution: 0.26 },
+    driverWeight: (hero) => (inList(hero, SPLIT_PUSH) ? 3 : 0),
+    full: 1,
+    narrate: (c) => {
+      const enemyCatch = c.enemies.filter((hero) => inList(hero, PICKOFF) || inList(hero, BLINK))
+      if (c.tier === 'situational') {
+        return {
+          detail: 'No hero threatens a lane alone, so every point of pressure has to come from the group of five.',
+          tactic: 'Play as one unit and buy the map with vision — a second front is not available to this draft.',
+        }
+      }
+      return {
+        detail: c.drivers.length > 1
+          ? `${c.drivers[0].localizedName} can hold a lane alone with ${c.drivers[1].localizedName} threatening the opposite side, forcing the enemy to answer in two places at once.`
+          : `${c.drivers[0].localizedName} can hold a lane alone and pull defenders away from the fight the rest of the team wants.`,
+        tactic: enemyCatch.length
+          ? `Keep a teleport and stay behind the wave whenever ${names(enemyCatch, 2)} are off the map — one caught splitter costs more than the lane gains.`
+          : 'Split the moment the enemy groups, and make them choose between the tower and your other four.',
+      }
+    },
+  },
+  {
+    id: 'scaling',
+    label: 'Late-game scaling',
+    weights: { Scaling: 0.66, Sustain: 0.16, Teamfight: 0.18 },
+    driverWeight: (hero) => (inList(hero, HARD_CARRY) ? 3 : 0) + (hero.roles.includes('Carry') ? 1 : 0),
+    full: 1,
+    narrate: (c) => {
+      const enemyLate = pick(c.enemies, HARD_CARRY)
+      const enemyTempo = c.enemies.filter((hero) => inList(hero, PUSH) || inList(hero, PICKOFF))
+      const anchor = c.drivers[0]
+      if (c.tier === 'situational') {
+        return {
+          detail: `${anchor?.localizedName ?? 'The core'} peaks on a timing rather than on slots, and the lineup loses relative value once both sides are six-slotted.`,
+          tactic: enemyLate.length
+            ? `Close the map before ${enemyLate[0].localizedName} finishes a third item — every even trade after that favours them.`
+            : 'Force the game to end inside your power window; a long game is a losing game here.',
+        }
+      }
+      return {
+        detail: `${names(c.drivers, 2)} ${verb(c.drivers, 'keeps', 'keep')} gaining value through six slots`
+          + (enemyLate.length ? `, and the late-game fight is specifically against ${enemyLate[0].localizedName}.` : ' — every minute the base holds makes this draft stronger.'),
+        tactic: enemyTempo.length
+          ? `Concede map to ${names(enemyTempo, 2)} but never barracks or buyback; defensive fights on your own high ground are the win condition.`
+          : `Trade space for farm and take fights near your own creep wave until ${anchor?.localizedName ?? 'the carry'} is online.`,
+      }
+    },
+  },
+  {
+    id: 'sustain',
+    label: 'Fight sustain',
+    weights: { Sustain: 0.66, Teamfight: 0.2, Laning: 0.14 },
+    driverWeight: (hero) => (inList(hero, SAVE) ? 3 : 0) + (hero.roles.includes('Support') ? 1 : 0),
+    narrate: (c) => {
+      const saves = pick(c.drivers, SAVE)
+      const front = saves.length ? saves : c.drivers
+      const burst = c.enemies.filter((hero) => inList(hero, BKB_PIERCING) || hero.roles.includes('Nuker'))
+      const antiHeal = pick(c.enemies, ANTI_HEAL)
+      if (c.tier === 'situational') {
+        return {
+          detail: `Only ${names(c.drivers, 1) || 'a lone support'} can answer a caught core, so the first death usually decides the fight.`,
+          tactic: burst.length
+            ? `Carry your own answer — Glimmer, Force Staff, or an early BKB against ${names(burst, 2)}.`
+            : 'Spread positioning and hold buyback instead of relying on a save this draft does not have.',
+        }
+      }
+      return {
+        detail: `${names(front, 2)} ${verb(front, 'keeps', 'keep')} an initiated core alive through the first rotation of damage, which turns short fights into the long ones this draft wants.`,
+        tactic: antiHeal.length
+          ? `${antiHeal[0].localizedName} switches that healing off — bait the ultimate out, or take the fight before it comes back up.`
+          : 'Extend engagements deliberately; the longer a fight runs, the more those save cooldowns are worth.',
+      }
+    },
+  },
+  {
+    id: 'defense',
+    label: 'Siege defense',
+    weights: { Sustain: 0.34, Teamfight: 0.36, Push: 0.3 },
+    driverWeight: (hero) => (inList(hero, WAVE_CLEAR) ? 3 : 0) + (inList(hero, PUSH) ? 2 : 0) + (hero.roles.includes('Durable') ? 1 : 0),
+    narrate: (c) => {
+      const siege = c.enemies.filter((hero) => inList(hero, PUSH) || hero.roles.includes('Pusher'))
+      const split = pick(c.enemies, SPLIT_PUSH)
+      if (c.tier === 'situational') {
+        return {
+          detail: siege.length
+            ? `Thin wave clear and few bodies for the ramp against ${names(siege, 2)} — a lost mid-game turns into a lost base quickly.`
+            : 'Little wave clear and no natural high-ground body: falling behind on towers is hard to reverse.',
+          tactic: 'Do not trade barracks. Fight on the map, with wards and forced engagements, before the enemy reaches high ground at all.',
+        }
+      }
+      return {
+        detail: `${names(c.drivers, 2)} ${verb(c.drivers, 'clears waves and holds', 'clear waves and hold')} the ramp, so this draft can lose the mid-game and still stall to its own timing.`,
+        tactic: split.length
+          ? `${split[0].localizedName} is the real threat to that plan — keep a teleport and a clear cooldown for the second front, not the front door.`
+          : 'Defend high ground, force the fight there, and use buyback to punish an over-extended siege.',
+      }
+    },
+  },
+]
+
+const traitDrivers = (blueprint: typeof TRAIT_BLUEPRINTS[number], heroes: Hero[]) => heroes
+  .map((hero) => ({ hero, weight: blueprint.driverWeight(hero) }))
+  .filter((entry) => entry.weight > 0)
+  .sort((a, b) => b.weight - a.weight)
+  .map((entry) => entry.hero)
+
+function buildTraits(heroes: Hero[], scores: Record<Dimension, number>): DraftTrait[] {
+  return TRAIT_BLUEPRINTS.map((blueprint) => {
+    const drivers = traitDrivers(blueprint, heroes)
+    const blend = (Object.entries(blueprint.weights) as [Dimension, number][])
+      .reduce((sum, [dimension, weight]) => sum + scores[dimension] * weight, 0)
+    // Dimension scores alone can float a pattern the draft has no heroes for — a lineup with
+    // decent push and scaling but zero split-pushers cannot split-push. Two carrying heroes
+    // earn the full rating; none caps it well below the "solid" line.
+    const strength = Math.round(blend * (0.55 + 0.45 * Math.min(1, drivers.length / (blueprint.full ?? 2))))
+    const tier = strength >= 68 ? 'signature' : strength >= 55 ? 'solid' : 'situational'
+    return {
+      id: blueprint.id,
+      label: blueprint.label,
+      strength,
+      tier,
+      detail: '',
+      tactic: '',
+      drivers: drivers.slice(0, 3).map((hero) => hero.localizedName),
+    } satisfies DraftTrait
+  }).sort((a, b) => b.strength - a.strength)
+}
+
+// Narration is a separate pass because it reads the opposing lineup: the same 71-rated pickoff
+// trait is written differently against a Dazzle than against a Faceless Void.
+function narrateTraits(traits: DraftTrait[], heroes: Hero[], enemies: Hero[], scores: Record<Dimension, number>, peakWindow: string): DraftTrait[] {
+  return traits.map((trait) => {
+    const blueprint = TRAIT_BLUEPRINTS.find((candidate) => candidate.id === trait.id)
+    if (!blueprint) return trait
+    const drivers = traitDrivers(blueprint, heroes)
+    if (!drivers.length && trait.tier !== 'situational') return trait
+    const written = blueprint.narrate({ heroes, enemies, drivers, scores, tier: trait.tier, edge: trait.edge, peakWindow })
+    return { ...trait, ...written }
+  })
+}
+
+// The hero on the other side who most directly punishes a weakness, so the risk line can name a
+// threat instead of gesturing at one.
+function exploiter(trait: DraftTrait, enemies: Hero[]): Hero | undefined {
+  switch (trait.id) {
+    case 'roshan': return pick(enemies, ROSHAN)[0]
+    case 'sustain': return pick(enemies, PICKOFF)[0] ?? byRole(enemies, 'Nuker')[0]
+    case 'defense': return pick(enemies, PUSH)[0] ?? byRole(enemies, 'Pusher')[0]
+    case 'scaling': return pick(enemies, HARD_CARRY)[0]
+    case 'pickoff': return enemies.filter((hero) => inList(hero, SLIPPERY))[0] ?? pick(enemies, SPLIT_PUSH)[0]
+    case 'teamfight': return pick(enemies, TEAMFIGHT_ULT)[0]
+    case 'push': return byRole(enemies, 'Durable')[0]
+    case 'split-push': return pick(enemies, PICKOFF)[0]
+    case 'early-aggression': return byRole(enemies, 'Nuker').filter((hero) => hero.attackType === 'Ranged')[0]
+    default: return undefined
+  }
+}
+
+function identityText(traits: DraftTrait[], scores: Record<Dimension, number>, enemies: Hero[], peakWindow: string) {
+  const leading = traits.filter((trait) => trait.tier !== 'situational').slice(0, 2)
+  const weakest = traits[traits.length - 1]
+  const headline = leading.length ? leading.map((trait) => trait.label).join(' + ') : 'No dominant pattern'
+  const sentences: string[] = []
+
+  if (leading.length) {
+    const anchors = leading[0].drivers.slice(0, 2)
+    sentences.push(`The advantage comes from ${leading[0].label.toLowerCase()}${anchors.length ? `, and it runs through ${anchors.join(' and ')}` : ''}.`)
+    if (leading[1]) {
+      // Name a hero the first sentence has not already used, so the second line adds information.
+      const second = leading[1].drivers.find((driver) => !anchors.includes(driver))
+      sentences.push(`${leading[1].label} is the follow-up once that lands${second ? ` — ${second} is what makes it available` : ', off the same heroes'}.`)
+    }
+  } else {
+    sentences.push('No single pattern carries this draft, so it wins on map reads and clean execution rather than on a structural edge.')
+  }
+
+  const tempo = (scores.Laning + scores.Push + scores.Pickoff) / 3
+  const late = (scores.Scaling + scores.Sustain) / 2
+  const enemyLate = pick(enemies, HARD_CARRY)[0]
+  if (tempo > late + 8) {
+    sentences.push(`The clock works against it: ${peakWindow} is the window, and ${enemyLate ? `${enemyLate.localizedName} out-scales it afterwards` : 'there is no answer once both sides are six-slotted'}.`)
+  } else if (late > tempo + 8) {
+    sentences.push(`Time is an ally — reaching ${peakWindow} intact is itself a win condition, so surviving the mid-game counts as progress.`)
+  } else {
+    sentences.push(`No strong clock preference; ${peakWindow} is simply when the item timings line up best.`)
+  }
+
+  if (weakest && weakest.strength < 55) {
+    const threat = exploiter(weakest, enemies)
+    sentences.push(`The exposed side is ${weakest.label.toLowerCase()} at ${weakest.strength}/100${threat ? ` — ${threat.localizedName} is the hero that punishes it` : ', though the opponent has no obvious hero to punish it'}.`)
+  }
+
+  return { headline, summary: sentences.join(' ') }
+}
+
 function riskLevel(scores: Record<Dimension, number>, laneFit: number): TeamAnalysis['riskLevel'] {
   const risks = [
     scores.Scaling >= 68 && scores.Laning < 58,
@@ -392,6 +800,29 @@ function refineMatchupPlans(team: TeamAnalysis, opponent: TeamAnalysis, heroes: 
     return matchup ? { ...lane, matchup } : lane
   })
 
+  // A trait only matters relative to the other draft: 68 pickoff means little if the opponent
+  // sits at 74, so each trait carries its head-to-head standing.
+  team.traits = team.traits.map((trait) => {
+    const rival = opponent.traits.find((candidate) => candidate.id === trait.id)
+    if (!rival) return trait
+    const delta = trait.strength - rival.strength
+    return { ...trait, edge: delta >= 8 ? 'dominant' : delta <= -8 ? 'outmatched' : 'even' }
+  })
+  // Rewrite the trait read now that the opposing heroes are known: this is where "enough catch
+  // to delete a core" becomes "…though Dazzle can buy that target back".
+  team.traits = narrateTraits(team.traits, heroes, opponentHeroes, team.scores, team.peakWindow)
+  const identity = identityText(team.traits, team.scores, opponentHeroes, team.peakWindow)
+  team.identityHeadline = identity.headline
+  team.identitySummary = identity.summary
+  // Only warn about the two traits the identity headline is built on — a lesser trait being
+  // outmatched is already visible on its own row.
+  const contested = team.traits.filter((trait) => trait.tier !== 'situational').slice(0, 2)
+    .find((trait) => trait.edge === 'outmatched')
+  if (contested) {
+    const rival = opponent.traits.find((candidate) => candidate.id === contested.id)
+    team.identitySummary += ` Note that ${contested.label.toLowerCase()} is also the opponent's best pattern${rival ? ` (${rival.strength} to ${contested.strength}${rival.drivers[0] ? `, through ${rival.drivers[0]}` : ''})` : ''}, so it has to be set up rather than walked into.`
+  }
+
   if (scoreDelta(team, opponent, 'Roshan') <= -10) {
     team.gaps.unshift('Roshan access is contested; this lineup likely needs a pickoff or ward advantage before entering the pit.')
   }
@@ -427,6 +858,10 @@ function analyzeTeam(heroes: Hero[], meta?: RecentProMeta | null): TeamAnalysis 
     scores.Scaling >= 65 ? 'Protect core farm until the second and third major items arrive.' : `Accelerate the game during the ${peakWindow} power window.`,
   ]
 
+  // Standalone read: refineMatchupPlans rewrites both of these once the opposing draft is known.
+  const traits = narrateTraits(buildTraits(heroes, scores), heroes, [], scores, peakWindow)
+  const identity = identityText(traits, scores, [], peakWindow)
+
   return {
     scores,
     archetype: inferArchetype(scores),
@@ -442,6 +877,9 @@ function analyzeTeam(heroes: Hero[], meta?: RecentProMeta | null): TeamAnalysis 
     damageProfile: inferDamageProfile(heroes),
     responseItems: [],
     objectivePlan: objectivePlan(scores, peakWindow),
+    traits,
+    identityHeadline: identity.headline,
+    identitySummary: identity.summary,
   }
 }
 

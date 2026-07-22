@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Activity, AlertTriangle, Archive, BarChart3, Bot, BrainCircuit, Check, ChevronDown, Clock3, Crosshair,
-  Map, Music, Music2, RotateCcw, Save, Search, Sparkles, Swords, Target, Trash2, TrendingUp, Wifi,
+  Flame, Map, Music, Music2, RotateCcw, Save, Search, Sparkles, Swords, Target, Trash2, TrendingUp, Wifi,
   X,
 } from 'lucide-react'
-import { analyzeDraft, type Dimension, type MatchupAnalysis } from './analysisEngine'
+import { analyzeDraft, type Dimension, type DraftTrait, type MatchupAnalysis } from './analysisEngine'
 import { chooseHero, coachSuggestions, DRAFT_ORDER, teamName } from './draftEngine'
 import { fallbackHeroes, loadHeroes, type DataSource } from './heroData'
 import { loadRecentProMeta } from './recentMeta'
@@ -52,6 +52,9 @@ type ReportTeam = {
   responseItems: string[]
   objectivePlan: { window: string; action: string }[]
   spikes: { hero: string; label: string; window: string; impact: string }[]
+  identityHeadline: string
+  identitySummary: string
+  traits: DraftTrait[]
 }
 
 type ReportSequenceEntry = {
@@ -121,6 +124,9 @@ function buildReportSnapshot(actions: DraftAction[], analysis: MatchupAnalysis, 
       responseItems: side.responseItems,
       objectivePlan: side.objectivePlan,
       spikes: side.spikes.map((spike) => ({ hero: spike.hero.localizedName, label: spike.label, window: `${spike.minuteStart}-${spike.minuteEnd} min`, impact: spike.impact })),
+      identityHeadline: side.identityHeadline,
+      identitySummary: side.identitySummary,
+      traits: side.traits,
     }
   }
   const radiantNames = actions.filter((action) => action.team === 'radiant' && action.type === 'pick').map((action) => action.hero.localizedName)
@@ -191,6 +197,25 @@ export function buildReportHtml(report: SavedDraftReport) {
       <td>${report.dire.scores[dimension]}</td>
     </tr>
   `).join('')
+  const edgeLabel = { dominant: 'Advantage', even: 'Contested', outmatched: 'Outmatched' } as const
+  const traitBlock = (team: ReportTeam) => {
+    const traits = team.traits ?? []
+    if (!traits.length) return ''
+    const rows = traits.map((trait) => `
+      <li class="trait ${trait.tier}">
+        <div class="trait-head"><b>${htmlEscape(trait.label)}</b><span>${trait.strength}<small>/100</small></span></div>
+        <div class="trait-bar"><i style="width:${Math.min(100, trait.strength)}%"></i></div>
+        <p>${htmlEscape(trait.detail)}</p>
+        ${trait.tactic ? `<p class="trait-tactic">${htmlEscape(trait.tactic)}</p>` : ''}
+        <div class="trait-foot">${trait.drivers.length ? `<em>${htmlEscape(trait.drivers.join(', '))}</em>` : '<em>No dedicated heroes</em>'}${trait.edge ? `<span class="edge ${trait.edge}">${edgeLabel[trait.edge]}</span>` : ''}</div>
+      </li>
+    `).join('')
+    return `
+      <h3>How this draft wins <em>${htmlEscape(team.identityHeadline ?? '')}</em></h3>
+      <p class="identity">${htmlEscape(team.identitySummary ?? '')}</p>
+      <ul class="traits">${rows}</ul>
+    `
+  }
   const teamCard = (label: 'Radiant' | 'Dire', team: ReportTeam, side: Team) => `
     <section class="team-card ${side}">
       <header>
@@ -199,6 +224,7 @@ export function buildReportHtml(report: SavedDraftReport) {
         <p>${htmlEscape(team.damageProfile)} · ${htmlEscape(team.riskLevel)} risk · peak ${htmlEscape(team.peakWindow)}</p>
       </header>
       <div class="hero-strip">${team.heroes.map((hero) => `<span>${htmlEscape(hero)}</span>`).join('')}</div>
+      ${traitBlock(team)}
       <div class="grid-two">
         <div><h3>Win conditions</h3><ul>${list(team.winConditions)}</ul></div>
         <div><h3>What's lacking</h3><ul>${list(team.gaps)}</ul></div>
@@ -266,6 +292,21 @@ export function buildReportHtml(report: SavedDraftReport) {
     .team-card h2 { margin:4px 0; text-transform:uppercase; letter-spacing:.02em; }.team-card.radiant header { border-top:5px solid var(--radiant); }.team-card.dire header { border-top:5px solid var(--dire); }
     .hero-strip { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }.hero-strip span, .pills span { border:1px solid #d7d2c5; background:#f7f3e9; padding:6px 8px; font-size:12px; font-weight:800; }
     .grid-two { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; } h3 em { color:var(--muted); font-style:normal; font-weight:600; letter-spacing:0; text-transform:none; }
+    .identity { margin:6px 0 0; font-size:12.5px; }
+    .traits { list-style:none; margin:10px 0 0; padding:0; display:grid; gap:7px; }
+    .trait { border:1px solid var(--line); border-left-width:4px; border-left-color:#cfd4cf; background:#fff; padding:8px 10px; break-inside:avoid; }
+    .trait.signature { border-left-color:var(--gold); background:#fdf9ef; }
+    .trait.solid { border-left-color:#9aa89b; }
+    .trait.situational { opacity:.78; }
+    .trait-head { display:flex; justify-content:space-between; align-items:baseline; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+    .trait-head b { font-weight:900; } .trait-head span { font-weight:900; } .trait-head small { color:var(--muted); font-weight:700; }
+    .trait-bar { height:5px; background:#e9ebe7; margin:5px 0 6px; } .trait-bar i { display:block; height:100%; background:var(--ink); }
+    .trait.signature .trait-bar i { background:var(--gold); }
+    .trait p { margin:0; font-size:11.5px; line-height:1.4; }
+    .trait p.trait-tactic { margin-top:5px; padding-left:8px; border-left:2px solid var(--gold); color:#2f3a37; font-weight:600; }
+    .trait-foot { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:5px; font-size:10px; text-transform:uppercase; letter-spacing:.06em; }
+    .trait-foot em { color:var(--muted); font-style:normal; font-weight:700; }
+    .edge { font-weight:900; } .edge.dominant { color:var(--radiant); } .edge.outmatched { color:var(--dire); } .edge.even { color:var(--muted); }
     .pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }.objectives { list-style:none; padding-left:0; }.objectives li { display:grid; grid-template-columns:54px 1fr; gap:8px; }
     .foot { margin-top:18px; border-top:1px solid var(--line); padding-top:10px; color:#7b837f; font-size:11px; }
     @media print { body { background:#fff; } .sheet { margin:0; max-width:none; box-shadow:none; padding:12mm; } .print-actions { display:none; } .sequence-panel { break-inside:avoid; } @page { size:A4; margin:10mm; } }
@@ -403,7 +444,7 @@ function DraftComplete({
 }) {
   const [rated, setRated] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [tab, setTab] = useState<'overview' | 'timings' | 'conditions' | 'plan'>('overview')
+  const [tab, setTab] = useState<'overview' | 'identity' | 'timings' | 'conditions' | 'plan'>('overview')
   const reportId = useRef(makeId())
   const radiant = actions.filter((a) => a.team === 'radiant' && a.type === 'pick')
   const dire = actions.filter((a) => a.team === 'dire' && a.type === 'pick')
@@ -442,6 +483,7 @@ function DraftComplete({
         </div>
         <div className="report-tabs" role="tablist" aria-label="Analysis sections">
           <button role="tab" aria-selected={tab === 'overview'} className={tab === 'overview' ? 'active' : ''} onClick={() => setTab('overview')}><BarChart3 size={14} /> Matchup</button>
+          <button role="tab" aria-selected={tab === 'identity'} className={tab === 'identity' ? 'active' : ''} onClick={() => setTab('identity')}><Flame size={14} /> Draft identity</button>
           <button role="tab" aria-selected={tab === 'timings'} className={tab === 'timings' ? 'active' : ''} onClick={() => setTab('timings')}><Clock3 size={14} /> Item timings</button>
           <button role="tab" aria-selected={tab === 'conditions'} className={tab === 'conditions' ? 'active' : ''} onClick={() => setTab('conditions')}><Crosshair size={14} /> Win conditions</button>
           <button role="tab" aria-selected={tab === 'plan'} className={tab === 'plan' ? 'active' : ''} onClick={() => setTab('plan')}><Map size={14} /> Game plan</button>
@@ -460,6 +502,25 @@ function DraftComplete({
             <div className="factor-panel"><small>DECIDING FACTORS</small>{analysis.decidingFactors.map((factor) => <p key={factor}><TrendingUp size={13} />{factor}</p>)}</div>
             <div className="simulation-panel"><small>SIMULATION READ</small>{analysis.simulationInsights.map((insight) => <p key={insight}><Activity size={13} />{insight}</p>)}</div>
           </>}
+          {tab === 'identity' && <div className="identity-columns">
+            {(['radiant', 'dire'] as const).map((team) => <section key={team} className={team}>
+              <header>
+                <div><strong>{teamName(team)}</strong><span>{analysis[team].identityHeadline}</span></div>
+                <small>{analysis[team].archetype} · peak {analysis[team].peakWindow}</small>
+              </header>
+              <p className="identity-summary"><Flame size={13} />{analysis[team].identitySummary}</p>
+              <div className="trait-list">
+                {analysis[team].traits.map((trait) => <div className={`trait-row ${trait.tier}`} key={trait.id}>
+                  <div className="trait-title"><strong>{trait.label}</strong>{trait.edge && <i className={`trait-edge ${trait.edge}`}>{trait.edge === 'dominant' ? 'Advantage' : trait.edge === 'outmatched' ? 'Outmatched' : 'Contested'}</i>}<b>{trait.strength}</b></div>
+                  <span className="trait-track"><i style={{ width: `${Math.min(100, trait.strength)}%` }} /></span>
+                  <p>{trait.detail}</p>
+                  <p className="trait-tactic"><Crosshair size={11} />{trait.tactic}</p>
+                  <em>{trait.drivers.length ? trait.drivers.join(' · ') : 'No dedicated heroes'}</em>
+                </div>)}
+              </div>
+            </section>)}
+            <p className="estimate-note"><AlertTriangle size={13} /> Trait ratings are composition-based: they blend the dimension scores that produce each pattern and compare them head-to-head with the other draft. They describe what the lineup is built to do, not a guaranteed outcome.</p>
+          </div>}
           {tab === 'timings' && <div className="timing-columns">
             {(['radiant', 'dire'] as const).map((team) => <section key={team} className={team}><header><strong>{teamName(team)}</strong><span>Peak window {analysis[team].peakWindow}</span></header>{analysis[team].spikes.map((spike, index) => <div className="spike-row" key={`${spike.hero.id}-${index}`}><HeroImage hero={spike.hero} /><div><strong>{spike.hero.localizedName}</strong><span>{spike.label}</span></div><time>{spike.minuteStart}–{spike.minuteEnd}<small>MIN</small></time></div>)}</section>)}
             <p className="estimate-note"><AlertTriangle size={13} /> Timing ranges are composition-based estimates. Lane result, role assignment, patch, and build choice can move them substantially.</p>
