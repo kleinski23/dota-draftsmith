@@ -1,5 +1,457 @@
 [
   {
+    "matchId": 8907997366,
+    "startTime": 1784708127,
+    "radiantWin": true,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 1496,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 13,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 155,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 55,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 11,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 107,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 145,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 2,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 123,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 119,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 112,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 88,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 106,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 3,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 128,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 54,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 47,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 67,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 59,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 110,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 25,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 119,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": true,
+        "position": 4
+      },
+      {
+        "heroId": 3,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 106,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 25,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 2,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 145,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 128,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 110,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 88,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 112,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": true,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "matchId": 8907942033,
+    "startTime": 1784703847,
+    "radiantWin": false,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2441,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 107,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 128,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 55,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 11,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 13,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 155,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 6,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 51,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 67,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 100,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 123,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 119,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 17,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 26,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 106,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 69,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 54,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 98,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 19,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 73,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 104,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 6,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 17,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 26,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": true,
+        "position": 4
+      },
+      {
+        "heroId": 100,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 104,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 119,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": true,
+        "position": 4
+      },
+      {
+        "heroId": 123,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 155,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 106,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 73,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      }
+    ]
+  },
+  {
     "matchId": 8907510684,
     "startTime": 1784665827,
     "radiantWin": false,
@@ -84294,7 +84746,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 5232
   },
   {
     "matchId": 8873154946,
@@ -84519,7 +84972,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2499
   },
   {
     "matchId": 8873143287,
@@ -84744,7 +85198,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 1630
   },
   {
     "matchId": 8873136109,
@@ -84969,7 +85424,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 3541
   },
   {
     "matchId": 8873134972,
@@ -85194,7 +85650,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 2025
   },
   {
     "matchId": 8873111382,
@@ -85419,7 +85876,8 @@
         "roaming": false,
         "position": 2
       }
-    ]
+    ],
+    "duration": 2093
   },
   {
     "matchId": 8873090446,
@@ -85644,7 +86102,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2460
   },
   {
     "matchId": 8873085721,
@@ -85869,7 +86328,8 @@
         "roaming": true,
         "position": 5
       }
-    ]
+    ],
+    "duration": 1372
   },
   {
     "matchId": 8873084933,
@@ -86094,7 +86554,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 1783
   },
   {
     "matchId": 8873074159,
@@ -86319,7 +86780,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2028
   },
   {
     "matchId": 8873067083,
@@ -86544,7 +87006,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 1826
   },
   {
     "matchId": 8873061977,
@@ -86769,7 +87232,8 @@
         "roaming": true,
         "position": 4
       }
-    ]
+    ],
+    "duration": 1297
   },
   {
     "matchId": 8873060145,
@@ -86994,7 +87458,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 1790
   },
   {
     "matchId": 8873031100,
@@ -87219,7 +87684,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 2893
   },
   {
     "matchId": 8873034096,
@@ -87444,7 +87910,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 1249
   },
   {
     "matchId": 8873041404,
@@ -87669,7 +88136,8 @@
         "roaming": false,
         "position": 2
       }
-    ]
+    ],
+    "duration": 2518
   },
   {
     "matchId": 8872983345,
@@ -87894,7 +88362,8 @@
         "roaming": false,
         "position": 5
       }
-    ]
+    ],
+    "duration": 2483
   },
   {
     "matchId": 8872968440,
@@ -88119,7 +88588,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 1299
   },
   {
     "matchId": 8872959540,
@@ -88344,7 +88814,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 1158
   },
   {
     "matchId": 8872953252,
@@ -88569,7 +89040,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 2782
   },
   {
     "matchId": 8872946542,
@@ -88794,7 +89266,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 2515
   },
   {
     "matchId": 8872943566,
@@ -89019,7 +89492,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2246
   },
   {
     "matchId": 8872943248,
@@ -89244,7 +89718,8 @@
         "roaming": false,
         "position": 1
       }
-    ]
+    ],
+    "duration": 1394
   },
   {
     "matchId": 8872934751,
@@ -89469,7 +89944,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 1908
   },
   {
     "matchId": 8872916646,
@@ -89694,7 +90170,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2636
   },
   {
     "matchId": 8872932159,
@@ -89919,7 +90396,8 @@
         "roaming": false,
         "position": 5
       }
-    ]
+    ],
+    "duration": 1626
   },
   {
     "matchId": 8872923482,
@@ -90144,7 +90622,8 @@
         "roaming": false,
         "position": 5
       }
-    ]
+    ],
+    "duration": 1385
   },
   {
     "matchId": 8871520485,
@@ -90369,7 +90848,8 @@
         "roaming": false,
         "position": 4
       }
-    ]
+    ],
+    "duration": 3890
   },
   {
     "matchId": 8871409188,
@@ -90594,7 +91074,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2371
   },
   {
     "matchId": 8871239788,
@@ -90819,7 +91300,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 3431
   },
   {
     "matchId": 8871085894,
@@ -91044,7 +91526,8 @@
         "roaming": false,
         "position": 5
       }
-    ]
+    ],
+    "duration": 2473
   },
   {
     "matchId": 8870918906,
@@ -91269,7 +91752,8 @@
         "roaming": false,
         "position": 5
       }
-    ]
+    ],
+    "duration": 3946
   },
   {
     "matchId": 8870805066,
@@ -91494,7 +91978,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2567
   },
   {
     "matchId": 8869535334,
@@ -91719,7 +92204,8 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 3396
   },
   {
     "matchId": 8869425699,
@@ -91944,6 +92430,7 @@
         "roaming": false,
         "position": 3
       }
-    ]
+    ],
+    "duration": 2292
   }
 ]
