@@ -833,7 +833,7 @@ export default function App() {
     return matchesQuery && matchesAttr && matchesRole
   }), [heroes, query, attr, role])
   const coachAdvice = useMemo(
-    () => step && mode?.playerTeam && mode.playerTeam === step.team ? coachSuggestions(heroes, actions, step, mode.playerTeam, recentMeta, 4, draftSeed + actions.length) : [],
+    () => step && mode?.playerTeam && mode.playerTeam === step.team ? coachSuggestions(heroes, actions, step, mode.playerTeam, recentMeta, 5, draftSeed + actions.length) : [],
     [heroes, actions, step, mode?.playerTeam, recentMeta, draftSeed],
   )
   const suggestedIds = useMemo(() => new Set(coachAdvice.map((suggestion) => suggestion.hero.id)), [coachAdvice])
@@ -1049,12 +1049,15 @@ export default function App() {
             <button className="intel-toggle" onClick={() => setShowIntel((value) => !value)} aria-expanded={showIntel}><BrainCircuit size={16} /> {coachAdvice.length ? "COACH'S GUIDE" : 'DRAFT INTELLIGENCE'} <ChevronDown size={14} /></button>
             {showIntel && <div className="intel-content">
               {coachAdvice.length ? <div className="coach-guide">
-                <small><Target size={13} /> COACH'S GUIDE · BEST {step?.type === 'ban' ? 'BANS' : 'PICKS'} THIS TURN</small>
+                <div className="coach-guide-head">
+                  <small><Target size={13} /> COACH'S GUIDE - BEST {step?.type === 'ban' ? 'BANS' : 'PICKS'} THIS TURN</small>
+                  <span>Beta: still in development</span>
+                </div>
                 <div className="coach-suggestions">
                   {coachAdvice.map((suggestion) => (
                     <button key={suggestion.hero.id} className={selectedId === suggestion.hero.id ? 'active' : ''} onClick={() => setSelectedId(suggestion.hero.id)} title={`Select ${suggestion.hero.localizedName}`}>
                       <HeroImage hero={suggestion.hero} />
-                      <span><strong>{suggestion.hero.localizedName}</strong><em>{suggestion.reason}</em></span>
+                      <span><strong>{suggestion.hero.localizedName}<b>{suggestion.confidence} {suggestion.priority}</b></strong><em>{suggestion.reason}</em></span>
                     </button>
                   ))}
                 </div>

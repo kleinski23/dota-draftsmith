@@ -696,6 +696,8 @@ export function chooseHero(
 export interface CoachSuggestion {
   hero: Hero
   reason: string
+  confidence: 'HIGH' | 'MED' | 'WATCH'
+  priority: number
 }
 
 // Dimensions a pick can meaningfully shore up, with the short label used in advice text.
@@ -748,7 +750,7 @@ export function coachSuggestions(
   step: DraftStep,
   playerTeam: Team,
   recentMeta?: RecentProMeta | null,
-  count = 4,
+  count = 5,
   seed = 0,
 ): CoachSuggestion[] {
   const used = new Set(actions.map((action) => action.hero.id))
@@ -809,6 +811,7 @@ export function coachSuggestions(
       if (needs.note) notes.push({ weight: needs.note.weight * 1.2, text: needs.note.text })
       const intentNote = compositionIntentNote(hero, teamPicks, enemyPicks)
       if (intentNote && intentScore >= 8) notes.push({ weight: intentScore, text: intentNote })
+      if (signal && signal.firstPhase >= 10 && teamPicks.length <= 1) notes.push({ weight: signal.firstPhase * 0.25, text: 'Reliable early-phase opener' })
       if (publicEdge * 30 >= 5 && publicSignal) notes.push({ weight: publicEdge * 30, text: `${Math.round((publicSignal.wins / publicSignal.picks) * 100)}% high-rank win rate` })
     } else {
       // Ban advice: deny the heroes that punish your committed picks or complete the enemy draft.
@@ -831,13 +834,22 @@ export function coachSuggestions(
       if (fitScore >= 5) notes.push({ weight: fitScore, text: 'Completes the enemy draft' })
 
       if (signal && step.phase === 1) score += signal.firstPhase * 1.2
+      if (signal && signal.firstPhase >= 10) notes.push({ weight: signal.firstPhase * 0.3, text: 'Common first-phase deny' })
       if (presence >= 12) notes.push({ weight: presence, text: 'Heavily contested in pro drafts' })
       if (publicEdge * 30 >= 5 && publicSignal) notes.push({ weight: publicEdge * 30, text: `${Math.round((publicSignal.wins / publicSignal.picks) * 100)}% high-rank win rate` })
     }
 
-    const reason = notes.sort((a, b) => b.weight - a.weight).slice(0, 2).map((note) => note.text).join(' · ') || 'Strong current-patch presence'
+    const reason = Array.from(new Set(notes.sort((a, b) => b.weight - a.weight).map((note) => note.text))).slice(0, 2).join(' - ') || 'Strong current-patch presence'
     return { hero, reason, score }
   }).sort((a, b) => b.score - a.score)
+
+  const maxScore = Math.max(1, scored[0]?.score ?? 1)
+  const toSuggestion = ({ hero, reason, score }: { hero: Hero; reason: string; score: number }): CoachSuggestion => {
+    const priority = Math.max(1, Math.min(99, Math.round((score / maxScore) * 99)))
+    const gap = maxScore - score
+    const confidence: CoachSuggestion['confidence'] = priority >= 88 || gap <= 5 ? 'HIGH' : priority >= 70 || gap <= 12 ? 'MED' : 'WATCH'
+    return { hero, reason, confidence, priority }
+  }
 
   // Variety is only appropriate when the board offers no concrete target: with no heroes
   // revealed many bans/openers are equally valid, so rotate them by seed. The moment any pick
@@ -853,10 +865,10 @@ export function coachSuggestions(
       ...entry,
       jittered: entry.score * (1 + contextFactor * (seededUnit(entry.hero.id, seed) - 0.5) + index * 1e-6),
     })).sort((a, b) => b.jittered - a.jittered)
-    return pool.slice(0, count).map(({ hero, reason }) => ({ hero, reason }))
+    return pool.slice(0, count).map(toSuggestion)
   }
 
-  return scored.slice(0, count).map(({ hero, reason }) => ({ hero, reason }))
+  return scored.slice(0, count).map(toSuggestion)
 }
 
 export function teamName(team: Team) {
