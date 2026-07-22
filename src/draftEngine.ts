@@ -17,6 +17,17 @@ export const DRAFT_ORDER: DraftStep[] = [
 ]
 
 const CHEESE = ['broodmother', 'meepo', 'huskar', 'tinker', 'arc_warden', 'visage', 'lone_druid', 'lycan', 'chen']
+const SAVE = ['abaddon', 'dazzle', 'oracle', 'shadow_demon', 'tusk', 'vengefulspirit', 'winter_wyvern', 'wisp']
+const TEAMFIGHT = ['ancient_apparition', 'dark_seer', 'disruptor', 'earthshaker', 'enigma', 'faceless_void', 'magnataur', 'mars', 'phoenix', 'sand_king', 'tidehunter', 'warlock']
+const TOWER_DAMAGE = ['beastmaster', 'broodmother', 'chen', 'death_prophet', 'jakiro', 'leshrac', 'lone_druid', 'lycan', 'luna', 'pugna', 'shadow_shaman', 'visage']
+const WAVE_CLEAR = ['axe', 'dark_seer', 'earthshaker', 'ember_spirit', 'jakiro', 'keeper_of_the_light', 'kunkka', 'leshrac', 'lina', 'magnataur', 'sand_king', 'sven', 'underlord']
+const ROSHAN_DAMAGE = ['huskar', 'ursa', 'templar_assassin', 'slardar', 'troll_warlord', 'lone_druid', 'lycan', 'meepo']
+const BKB_PIERCE = ['axe', 'bane', 'beastmaster', 'batrider', 'doom_bringer', 'enigma', 'faceless_void', 'legion_commander', 'magnataur', 'pudge', 'shadow_demon', 'spirit_breaker']
+const ILLUSION_CORES = ['chaos_knight', 'naga_siren', 'phantom_lancer', 'terrorblade']
+const FLEX_OPENERS = ['bane', 'clockwerk', 'dark_willow', 'earthshaker', 'hoodwink', 'mirana', 'puck', 'rubick', 'snapfire', 'tiny', 'tusk', 'vengefulspirit']
+const FRONTLINERS = ['axe', 'bristleback', 'centaur', 'dragon_knight', 'mars', 'primal_beast', 'sand_king', 'shredder', 'tidehunter', 'abyssal_underlord']
+const MOBILE_CORES = ['antimage', 'ember_spirit', 'faceless_void', 'morphling', 'puck', 'queenofpain', 'slark', 'storm_spirit', 'void_spirit', 'weaver']
+const SILENCE_OR_ROOT = ['bloodseeker', 'death_prophet', 'disruptor', 'drow_ranger', 'grimstroke', 'night_stalker', 'puck', 'riki', 'silencer', 'skywrath_mage']
 
 // Curated hard-counter map for heroes whose whole game plan collapses into specific answers
 // (clones, illusions, summons, heal-stacking). The observed counter table only covers pairs
@@ -47,6 +58,39 @@ const hardCounters = (hero: Hero, target: Hero) => COUNTERED_BY[key(target)]?.in
 const key = (hero: Hero) => hero.name.replace('npc_dota_hero_', '')
 const hasAny = (hero: Hero, list: string[]) => list.includes(key(hero))
 const roleCount = (heroes: Hero[], role: string) => heroes.filter((hero) => hero.roles.includes(role)).length
+
+interface ScoreFactor {
+  label: string
+  value: number
+}
+
+interface ScoredHero {
+  hero: Hero
+  score: number
+  factors: ScoreFactor[]
+}
+
+interface DraftContext {
+  available: Hero[]
+  teamPicks: Hero[]
+  enemyPicks: Hero[]
+  step: DraftStep
+  strategy: Strategy
+  recentMeta?: RecentProMeta | null
+  maxPresence: number
+  maxRecentPresence: number
+  memory: number
+  isOpeningBan: boolean
+  isOpeningPick: boolean
+  openingHistory: number[]
+  pickHistory: number[]
+  suppressVariety?: boolean
+}
+
+const add = (factors: ScoreFactor[], label: string, value: number) => {
+  if (Math.abs(value) >= 0.25) factors.push({ label, value })
+  return value
+}
 
 function likelyPositionWeight(hero: Hero, position: 0 | 1 | 2 | 3 | 4, recentMeta?: RecentProMeta | null) {
   const observed = recentMeta?.positionSignals?.[hero.id]
@@ -172,6 +216,284 @@ function compositionScore(hero: Hero, teamPicks: Hero[]) {
   return score
 }
 
+function roleIntent(teamPicks: Hero[]) {
+  const scores = teamPicks.length ? scoreTeam(teamPicks) : null
+  return {
+    needsCarry: roleCount(teamPicks, 'Carry') === 0,
+    needsSupport: roleCount(teamPicks, 'Support') < Math.min(2, Math.max(1, teamPicks.length)),
+    needsDisable: roleCount(teamPicks, 'Disabler') < 2,
+    needsInitiation: roleCount(teamPicks, 'Initiator') === 0,
+    needsPush: !teamPicks.some((hero) => hero.roles.includes('Pusher') || hasAny(hero, TOWER_DAMAGE)) || (scores?.Push ?? 80) < 58,
+    needsWaveClear: !teamPicks.some((hero) => hasAny(hero, WAVE_CLEAR)),
+    needsSave: teamPicks.length >= 2 && !teamPicks.some((hero) => hasAny(hero, SAVE)) && (scores?.Sustain ?? 80) < 58,
+    needsRoshan: teamPicks.length >= 2 && !teamPicks.some((hero) => hasAny(hero, ROSHAN_DAMAGE)) && (scores?.Roshan ?? 80) < 58,
+    needsBkbPierce: teamPicks.length >= 2 && !teamPicks.some((hero) => hasAny(hero, BKB_PIERCE)),
+    needsTeamfight: (scores?.Teamfight ?? 80) < 58,
+    needsScaling: teamPicks.length >= 2 && (scores?.Scaling ?? 80) < 56,
+    needsFrontline: teamPicks.length >= 2 && !teamPicks.some((hero) => hero.roles.includes('Durable') || hasAny(hero, FRONTLINERS)),
+  }
+}
+
+function compositionIntentScore(hero: Hero, teamPicks: Hero[], enemyPicks: Hero[]) {
+  const intent = roleIntent(teamPicks)
+  let score = 0
+  if (intent.needsCarry && hero.roles.includes('Carry')) score += 14
+  if (intent.needsSupport && hero.roles.includes('Support')) score += 15
+  if (intent.needsDisable && hero.roles.includes('Disabler')) score += 10
+  if (intent.needsInitiation && hero.roles.includes('Initiator')) score += 10
+  if (intent.needsPush && (hero.roles.includes('Pusher') || hasAny(hero, TOWER_DAMAGE))) score += 11
+  if (intent.needsWaveClear && hasAny(hero, WAVE_CLEAR)) score += 9
+  if (intent.needsSave && hasAny(hero, SAVE)) score += 12
+  if (intent.needsRoshan && hasAny(hero, ROSHAN_DAMAGE)) score += 8
+  if (intent.needsBkbPierce && hasAny(hero, BKB_PIERCE)) score += 7
+  if (intent.needsTeamfight && hasAny(hero, TEAMFIGHT)) score += 11
+  if (intent.needsScaling && hero.roles.includes('Carry')) score += 6
+  if (intent.needsFrontline && (hero.roles.includes('Durable') || hasAny(hero, FRONTLINERS))) score += 10
+  if (enemyPicks.some((enemy) => hasAny(enemy, ILLUSION_CORES)) && hasAny(hero, WAVE_CLEAR)) score += 11
+  if (enemyPicks.some((enemy) => hasAny(enemy, MOBILE_CORES)) && (hero.roles.includes('Disabler') || hasAny(hero, SILENCE_OR_ROOT))) score += 10
+  return score
+}
+
+function compositionIntentNote(hero: Hero, teamPicks: Hero[], enemyPicks: Hero[]) {
+  const intent = roleIntent(teamPicks)
+  if (intent.needsFrontline && (hero.roles.includes('Durable') || hasAny(hero, FRONTLINERS))) return 'Adds a needed frontliner'
+  if (intent.needsSave && hasAny(hero, SAVE)) return 'Adds save/reset'
+  if (intent.needsPush && (hero.roles.includes('Pusher') || hasAny(hero, TOWER_DAMAGE))) return 'Adds objective damage'
+  if (intent.needsWaveClear && hasAny(hero, WAVE_CLEAR)) return 'Adds wave clear'
+  if (intent.needsRoshan && hasAny(hero, ROSHAN_DAMAGE)) return 'Adds Roshan threat'
+  if (intent.needsBkbPierce && hasAny(hero, BKB_PIERCE)) return 'Adds BKB-piercing control'
+  if (enemyPicks.some((enemy) => hasAny(enemy, ILLUSION_CORES)) && hasAny(hero, WAVE_CLEAR)) return 'Answers illusion pressure'
+  if (enemyPicks.some((enemy) => hasAny(enemy, MOBILE_CORES)) && (hero.roles.includes('Disabler') || hasAny(hero, SILENCE_OR_ROOT))) return 'Controls mobile cores'
+  return undefined
+}
+
+function metaSignals(hero: Hero, context: DraftContext) {
+  const recentSignal = context.recentMeta?.heroSignals[hero.id]
+  const publicSignal = context.recentMeta?.publicHeroSignals?.[hero.id]
+  const presence = ((hero.proPick + hero.proBan) / context.maxPresence) * 30
+  const recentPresence = recentSignal ? ((recentSignal.picks + recentSignal.bans) / context.maxRecentPresence) * 34 : 0
+  const recentWinRate = recentSignal?.picks ? (recentSignal.wins / recentSignal.picks - 0.5) * 16 : 0
+  const publicEdge = publicSignal && publicSignal.picks > 0
+    ? (publicSignal.wins / publicSignal.picks - 0.5) * 2 * (publicSignal.picks / (publicSignal.picks + 6))
+    : 0
+  return { recentSignal, publicSignal, presence, recentPresence, recentWinRate, publicEdge }
+}
+
+function scoreMetaPresence(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  const { presence, recentPresence, recentWinRate, publicEdge } = metaSignals(hero, context)
+  const banPresenceScale = context.isOpeningBan ? 0.58 : 1
+  const pickPresenceScale = context.isOpeningPick ? 0.72 : 1
+  let score = 0
+  score += add(factors, 'OpenDota hero contest rate', presence * (context.step.type === 'ban' ? 0.45 : 0.55))
+  score += add(factors, 'Recent pro draft presence', recentPresence * banPresenceScale * pickPresenceScale)
+  if (context.step.type === 'pick') score += add(factors, 'Recent pro win signal', recentWinRate)
+  score += add(factors, 'High-rank public trend', context.step.type === 'pick' ? publicEdge * 45 : Math.max(0, publicEdge) * 28)
+  score += add(factors, 'Session adaptation', Math.min(context.memory, 20) * 0.05)
+  return score
+}
+
+function scoreRepeatMemory(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  let score = 0
+  if (context.isOpeningBan && context.openingHistory.includes(hero.id)) {
+    score += add(factors, 'Opening-ban repeat penalty', -Math.max(0, 8 - context.openingHistory.indexOf(hero.id)) * 3.2)
+  }
+  if (context.step.type === 'pick' && context.pickHistory.includes(hero.id)) {
+    const exactAnswer = context.enemyPicks.some((enemy) => hardCounters(hero, enemy))
+    const fillNeed = roleNeedScore(hero, context.teamPicks) >= 14 || compositionIntentScore(hero, context.teamPicks, context.enemyPicks) >= 12
+    const relief = exactAnswer || fillNeed ? 0.45 : 1
+    score += add(factors, 'Recent AI pick repeat penalty', -Math.max(6, 34 - context.pickHistory.indexOf(hero.id) * 2.2) * relief)
+  }
+  return score
+}
+
+function scorePickStructure(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  if (context.step.type !== 'pick') return 0
+  let score = 0
+  score += add(factors, 'Role coverage', roleNeedScore(hero, context.teamPicks))
+  score += add(factors, 'Composition fit', compositionScore(hero, context.teamPicks))
+  score += add(factors, 'Role economy', roleEconomyScore(hero, context.teamPicks, context.recentMeta))
+  score += add(factors, 'Lane-pair fit', lanePairScore(hero, context.teamPicks, context.recentMeta))
+  score += add(factors, 'Draft intent coverage', compositionIntentScore(hero, context.teamPicks, context.enemyPicks))
+  const coherenceWeight = context.teamPicks.length * 60
+  score += add(factors, 'Position coherence', positionCoherence(hero, context.teamPicks, context.recentMeta) * coherenceWeight)
+  return score
+}
+
+function scoreMatchups(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  let score = 0
+  if (context.step.type === 'pick') {
+    for (const enemy of context.enemyPicks) {
+      if (hardCounters(enemy, hero)) score += add(factors, `${enemy.localizedName} hard-counters this pick`, -34)
+      if (hardCounters(hero, enemy)) score += add(factors, `Hard-counters ${enemy.localizedName}`, 18)
+      score += add(factors, `Observed counter into ${enemy.localizedName}`, (context.recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 16)
+    }
+    for (const ally of context.teamPicks) {
+      const synergyKey = hero.id < ally.id ? `${hero.id}:${ally.id}` : `${ally.id}:${hero.id}`
+      score += add(factors, `Pairs with ${ally.localizedName}`, (context.recentMeta?.synergy[synergyKey] ?? 0) * 18)
+    }
+  } else {
+    for (const enemy of context.enemyPicks) {
+      const pairKey = hero.id < enemy.id ? `${hero.id}:${enemy.id}` : `${enemy.id}:${hero.id}`
+      score += add(factors, `Denies ${enemy.localizedName} pairing`, Math.max(0, context.recentMeta?.synergy[pairKey] ?? 0) * 14)
+      score += add(factors, `Bans counter to ${enemy.localizedName}`, Math.max(0, context.recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 12)
+    }
+    for (const ally of context.teamPicks) {
+      if (hardCounters(hero, ally)) score += add(factors, `Protects ${ally.localizedName}`, 16)
+      score += add(factors, `Observed threat to ${ally.localizedName}`, Math.max(0, context.recentMeta?.counters[`${hero.id}:${ally.id}`] ?? 0) * 18)
+    }
+  }
+  return score
+}
+
+function scorePhaseAwareBan(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  if (context.step.type !== 'ban') return 0
+  const { recentSignal, presence } = metaSignals(hero, context)
+  let score = 0
+  if (context.step.phase === 1) {
+    score += add(factors, 'Phase 1 contested opener ban', (recentSignal?.firstPhase ?? 0) * 1.4 + presence * 0.35)
+    if (hasAny(hero, FLEX_OPENERS)) score += add(factors, 'Flexible opener denial', 8)
+  } else if (context.step.phase === 2) {
+    const enemyHasCarry = context.enemyPicks.some((pick) => pick.roles.includes('Carry'))
+    const enemyHasSupport = context.enemyPicks.some((pick) => pick.roles.includes('Support'))
+    if (!enemyHasCarry && hero.roles.includes('Carry')) score += add(factors, 'Phase 2 carry-pool squeeze', 10)
+    if (!enemyHasSupport && hero.roles.includes('Support')) score += add(factors, 'Phase 2 support-pool squeeze', 7)
+    for (const enemy of context.enemyPicks) {
+      const pairKey = hero.id < enemy.id ? `${hero.id}:${enemy.id}` : `${enemy.id}:${hero.id}`
+      score += add(factors, `Blocks ${enemy.localizedName} partner`, Math.max(0, context.recentMeta?.synergy[pairKey] ?? 0) * 20)
+    }
+  } else {
+    if (hasAny(hero, CHEESE)) score += add(factors, 'Phase 3 cheese protection', 16)
+    for (const ally of context.teamPicks) if (hardCounters(hero, ally)) score += add(factors, `Last-phase protects ${ally.localizedName}`, 22)
+    const enemyIntent = roleIntent(context.enemyPicks)
+    if (enemyIntent.needsCarry && hero.roles.includes('Carry')) score += add(factors, 'Last-pick core denial', 14)
+    if (enemyIntent.needsInitiation && hero.roles.includes('Initiator')) score += add(factors, 'Last-pick initiation denial', 10)
+  }
+  return score
+}
+
+function scoreStrategyProfile(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  const { recentSignal, presence, recentPresence, recentWinRate, publicEdge } = metaSignals(hero, context)
+  let score = 0
+  if (context.strategy === 'meta') {
+    score += add(factors, 'Meta profile: contested hero', presence * 0.45 + recentPresence * (context.step.type === 'ban' ? 0.55 : 1.15))
+    score += add(factors, 'Meta profile: first-phase data', (recentSignal?.firstPhase ?? 0) * (context.isOpeningBan ? 0.45 : 2))
+    score += add(factors, 'Meta profile: winning trend', Math.max(0, publicEdge) * 30 + (context.step.type === 'pick' ? recentWinRate * 0.6 : 0))
+  }
+  if (context.strategy === 'balanced') {
+    score += add(factors, 'Adaptive profile: flexibility', hero.roles.length * 2)
+    if (context.step.type === 'pick') {
+      score += add(factors, 'Adaptive profile: role repair', roleNeedScore(hero, context.teamPicks) * 0.6)
+      for (const enemy of context.enemyPicks) score += add(factors, `Adaptive answer to ${enemy.localizedName}`, (context.recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 10)
+      const observedPositions = context.recentMeta?.positionSignals?.[hero.id]
+      if (observedPositions?.samples) {
+        const flexible = observedPositions.positions.filter((count) => count / observedPositions.samples >= 0.2).length
+        if (flexible >= 2) score += add(factors, 'Observed multi-position flex', 7)
+      }
+    }
+  }
+  if (context.strategy === 'cheese') {
+    const cheeseAnswered = context.enemyPicks.some((enemy) => hardCounters(enemy, hero))
+    score += add(factors, 'Cheese profile: narrow win condition', hasAny(hero, CHEESE) && !cheeseAnswered ? (context.step.phase === 3 ? 48 : 14) : 0)
+    if (context.step.type === 'pick') {
+      const surprise = Math.max(0, publicEdge) * Math.max(0, 1 - recentPresence / 20)
+      score += add(factors, 'Cheese profile: low-practice surprise', surprise * (context.step.phase === 3 ? 55 : 30))
+    }
+  }
+  if (context.strategy === 'counter') {
+    if (context.step.type === 'pick') {
+      for (const enemy of context.enemyPicks) score += add(factors, `Counter profile into ${enemy.localizedName}`, (context.recentMeta?.counters[`${hero.id}:${enemy.id}`] ?? 0) * 24)
+      score += add(factors, 'Counter profile: reliable disable', hero.roles.includes('Disabler') ? 8 : 0)
+      if (!context.enemyPicks.length) score += add(factors, 'Counter profile: keeps options hidden', hero.roles.length * 1.5)
+    } else {
+      score += add(factors, 'Counter profile: meta denial', presence * 0.7)
+      for (const ally of context.teamPicks) score += add(factors, `Counter-ban protects ${ally.localizedName}`, Math.max(0, context.recentMeta?.counters[`${hero.id}:${ally.id}`] ?? 0) * 20)
+    }
+  }
+  return score
+}
+
+function lineupHealth(heroes: Hero[]) {
+  if (!heroes.length) return 0
+  const scores = scoreTeam(heroes)
+  return scores.Laning * 0.12
+    + scores.Teamfight * 0.16
+    + scores.Pickoff * 0.14
+    + scores.Push * 0.13
+    + scores.Sustain * 0.11
+    + scores.Scaling * 0.13
+    + scores.Roshan * 0.1
+    + scores.Execution * 0.11
+}
+
+function estimateEnemyCompletion(hero: Hero, enemyPicks: Hero[], ourPicks: Hero[], context: DraftContext) {
+  const { presence, recentPresence, recentWinRate, publicEdge } = metaSignals(hero, context)
+  let score = presence * 0.18 + recentPresence * 0.34 + Math.max(0, recentWinRate) * 0.8 + Math.max(0, publicEdge) * 22
+  score += roleNeedScore(hero, enemyPicks) * 0.72
+  score += roleEconomyScore(hero, enemyPicks, context.recentMeta) * 0.5
+  score += lanePairScore(hero, enemyPicks, context.recentMeta) * 0.6
+  score += compositionIntentScore(hero, enemyPicks, ourPicks) * 0.8
+
+  for (const ally of enemyPicks) {
+    const synergyKey = hero.id < ally.id ? `${hero.id}:${ally.id}` : `${ally.id}:${hero.id}`
+    score += Math.max(0, context.recentMeta?.synergy[synergyKey] ?? 0) * 18
+  }
+  for (const target of ourPicks) {
+    if (hardCounters(hero, target)) score += 18
+    score += Math.max(0, context.recentMeta?.counters[`${hero.id}:${target.id}`] ?? 0) * 18
+  }
+  return score
+}
+
+function scoreLookahead(hero: Hero, context: DraftContext, factors: ScoreFactor[]) {
+  const responsePool = context.available.filter((candidate) => candidate.id !== hero.id)
+  if (responsePool.length < 2) return 0
+
+  if (context.step.type === 'ban') {
+    const denyScore = estimateEnemyCompletion(hero, context.enemyPicks, context.teamPicks, context)
+    return add(factors, 'Deny likely enemy completion', Math.min(18, denyScore * 0.28))
+  }
+
+  const futureTeam = [...context.teamPicks, hero]
+  const futureHealthGain = lineupHealth(futureTeam) - lineupHealth(context.teamPicks)
+  const likelyResponses = responsePool
+    .map((candidate) => ({ hero: candidate, score: estimateEnemyCompletion(candidate, context.enemyPicks, futureTeam, context) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+  const bestResponse = likelyResponses[0]
+  if (!bestResponse) return add(factors, 'One-step lineup stability', Math.min(12, futureHealthGain * 0.14))
+
+  const directPunish = futureTeam.reduce((total, ally) => total + (hardCounters(bestResponse.hero, ally) ? 1 : 0), 0)
+  let score = 0
+  score += add(factors, 'One-step lineup stability', Math.min(12, futureHealthGain * 0.14))
+  score += add(factors, `Projected enemy reply: ${bestResponse.hero.localizedName}`, -Math.min(16, bestResponse.score * 0.13 + directPunish * 5))
+
+  const secondResponse = likelyResponses[1]
+  if (secondResponse && bestResponse.score - secondResponse.score < 4) {
+    score += add(factors, 'Multiple enemy replies remain open', -4)
+  }
+  return score
+}
+
+function scoreCandidate(hero: Hero, context: DraftContext): ScoredHero {
+  const factors: ScoreFactor[] = []
+  let score = context.suppressVariety ? 0 : add(factors, 'Controlled draft variety', Math.random() * (context.isOpeningBan ? 14 : 7))
+  score += scoreMetaPresence(hero, context, factors)
+  score += scoreRepeatMemory(hero, context, factors)
+  score += scorePickStructure(hero, context, factors)
+  score += scoreMatchups(hero, context, factors)
+  score += scorePhaseAwareBan(hero, context, factors)
+  score += scoreStrategyProfile(hero, context, factors)
+  score += scoreLookahead(hero, context, factors)
+  return { hero, score, factors: factors.sort((a, b) => Math.abs(b.value) - Math.abs(a.value)) }
+}
+
+function factorReason(scored: ScoredHero, fallback: string) {
+  const positives = scored.factors.filter((factor) => factor.value > 2.5).slice(0, 3)
+  const negatives = scored.factors.filter((factor) => factor.value < -8).slice(0, 1)
+  const reasons = [...positives, ...negatives].map((factor) => factor.label)
+  return reasons.length ? `${fallback} Key read: ${reasons.join(' · ')}.` : fallback
+}
+
 function reasonFor(hero: Hero, strategy: Strategy, teamPicks: Hero[], isBan: boolean) {
   const heroName = hero.localizedName
   if (isBan && strategy === 'counter') return `${heroName} removes a high-impact answer before the next reveal.`
@@ -182,7 +504,7 @@ function reasonFor(hero: Hero, strategy: Strategy, teamPicks: Hero[], isBan: boo
   return `${heroName} improves role coverage and gives this lineup a clearer timing window.`
 }
 
-export function chooseHero(
+function chooseHeroLegacy(
   heroes: Hero[],
   actions: DraftAction[],
   step: DraftStep,
@@ -318,6 +640,59 @@ export function chooseHero(
   return { hero: selected, reason: `${baseReason}${recentNote}${publicNote}` }
 }
 
+export function chooseHero(
+  heroes: Hero[],
+  actions: DraftAction[],
+  step: DraftStep,
+  strategy: Strategy,
+  recentMeta?: RecentProMeta | null,
+): { hero: Hero; reason: string } {
+  const used = new Set(actions.map((action) => action.hero.id))
+  const available = heroes.filter((hero) => !used.has(hero.id))
+  const teamPicks = actions.filter((a) => a.type === 'pick' && a.team === step.team).map((a) => a.hero)
+  const enemyPicks = actions.filter((a) => a.type === 'pick' && a.team !== step.team).map((a) => a.hero)
+  const isOpeningBan = step.type === 'ban' && enemyPicks.length === 0 && teamPicks.length === 0
+  const context: DraftContext = {
+    available,
+    teamPicks,
+    enemyPicks,
+    step,
+    strategy,
+    recentMeta,
+    maxPresence: Math.max(1, ...heroes.map((h) => h.proPick + h.proBan)),
+    maxRecentPresence: Math.max(1, ...Object.values(recentMeta?.heroSignals ?? {}).map((s) => s.picks + s.bans)),
+    memory: Number(localStorage.getItem('draftsmith_sessions') ?? 0),
+    isOpeningBan,
+    isOpeningPick: step.type === 'pick' && teamPicks.length === 0,
+    openingHistory: isOpeningBan ? recentOpeningBans() : [],
+    pickHistory: step.type === 'pick' ? recentAiPicks() : [],
+  }
+
+  const scored = available.map((hero) => scoreCandidate(hero, context)).sort((a, b) => b.score - a.score)
+  if (!scored.length) return chooseHeroLegacy(heroes, actions, step, strategy, recentMeta)
+
+  const candidateCount = step.type === 'ban' ? (enemyPicks.length ? 5 : 10) : teamPicks.length === 0 ? 10 : 4
+  const candidatePool = Math.min(candidateCount, scored.length)
+  const temperature = step.type === 'ban' && enemyPicks.length === 0 ? 0.85 : teamPicks.length === 0 ? 0.95 : 1.35
+  const selectedEntry = scored[pickCandidateIndex(candidatePool, temperature)] ?? scored[0]
+  const selected = selectedEntry.hero
+
+  if (step.type === 'ban' && enemyPicks.length === 0 && teamPicks.length === 0) rememberOpeningBan(selected.id)
+  if (step.type === 'pick') rememberAiPick(selected.id)
+
+  const baseReason = reasonFor(selected, strategy, teamPicks, step.type === 'ban')
+  const selectedRecent = recentMeta?.heroSignals[selected.id]
+  const recentObservations = Math.round((selectedRecent?.picks ?? 0) + (selectedRecent?.bans ?? 0))
+  const recentNote = selectedRecent && recentObservations > 0
+    ? ` Observed in about ${recentObservations} of ${recentMeta?.matchesAnalyzed ?? 0} weighted current-patch pro drafts.`
+    : ''
+  const selectedPublic = recentMeta?.publicHeroSignals?.[selected.id]
+  const publicNote = selectedPublic && selectedPublic.picks >= 2
+    ? ` High-rank win rate ≈ ${Math.round((selectedPublic.wins / selectedPublic.picks) * 100)}% in the current Divine+ sample.`
+    : ''
+  return { hero: selected, reason: factorReason(selectedEntry, `${baseReason}${recentNote}${publicNote}`) }
+}
+
 export interface CoachSuggestion {
   hero: Hero
   reason: string
@@ -420,7 +795,8 @@ export function coachSuggestions(
       if (partners.length) notes.push({ weight: synergyScore, text: `Pairs with ${partners.slice(0, 2).join(' + ')}` })
 
       const needScore = roleNeedScore(hero, teamPicks)
-      score += needScore + roleEconomyScore(hero, teamPicks, recentMeta) + compositionScore(hero, teamPicks) + lanePairScore(hero, teamPicks, recentMeta)
+      const intentScore = compositionIntentScore(hero, teamPicks, enemyPicks)
+      score += needScore + roleEconomyScore(hero, teamPicks, recentMeta) + compositionScore(hero, teamPicks) + lanePairScore(hero, teamPicks, recentMeta) + intentScore
       if (needScore >= 14) {
         const held = new Set(teamPicks.flatMap((pick) => pick.roles))
         const need = !held.has('Carry') && hero.roles.includes('Carry') ? 'carry' : !held.has('Support') && hero.roles.includes('Support') ? 'support' : 'initiation'
@@ -431,6 +807,8 @@ export function coachSuggestions(
       const needs = teamNeedBoost(hero, teamPicks)
       score += needs.value * 1.2
       if (needs.note) notes.push({ weight: needs.note.weight * 1.2, text: needs.note.text })
+      const intentNote = compositionIntentNote(hero, teamPicks, enemyPicks)
+      if (intentNote && intentScore >= 8) notes.push({ weight: intentScore, text: intentNote })
       if (publicEdge * 30 >= 5 && publicSignal) notes.push({ weight: publicEdge * 30, text: `${Math.round((publicSignal.wins / publicSignal.picks) * 100)}% high-rank win rate` })
     } else {
       // Ban advice: deny the heroes that punish your committed picks or complete the enemy draft.
