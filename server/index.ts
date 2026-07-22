@@ -17,6 +17,7 @@ app.get('/api/health', async (_request, response) => {
 app.get('/api/meta/recent', async (_request, response) => {
   try {
     response.setHeader('Cache-Control', 'no-cache, stale-while-revalidate=300')
+    response.setHeader('X-DraftGG-Data-Source', 'live')
     response.json(await getCachedMeta())
   } catch {
     response.status(503).json({ error: 'Professional draft model is warming up' })
@@ -25,6 +26,7 @@ app.get('/api/meta/recent', async (_request, response) => {
 app.get('/api/heroes', async (_request, response) => {
   try {
     response.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400')
+    response.setHeader('X-DraftGG-Data-Source', 'live')
     response.json(await getCachedHeroes())
   } catch {
     response.status(503).json({ error: 'Hero metadata is unavailable' })

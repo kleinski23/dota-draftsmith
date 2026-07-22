@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server/index.ts --dev",
+    "prebuild": "npm run data:publish",
     "build": "tsc -b && vite build",
     "start": "tsx server/index.ts",
     "ingest:meta": "tsx server/ingest.ts --force",
+    "data:publish": "tsx server/publish-snapshots.ts",
+    "data:refresh": "tsx server/refresh-snapshots.ts",
     "engine:update": "tsx server/update-engine.ts",
     "engine:evaluate": "tsx server/evaluate-model.ts",
     "lint": "eslint .",

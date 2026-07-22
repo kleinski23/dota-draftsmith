@@ -14,6 +14,34 @@ type ApiHero = {
   pro_win?: number
 }
 
+export type DataSource = 'live' | 'bundled'
+
+function apiHeroes(payload: ApiHero[] | { heroes?: ApiHero[] }): ApiHero[] {
+  const heroes = Array.isArray(payload) ? payload : payload.heroes
+  if (!Array.isArray(heroes) || heroes.length === 0) throw new Error('Hero data is empty or invalid')
+  return heroes
+}
+
+function dataSource(response: Response): DataSource {
+  return response.headers.get('x-draftgg-data-source') === 'bundled' ? 'bundled' : 'live'
+}
+
+function mapHeroes(data: ApiHero[]): Hero[] {
+  return data.map((hero) => ({
+    id: hero.id,
+    name: hero.name,
+    localizedName: hero.localized_name,
+    primaryAttr: hero.primary_attr,
+    attackType: hero.attack_type,
+    roles: hero.roles,
+    image: `https://cdn.cloudflare.steamstatic.com${hero.img}`,
+    icon: `https://cdn.cloudflare.steamstatic.com${hero.icon}`,
+    proPick: hero.pro_pick ?? 0,
+    proBan: hero.pro_ban ?? 0,
+    proWin: hero.pro_win ?? 0,
+  }))
+}
+
 const fallbackNames = [
   ['antimage', 'Anti-Mage', 'agi', 'Carry'], ['axe', 'Axe', 'str', 'Initiator'],
   ['bane', 'Bane', 'all', 'Support'], ['bloodseeker', 'Bloodseeker', 'agi', 'Carry'],
@@ -98,50 +126,26 @@ export const fallbackHeroes: Hero[] = fallbackNames.map(([name, localizedName, a
   proWin: 0,
 }))
 
-export async function loadHeroes(): Promise<{ heroes: Hero[]; live: boolean }> {
+export async function loadHeroes(): Promise<{ heroes: Hero[]; source: DataSource }> {
   try {
     const response = await fetch('/api/heroes')
     if (!response.ok) throw new Error('OpenDota unavailable')
-    const data = await response.json() as ApiHero[]
+    const data = apiHeroes(await response.json() as ApiHero[] | { heroes?: ApiHero[] })
     return {
-      live: true,
-      heroes: data.map((hero) => ({
-        id: hero.id,
-        name: hero.name,
-        localizedName: hero.localized_name,
-        primaryAttr: hero.primary_attr,
-        attackType: hero.attack_type,
-        roles: hero.roles,
-        image: `https://cdn.cloudflare.steamstatic.com${hero.img}`,
-        icon: `https://cdn.cloudflare.steamstatic.com${hero.icon}`,
-        proPick: hero.pro_pick ?? 0,
-        proBan: hero.pro_ban ?? 0,
-        proWin: hero.pro_win ?? 0,
-      })),
+      source: dataSource(response),
+      heroes: mapHeroes(data),
     }
   } catch {
     try {
       const response = await fetch('/data/heroes.json')
       if (!response.ok) throw new Error('Bundled hero data unavailable')
-      const data = await response.json() as ApiHero[]
+      const data = apiHeroes(await response.json() as ApiHero[] | { heroes?: ApiHero[] })
       return {
-        live: false,
-        heroes: data.map((hero) => ({
-          id: hero.id,
-          name: hero.name,
-          localizedName: hero.localized_name,
-          primaryAttr: hero.primary_attr,
-          attackType: hero.attack_type,
-          roles: hero.roles,
-          image: `https://cdn.cloudflare.steamstatic.com${hero.img}`,
-          icon: `https://cdn.cloudflare.steamstatic.com${hero.icon}`,
-          proPick: hero.pro_pick ?? 0,
-          proBan: hero.pro_ban ?? 0,
-          proWin: hero.pro_win ?? 0,
-        })),
+        source: 'bundled',
+        heroes: mapHeroes(data),
       }
     } catch {
-      return { heroes: fallbackHeroes, live: false }
+      return { heroes: fallbackHeroes, source: 'bundled' }
     }
   }
 }

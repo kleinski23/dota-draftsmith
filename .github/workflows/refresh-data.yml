@@ -1,0 +1,44 @@
+name: Refresh OpenDota snapshots
+
+on:
+  schedule:
+    # Once daily, off the hour, to avoid API and Actions traffic spikes.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-opendota-snapshots
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Refresh and publish snapshots
+        run: npm run data:refresh
+        env:
+          PRO_MATCH_BATCH_SIZE: 48
+          HIGH_RANK_BATCH_SIZE: 240
+          PRO_POSITION_BACKFILL_SIZE: 48
+      - run: npm run build
+      - name: Commit changed snapshots
+        run: |
+          if git diff --quiet -- data public/data; then
+            echo "Snapshots are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data public/data
+          git commit -m "chore: refresh OpenDota snapshots"
+          git push

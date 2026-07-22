@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 import { analyzeDraft, type Dimension, type MatchupAnalysis } from './analysisEngine'
 import { chooseHero, coachSuggestions, DRAFT_ORDER, teamName } from './draftEngine'
-import { fallbackHeroes, loadHeroes } from './heroData'
+import { fallbackHeroes, loadHeroes, type DataSource } from './heroData'
 import { loadRecentProMeta } from './recentMeta'
 import type { DraftAction, DraftMode, Hero, RecentProMeta, Strategy, Team } from './types'
 
@@ -360,7 +360,7 @@ function TeamRail({ team, actions }: { team: Team; actions: DraftAction[] }) {
   )
 }
 
-function StartScreen({ onStart, heroLive }: { onStart: (mode: DraftMode) => void; heroLive: boolean }) {
+function StartScreen({ onStart, heroSource }: { onStart: (mode: DraftMode) => void; heroSource: DataSource }) {
   return (
     <main className="start-screen">
       <div className="start-noise" />
@@ -381,7 +381,7 @@ function StartScreen({ onStart, heroLive }: { onStart: (mode: DraftMode) => void
         </div>
 
         <div className="start-meta">
-          <span className={heroLive ? 'online' : 'local'}>{heroLive ? <Wifi size={13} /> : <Archive size={13} />}{heroLive ? 'Live OpenDota roster' : 'Bundled roster ready'}</span>
+          <span className={heroSource === 'live' ? 'online' : 'local'}>{heroSource === 'live' ? <Wifi size={13} /> : <Archive size={13} />}{heroSource === 'live' ? 'Live OpenDota roster' : 'Bundled OpenDota roster'}</span>
           <span>No login</span><span>Free to practice</span><span>Local feedback</span>
         </div>
       </section>
@@ -577,7 +577,7 @@ function SavedReportViewer({ report, onClose }: { report: SavedDraftReport; onCl
 
 export default function App() {
   const [heroes, setHeroes] = useState<Hero[]>(fallbackHeroes)
-  const [live, setLive] = useState(false)
+  const [heroSource, setHeroSource] = useState<DataSource>('bundled')
   const [loading, setLoading] = useState(true)
   const [mode, setMode] = useState<DraftMode | null>(null)
   const [actions, setActions] = useState<DraftAction[]>([])
@@ -591,6 +591,7 @@ export default function App() {
   const [showIntel, setShowIntel] = useState(true)
   const [draftSeed, setDraftSeed] = useState(() => (Math.random() * 1e9) | 0)
   const [recentMeta, setRecentMeta] = useState<RecentProMeta | null>(null)
+  const [metaSource, setMetaSource] = useState<DataSource | null>(null)
   const [metaLoading, setMetaLoading] = useState(true)
   const [savedReports, setSavedReports] = useState<SavedDraftReport[]>(readSavedReports)
   const [showSavedReports, setShowSavedReports] = useState(false)
@@ -612,14 +613,15 @@ export default function App() {
   const loopFadeActive = useRef(false)
 
   useEffect(() => {
-    loadHeroes().then(({ heroes: loaded, live: isLive }) => {
-      setHeroes(loaded); setLive(isLive); setLoading(false)
+    loadHeroes().then(({ heroes: loaded, source }) => {
+      setHeroes(loaded); setHeroSource(source); setLoading(false)
     })
   }, [])
 
   useEffect(() => {
-    loadRecentProMeta().then(({ meta }) => {
+    loadRecentProMeta().then(({ meta, source }) => {
       setRecentMeta(meta)
+      setMetaSource(source)
       setMetaLoading(false)
     })
   }, [])
@@ -957,7 +959,7 @@ export default function App() {
 
   if (!mode) return (
     <>
-      <StartScreen onStart={startDraft} heroLive={live} />
+      <StartScreen onStart={startDraft} heroSource={heroSource} />
       <audio ref={audioRef} src={DRAFT_BGM_SOURCE} preload="auto" />
     </>
   )
@@ -970,7 +972,7 @@ export default function App() {
   const metaStatus = metaLoading
     ? { className: '', icon: <Activity size={13} />, label: 'Loading pro meta' }
     : recentMeta
-      ? { className: 'online', icon: <Wifi size={13} />, label: recentMeta.publicMatchesAnalyzed ? `${recentMeta.matchesAnalyzed} pro + ${recentMeta.publicMatchesAnalyzed} high-rank` : `${recentMeta.matchesAnalyzed} pro drafts` }
+      ? { className: metaSource === 'live' ? 'online' : 'local', icon: metaSource === 'live' ? <Wifi size={13} /> : <Archive size={13} />, label: `${metaSource === 'live' ? 'Live' : 'Bundled'} · ${recentMeta.publicMatchesAnalyzed ? `${recentMeta.matchesAnalyzed} pro + ${recentMeta.publicMatchesAnalyzed} high-rank` : `${recentMeta.matchesAnalyzed} pro drafts`}` }
       : { className: 'local', icon: <Archive size={13} />, label: 'Role model fallback' }
 
   return (
