@@ -1,5 +1,5612 @@
 [
   {
+    "matchId": 8927044673,
+    "startTime": 1785737539,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 973,
+    "radiant": [
+      21,
+      9,
+      11,
+      14,
+      135
+    ],
+    "dire": [
+      114,
+      100,
+      39,
+      97,
+      75
+    ]
+  },
+  {
+    "matchId": 8927043443,
+    "startTime": 1785737434,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1247,
+    "radiant": [
+      104,
+      60,
+      105,
+      54,
+      53
+    ],
+    "dire": [
+      78,
+      2,
+      58,
+      32,
+      6
+    ]
+  },
+  {
+    "matchId": 8927041940,
+    "startTime": 1785737299,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1095,
+    "radiant": [
+      36,
+      128,
+      51,
+      83,
+      145
+    ],
+    "dire": [
+      38,
+      50,
+      85,
+      22,
+      138
+    ]
+  },
+  {
+    "matchId": 8927041038,
+    "startTime": 1785737219,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1165,
+    "radiant": [
+      14,
+      11,
+      110,
+      57,
+      54
+    ],
+    "dire": [
+      69,
+      93,
+      77,
+      84,
+      81
+    ]
+  },
+  {
+    "matchId": 8927040318,
+    "startTime": 1785737159,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1281,
+    "radiant": [
+      21,
+      26,
+      113,
+      37,
+      6
+    ],
+    "dire": [
+      83,
+      22,
+      48,
+      35,
+      99
+    ]
+  },
+  {
+    "matchId": 8927040069,
+    "startTime": 1785737134,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1289,
+    "radiant": [
+      94,
+      106,
+      53,
+      38,
+      28
+    ],
+    "dire": [
+      59,
+      101,
+      93,
+      65,
+      68
+    ]
+  },
+  {
+    "matchId": 8927039995,
+    "startTime": 1785737129,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1549,
+    "radiant": [
+      6,
+      90,
+      64,
+      28,
+      92
+    ],
+    "dire": [
+      113,
+      14,
+      85,
+      104,
+      53
+    ]
+  },
+  {
+    "matchId": 8927039028,
+    "startTime": 1785737039,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1278,
+    "radiant": [
+      11,
+      71,
+      85,
+      28,
+      40
+    ],
+    "dire": [
+      12,
+      22,
+      101,
+      16,
+      104
+    ]
+  },
+  {
+    "matchId": 8927038834,
+    "startTime": 1785737028,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1464,
+    "radiant": [
+      86,
+      62,
+      54,
+      35,
+      92
+    ],
+    "dire": [
+      87,
+      74,
+      63,
+      26,
+      67
+    ]
+  },
+  {
+    "matchId": 8927038914,
+    "startTime": 1785737019,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1311,
+    "radiant": [
+      95,
+      129,
+      71,
+      126,
+      86
+    ],
+    "dire": [
+      96,
+      76,
+      26,
+      12,
+      105
+    ]
+  },
+  {
+    "matchId": 8927038785,
+    "startTime": 1785737019,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 933,
+    "radiant": [
+      48,
+      101,
+      108,
+      31,
+      5
+    ],
+    "dire": [
+      8,
+      39,
+      27,
+      110,
+      135
+    ]
+  },
+  {
+    "matchId": 8927038415,
+    "startTime": 1785736994,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1501,
+    "radiant": [
+      36,
+      97,
+      26,
+      86,
+      138
+    ],
+    "dire": [
+      22,
+      57,
+      32,
+      16,
+      21
+    ]
+  },
+  {
+    "matchId": 8927038399,
+    "startTime": 1785736989,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1465,
+    "radiant": [
+      92,
+      14,
+      73,
+      107,
+      20
+    ],
+    "dire": [
+      9,
+      32,
+      26,
+      2,
+      12
+    ]
+  },
+  {
+    "matchId": 8927038550,
+    "startTime": 1785736974,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1537,
+    "radiant": [
+      128,
+      1,
+      71,
+      129,
+      91
+    ],
+    "dire": [
+      5,
+      15,
+      19,
+      40,
+      17
+    ]
+  },
+  {
+    "matchId": 8927038049,
+    "startTime": 1785736959,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1603,
+    "radiant": [
+      26,
+      106,
+      14,
+      48,
+      43
+    ],
+    "dire": [
+      128,
+      119,
+      86,
+      18,
+      91
+    ]
+  },
+  {
+    "matchId": 8927038046,
+    "startTime": 1785736959,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1696,
+    "radiant": [
+      98,
+      62,
+      48,
+      107,
+      64
+    ],
+    "dire": [
+      83,
+      41,
+      21,
+      14,
+      17
+    ]
+  },
+  {
+    "matchId": 8927037516,
+    "startTime": 1785736908,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1647,
+    "radiant": [
+      41,
+      121,
+      114,
+      2,
+      22
+    ],
+    "dire": [
+      106,
+      29,
+      102,
+      45,
+      86
+    ]
+  },
+  {
+    "matchId": 8927037120,
+    "startTime": 1785736874,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1624,
+    "radiant": [
+      60,
+      7,
+      75,
+      41,
+      9
+    ],
+    "dire": [
+      119,
+      128,
+      108,
+      44,
+      17
+    ]
+  },
+  {
+    "matchId": 8927037012,
+    "startTime": 1785736869,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1522,
+    "radiant": [
+      27,
+      72,
+      9,
+      71,
+      53
+    ],
+    "dire": [
+      36,
+      11,
+      14,
+      97,
+      26
+    ]
+  },
+  {
+    "matchId": 8927036976,
+    "startTime": 1785736863,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1402,
+    "radiant": [
+      10,
+      85,
+      53,
+      52,
+      112
+    ],
+    "dire": [
+      107,
+      128,
+      83,
+      101,
+      12
+    ]
+  },
+  {
+    "matchId": 8927037009,
+    "startTime": 1785736854,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1120,
+    "radiant": [
+      46,
+      20,
+      27,
+      29,
+      36
+    ],
+    "dire": [
+      60,
+      71,
+      101,
+      49,
+      11
+    ]
+  },
+  {
+    "matchId": 8927036779,
+    "startTime": 1785736844,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1587,
+    "radiant": [
+      49,
+      105,
+      12,
+      86,
+      131
+    ],
+    "dire": [
+      48,
+      31,
+      90,
+      106,
+      60
+    ]
+  },
+  {
+    "matchId": 8927036717,
+    "startTime": 1785736844,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1724,
+    "radiant": [
+      96,
+      67,
+      106,
+      68,
+      40
+    ],
+    "dire": [
+      110,
+      131,
+      93,
+      22,
+      29
+    ]
+  },
+  {
+    "matchId": 8927036705,
+    "startTime": 1785736834,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1233,
+    "radiant": [
+      135,
+      14,
+      6,
+      107,
+      22
+    ],
+    "dire": [
+      54,
+      25,
+      71,
+      110,
+      35
+    ]
+  },
+  {
+    "matchId": 8927036607,
+    "startTime": 1785736823,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1639,
+    "radiant": [
+      38,
+      6,
+      96,
+      20,
+      31
+    ],
+    "dire": [
+      18,
+      87,
+      60,
+      61,
+      26
+    ]
+  },
+  {
+    "matchId": 8927036354,
+    "startTime": 1785736803,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1637,
+    "radiant": [
+      14,
+      22,
+      41,
+      74,
+      129
+    ],
+    "dire": [
+      32,
+      42,
+      26,
+      51,
+      6
+    ]
+  },
+  {
+    "matchId": 8927036197,
+    "startTime": 1785736794,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1045,
+    "radiant": [
+      37,
+      110,
+      74,
+      100,
+      56
+    ],
+    "dire": [
+      85,
+      54,
+      11,
+      50,
+      57
+    ]
+  },
+  {
+    "matchId": 8927036308,
+    "startTime": 1785736789,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1505,
+    "radiant": [
+      49,
+      28,
+      30,
+      48,
+      101
+    ],
+    "dire": [
+      112,
+      47,
+      91,
+      14,
+      5
+    ]
+  },
+  {
+    "matchId": 8927036096,
+    "startTime": 1785736784,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1324,
+    "radiant": [
+      31,
+      8,
+      62,
+      38,
+      92
+    ],
+    "dire": [
+      17,
+      26,
+      14,
+      10,
+      55
+    ]
+  },
+  {
+    "matchId": 8927035596,
+    "startTime": 1785736739,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1591,
+    "radiant": [
+      99,
+      26,
+      80,
+      106,
+      9
+    ],
+    "dire": [
+      17,
+      137,
+      14,
+      19,
+      87
+    ]
+  },
+  {
+    "matchId": 8927035157,
+    "startTime": 1785736699,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1802,
+    "radiant": [
+      88,
+      109,
+      111,
+      120,
+      128
+    ],
+    "dire": [
+      41,
+      107,
+      90,
+      5,
+      29
+    ]
+  },
+  {
+    "matchId": 8927034747,
+    "startTime": 1785736663,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1620,
+    "radiant": [
+      7,
+      128,
+      46,
+      14,
+      123
+    ],
+    "dire": [
+      62,
+      101,
+      38,
+      48,
+      86
+    ]
+  },
+  {
+    "matchId": 8927034806,
+    "startTime": 1785736649,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1666,
+    "radiant": [
+      14,
+      104,
+      17,
+      56,
+      119
+    ],
+    "dire": [
+      9,
+      70,
+      86,
+      28,
+      126
+    ]
+  },
+  {
+    "matchId": 8927034679,
+    "startTime": 1785736649,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1634,
+    "radiant": [
+      67,
+      69,
+      131,
+      22,
+      74
+    ],
+    "dire": [
+      35,
+      135,
+      86,
+      109,
+      14
+    ]
+  },
+  {
+    "matchId": 8927034600,
+    "startTime": 1785736649,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1954,
+    "radiant": [
+      29,
+      3,
+      56,
+      10,
+      22
+    ],
+    "dire": [
+      85,
+      36,
+      81,
+      75,
+      48
+    ]
+  },
+  {
+    "matchId": 8927034491,
+    "startTime": 1785736634,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2005,
+    "radiant": [
+      31,
+      8,
+      108,
+      126,
+      123
+    ],
+    "dire": [
+      64,
+      107,
+      25,
+      45,
+      138
+    ]
+  },
+  {
+    "matchId": 8927034124,
+    "startTime": 1785736604,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1306,
+    "radiant": [
+      135,
+      120,
+      87,
+      3,
+      11
+    ],
+    "dire": [
+      14,
+      110,
+      107,
+      42,
+      109
+    ]
+  },
+  {
+    "matchId": 8927034049,
+    "startTime": 1785736594,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1420,
+    "radiant": [
+      114,
+      34,
+      40,
+      26,
+      31
+    ],
+    "dire": [
+      14,
+      67,
+      3,
+      99,
+      121
+    ]
+  },
+  {
+    "matchId": 8927034132,
+    "startTime": 1785736584,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1513,
+    "radiant": [
+      36,
+      135,
+      14,
+      11,
+      9
+    ],
+    "dire": [
+      37,
+      34,
+      85,
+      44,
+      105
+    ]
+  },
+  {
+    "matchId": 8927033877,
+    "startTime": 1785736574,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1700,
+    "radiant": [
+      74,
+      131,
+      23,
+      67,
+      123
+    ],
+    "dire": [
+      98,
+      36,
+      31,
+      121,
+      93
+    ]
+  },
+  {
+    "matchId": 8927033810,
+    "startTime": 1785736574,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1699,
+    "radiant": [
+      97,
+      13,
+      53,
+      31,
+      70
+    ],
+    "dire": [
+      106,
+      112,
+      71,
+      12,
+      88
+    ]
+  },
+  {
+    "matchId": 8927033337,
+    "startTime": 1785736529,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2154,
+    "radiant": [
+      98,
+      14,
+      7,
+      48,
+      91
+    ],
+    "dire": [
+      112,
+      12,
+      83,
+      17,
+      123
+    ]
+  },
+  {
+    "matchId": 8927033324,
+    "startTime": 1785736529,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1745,
+    "radiant": [
+      73,
+      86,
+      55,
+      27,
+      76
+    ],
+    "dire": [
+      43,
+      93,
+      14,
+      8,
+      39
+    ]
+  },
+  {
+    "matchId": 8927033186,
+    "startTime": 1785736514,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1906,
+    "radiant": [
+      69,
+      83,
+      123,
+      54,
+      107
+    ],
+    "dire": [
+      5,
+      93,
+      86,
+      96,
+      17
+    ]
+  },
+  {
+    "matchId": 8927033129,
+    "startTime": 1785736509,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1917,
+    "radiant": [
+      85,
+      48,
+      120,
+      26,
+      2
+    ],
+    "dire": [
+      101,
+      16,
+      83,
+      61,
+      59
+    ]
+  },
+  {
+    "matchId": 8927032910,
+    "startTime": 1785736489,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1927,
+    "radiant": [
+      22,
+      6,
+      120,
+      86,
+      88
+    ],
+    "dire": [
+      2,
+      74,
+      40,
+      8,
+      26
+    ]
+  },
+  {
+    "matchId": 8927032798,
+    "startTime": 1785736479,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1907,
+    "radiant": [
+      17,
+      63,
+      99,
+      80,
+      71
+    ],
+    "dire": [
+      86,
+      114,
+      11,
+      108,
+      35
+    ]
+  },
+  {
+    "matchId": 8927032747,
+    "startTime": 1785736474,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1519,
+    "radiant": [
+      29,
+      39,
+      9,
+      1,
+      88
+    ],
+    "dire": [
+      110,
+      85,
+      57,
+      67,
+      22
+    ]
+  },
+  {
+    "matchId": 8927032736,
+    "startTime": 1785736473,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1977,
+    "radiant": [
+      31,
+      145,
+      40,
+      28,
+      20
+    ],
+    "dire": [
+      129,
+      44,
+      62,
+      25,
+      97
+    ]
+  },
+  {
+    "matchId": 8927032629,
+    "startTime": 1785736464,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1614,
+    "radiant": [
+      6,
+      26,
+      79,
+      74,
+      104
+    ],
+    "dire": [
+      85,
+      38,
+      84,
+      11,
+      107
+    ]
+  },
+  {
+    "matchId": 8927032507,
+    "startTime": 1785736454,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1690,
+    "radiant": [
+      90,
+      109,
+      9,
+      99,
+      75
+    ],
+    "dire": [
+      28,
+      119,
+      11,
+      93,
+      5
+    ]
+  },
+  {
+    "matchId": 8927032416,
+    "startTime": 1785736449,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1769,
+    "radiant": [
+      30,
+      34,
+      10,
+      101,
+      29
+    ],
+    "dire": [
+      69,
+      74,
+      107,
+      21,
+      53
+    ]
+  },
+  {
+    "matchId": 8927032348,
+    "startTime": 1785736439,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1831,
+    "radiant": [
+      14,
+      21,
+      32,
+      76,
+      38
+    ],
+    "dire": [
+      39,
+      105,
+      78,
+      48,
+      131
+    ]
+  },
+  {
+    "matchId": 8927032322,
+    "startTime": 1785736439,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1396,
+    "radiant": [
+      22,
+      14,
+      106,
+      51,
+      11
+    ],
+    "dire": [
+      86,
+      71,
+      95,
+      2,
+      62
+    ]
+  },
+  {
+    "matchId": 8927032337,
+    "startTime": 1785736434,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1929,
+    "radiant": [
+      38,
+      67,
+      101,
+      74,
+      22
+    ],
+    "dire": [
+      48,
+      26,
+      128,
+      31,
+      25
+    ]
+  },
+  {
+    "matchId": 8927032315,
+    "startTime": 1785736434,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2153,
+    "radiant": [
+      101,
+      33,
+      99,
+      21,
+      48
+    ],
+    "dire": [
+      69,
+      1,
+      40,
+      11,
+      58
+    ]
+  },
+  {
+    "matchId": 8927032115,
+    "startTime": 1785736414,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1768,
+    "radiant": [
+      138,
+      61,
+      6,
+      85,
+      20
+    ],
+    "dire": [
+      11,
+      100,
+      90,
+      107,
+      22
+    ]
+  },
+  {
+    "matchId": 8927031990,
+    "startTime": 1785736399,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2085,
+    "radiant": [
+      131,
+      104,
+      52,
+      26,
+      70
+    ],
+    "dire": [
+      51,
+      74,
+      81,
+      48,
+      65
+    ]
+  },
+  {
+    "matchId": 8927031697,
+    "startTime": 1785736384,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1988,
+    "radiant": [
+      101,
+      27,
+      93,
+      90,
+      70
+    ],
+    "dire": [
+      3,
+      29,
+      126,
+      8,
+      83
+    ]
+  },
+  {
+    "matchId": 8927031727,
+    "startTime": 1785736379,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2023,
+    "radiant": [
+      131,
+      106,
+      93,
+      75,
+      23
+    ],
+    "dire": [
+      18,
+      71,
+      83,
+      25,
+      85
+    ]
+  },
+  {
+    "matchId": 8927031454,
+    "startTime": 1785736359,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2201,
+    "radiant": [
+      60,
+      2,
+      86,
+      20,
+      5
+    ],
+    "dire": [
+      25,
+      9,
+      114,
+      129,
+      27
+    ]
+  },
+  {
+    "matchId": 8927031438,
+    "startTime": 1785736359,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2334,
+    "radiant": [
+      78,
+      86,
+      76,
+      31,
+      73
+    ],
+    "dire": [
+      104,
+      17,
+      8,
+      135,
+      5
+    ]
+  },
+  {
+    "matchId": 8927031432,
+    "startTime": 1785736359,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2286,
+    "radiant": [
+      71,
+      98,
+      128,
+      27,
+      41
+    ],
+    "dire": [
+      47,
+      48,
+      135,
+      5,
+      106
+    ]
+  },
+  {
+    "matchId": 8927031315,
+    "startTime": 1785736349,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1675,
+    "radiant": [
+      47,
+      87,
+      71,
+      108,
+      56
+    ],
+    "dire": [
+      107,
+      67,
+      126,
+      5,
+      11
+    ]
+  },
+  {
+    "matchId": 8927031159,
+    "startTime": 1785736334,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1954,
+    "radiant": [
+      135,
+      79,
+      17,
+      10,
+      32
+    ],
+    "dire": [
+      47,
+      91,
+      155,
+      43,
+      21
+    ]
+  },
+  {
+    "matchId": 8927031158,
+    "startTime": 1785736329,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2084,
+    "radiant": [
+      75,
+      26,
+      8,
+      71,
+      69
+    ],
+    "dire": [
+      101,
+      2,
+      11,
+      36,
+      53
+    ]
+  },
+  {
+    "matchId": 8927030940,
+    "startTime": 1785736314,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1642,
+    "radiant": [
+      83,
+      10,
+      86,
+      113,
+      85
+    ],
+    "dire": [
+      128,
+      136,
+      26,
+      28,
+      11
+    ]
+  },
+  {
+    "matchId": 8927030916,
+    "startTime": 1785736309,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1872,
+    "radiant": [
+      23,
+      14,
+      15,
+      21,
+      16
+    ],
+    "dire": [
+      86,
+      69,
+      98,
+      48,
+      19
+    ]
+  },
+  {
+    "matchId": 8927030933,
+    "startTime": 1785736304,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2216,
+    "radiant": [
+      114,
+      93,
+      57,
+      7,
+      21
+    ],
+    "dire": [
+      46,
+      107,
+      64,
+      14,
+      131
+    ]
+  },
+  {
+    "matchId": 8927030910,
+    "startTime": 1785736304,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1456,
+    "radiant": [
+      86,
+      88,
+      48,
+      135,
+      23
+    ],
+    "dire": [
+      12,
+      5,
+      83,
+      28,
+      53
+    ]
+  },
+  {
+    "matchId": 8927030842,
+    "startTime": 1785736299,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2183,
+    "radiant": [
+      48,
+      5,
+      90,
+      100,
+      14
+    ],
+    "dire": [
+      31,
+      54,
+      21,
+      107,
+      16
+    ]
+  },
+  {
+    "matchId": 8927030812,
+    "startTime": 1785736299,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2418,
+    "radiant": [
+      90,
+      86,
+      10,
+      17,
+      36
+    ],
+    "dire": [
+      34,
+      85,
+      99,
+      50,
+      12
+    ]
+  },
+  {
+    "matchId": 8927030894,
+    "startTime": 1785736294,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2181,
+    "radiant": [
+      25,
+      2,
+      22,
+      91,
+      48
+    ],
+    "dire": [
+      74,
+      12,
+      77,
+      123,
+      30
+    ]
+  },
+  {
+    "matchId": 8927030706,
+    "startTime": 1785736294,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2073,
+    "radiant": [
+      88,
+      19,
+      74,
+      100,
+      98
+    ],
+    "dire": [
+      29,
+      53,
+      39,
+      3,
+      14
+    ]
+  },
+  {
+    "matchId": 8927030617,
+    "startTime": 1785736283,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2008,
+    "radiant": [
+      69,
+      100,
+      120,
+      5,
+      8
+    ],
+    "dire": [
+      131,
+      87,
+      15,
+      11,
+      110
+    ]
+  },
+  {
+    "matchId": 8927030560,
+    "startTime": 1785736279,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1635,
+    "radiant": [
+      36,
+      27,
+      54,
+      88,
+      25
+    ],
+    "dire": [
+      109,
+      11,
+      60,
+      26,
+      40
+    ]
+  },
+  {
+    "matchId": 8927030599,
+    "startTime": 1785736274,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2153,
+    "radiant": [
+      74,
+      37,
+      43,
+      70,
+      136
+    ],
+    "dire": [
+      128,
+      75,
+      41,
+      14,
+      131
+    ]
+  },
+  {
+    "matchId": 8927030578,
+    "startTime": 1785736269,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2069,
+    "radiant": [
+      128,
+      31,
+      50,
+      42,
+      55
+    ],
+    "dire": [
+      26,
+      96,
+      135,
+      93,
+      123
+    ]
+  },
+  {
+    "matchId": 8927030413,
+    "startTime": 1785736254,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2184,
+    "radiant": [
+      14,
+      12,
+      96,
+      13,
+      128
+    ],
+    "dire": [
+      145,
+      123,
+      99,
+      112,
+      53
+    ]
+  },
+  {
+    "matchId": 8927030302,
+    "startTime": 1785736254,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1853,
+    "radiant": [
+      92,
+      67,
+      15,
+      27,
+      35
+    ],
+    "dire": [
+      74,
+      112,
+      70,
+      128,
+      60
+    ]
+  },
+  {
+    "matchId": 8927030236,
+    "startTime": 1785736249,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1753,
+    "radiant": [
+      48,
+      55,
+      21,
+      126,
+      87
+    ],
+    "dire": [
+      105,
+      17,
+      20,
+      57,
+      11
+    ]
+  },
+  {
+    "matchId": 8927030363,
+    "startTime": 1785736248,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1984,
+    "radiant": [
+      145,
+      85,
+      32,
+      135,
+      9
+    ],
+    "dire": [
+      13,
+      22,
+      14,
+      28,
+      10
+    ]
+  },
+  {
+    "matchId": 8927030258,
+    "startTime": 1785736243,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1708,
+    "radiant": [
+      25,
+      101,
+      28,
+      14,
+      36
+    ],
+    "dire": [
+      23,
+      110,
+      74,
+      6,
+      83
+    ]
+  },
+  {
+    "matchId": 8927029981,
+    "startTime": 1785736229,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2043,
+    "radiant": [
+      128,
+      71,
+      2,
+      36,
+      35
+    ],
+    "dire": [
+      101,
+      108,
+      76,
+      43,
+      20
+    ]
+  },
+  {
+    "matchId": 8927030298,
+    "startTime": 1785736224,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2132,
+    "radiant": [
+      87,
+      104,
+      54,
+      52,
+      101
+    ],
+    "dire": [
+      138,
+      2,
+      5,
+      48,
+      35
+    ]
+  },
+  {
+    "matchId": 8927029972,
+    "startTime": 1785736224,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2372,
+    "radiant": [
+      26,
+      97,
+      41,
+      2,
+      86
+    ],
+    "dire": [
+      74,
+      135,
+      131,
+      71,
+      12
+    ]
+  },
+  {
+    "matchId": 8927029889,
+    "startTime": 1785736219,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1988,
+    "radiant": [
+      102,
+      86,
+      137,
+      36,
+      8
+    ],
+    "dire": [
+      35,
+      114,
+      41,
+      105,
+      74
+    ]
+  },
+  {
+    "matchId": 8927029820,
+    "startTime": 1785736209,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1822,
+    "radiant": [
+      23,
+      85,
+      5,
+      95,
+      35
+    ],
+    "dire": [
+      119,
+      90,
+      99,
+      11,
+      100
+    ]
+  },
+  {
+    "matchId": 8927029799,
+    "startTime": 1785736209,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2175,
+    "radiant": [
+      21,
+      112,
+      106,
+      62,
+      135
+    ],
+    "dire": [
+      90,
+      85,
+      43,
+      111,
+      67
+    ]
+  },
+  {
+    "matchId": 8927029677,
+    "startTime": 1785736199,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1969,
+    "radiant": [
+      100,
+      3,
+      138,
+      93,
+      16
+    ],
+    "dire": [
+      74,
+      15,
+      75,
+      10,
+      14
+    ]
+  },
+  {
+    "matchId": 8927029606,
+    "startTime": 1785736194,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2115,
+    "radiant": [
+      21,
+      101,
+      87,
+      135,
+      39
+    ],
+    "dire": [
+      14,
+      26,
+      111,
+      28,
+      18
+    ]
+  },
+  {
+    "matchId": 8927029605,
+    "startTime": 1785736189,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1692,
+    "radiant": [
+      31,
+      36,
+      53,
+      135,
+      14
+    ],
+    "dire": [
+      77,
+      67,
+      145,
+      27,
+      30
+    ]
+  },
+  {
+    "matchId": 8927029548,
+    "startTime": 1785736189,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2365,
+    "radiant": [
+      108,
+      87,
+      35,
+      104,
+      8
+    ],
+    "dire": [
+      93,
+      96,
+      68,
+      9,
+      76
+    ]
+  },
+  {
+    "matchId": 8927029546,
+    "startTime": 1785736189,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1778,
+    "radiant": [
+      131,
+      57,
+      123,
+      14,
+      54
+    ],
+    "dire": [
+      74,
+      104,
+      19,
+      11,
+      107
+    ]
+  },
+  {
+    "matchId": 8927029544,
+    "startTime": 1785736189,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1647,
+    "radiant": [
+      131,
+      135,
+      12,
+      74,
+      27
+    ],
+    "dire": [
+      9,
+      69,
+      13,
+      18,
+      3
+    ]
+  },
+  {
+    "matchId": 8927029507,
+    "startTime": 1785736174,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2099,
+    "radiant": [
+      86,
+      92,
+      54,
+      25,
+      71
+    ],
+    "dire": [
+      7,
+      8,
+      26,
+      135,
+      128
+    ]
+  },
+  {
+    "matchId": 8927029489,
+    "startTime": 1785736174,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1803,
+    "radiant": [
+      48,
+      69,
+      91,
+      17,
+      50
+    ],
+    "dire": [
+      67,
+      137,
+      27,
+      84,
+      11
+    ]
+  },
+  {
+    "matchId": 8927029403,
+    "startTime": 1785736174,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1704,
+    "radiant": [
+      26,
+      27,
+      109,
+      60,
+      107
+    ],
+    "dire": [
+      106,
+      35,
+      83,
+      20,
+      5
+    ]
+  },
+  {
+    "matchId": 8927029430,
+    "startTime": 1785736164,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2336,
+    "radiant": [
+      69,
+      86,
+      3,
+      41,
+      25
+    ],
+    "dire": [
+      103,
+      42,
+      87,
+      67,
+      21
+    ]
+  },
+  {
+    "matchId": 8927029263,
+    "startTime": 1785736164,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2353,
+    "radiant": [
+      84,
+      21,
+      36,
+      42,
+      131
+    ],
+    "dire": [
+      112,
+      33,
+      48,
+      136,
+      52
+    ]
+  },
+  {
+    "matchId": 8927029221,
+    "startTime": 1785736154,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2281,
+    "radiant": [
+      98,
+      26,
+      54,
+      36,
+      123
+    ],
+    "dire": [
+      129,
+      86,
+      14,
+      22,
+      20
+    ]
+  },
+  {
+    "matchId": 8927028893,
+    "startTime": 1785736129,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2509,
+    "radiant": [
+      88,
+      110,
+      18,
+      75,
+      137
+    ],
+    "dire": [
+      52,
+      68,
+      14,
+      46,
+      128
+    ]
+  },
+  {
+    "matchId": 8927028880,
+    "startTime": 1785736119,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1793,
+    "radiant": [
+      2,
+      110,
+      6,
+      85,
+      21
+    ],
+    "dire": [
+      96,
+      131,
+      54,
+      53,
+      47
+    ]
+  },
+  {
+    "matchId": 8927028771,
+    "startTime": 1785736114,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1589,
+    "radiant": [
+      74,
+      128,
+      14,
+      41,
+      36
+    ],
+    "dire": [
+      21,
+      48,
+      16,
+      39,
+      27
+    ]
+  },
+  {
+    "matchId": 8927028738,
+    "startTime": 1785736114,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2242,
+    "radiant": [
+      86,
+      74,
+      137,
+      9,
+      41
+    ],
+    "dire": [
+      100,
+      26,
+      11,
+      128,
+      2
+    ]
+  },
+  {
+    "matchId": 8927028756,
+    "startTime": 1785736113,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1863,
+    "radiant": [
+      68,
+      11,
+      104,
+      52,
+      131
+    ],
+    "dire": [
+      86,
+      74,
+      73,
+      42,
+      35
+    ]
+  },
+  {
+    "matchId": 8927028616,
+    "startTime": 1785736104,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2514,
+    "radiant": [
+      49,
+      57,
+      7,
+      137,
+      8
+    ],
+    "dire": [
+      123,
+      36,
+      19,
+      2,
+      114
+    ]
+  },
+  {
+    "matchId": 8927028589,
+    "startTime": 1785736094,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2224,
+    "radiant": [
+      89,
+      121,
+      131,
+      97,
+      113
+    ],
+    "dire": [
+      14,
+      114,
+      68,
+      77,
+      11
+    ]
+  },
+  {
+    "matchId": 8927028639,
+    "startTime": 1785736089,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1918,
+    "radiant": [
+      21,
+      7,
+      47,
+      9,
+      48
+    ],
+    "dire": [
+      11,
+      5,
+      8,
+      31,
+      60
+    ]
+  },
+  {
+    "matchId": 8927028185,
+    "startTime": 1785736059,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2630,
+    "radiant": [
+      82,
+      60,
+      58,
+      43,
+      9
+    ],
+    "dire": [
+      3,
+      19,
+      86,
+      39,
+      69
+    ]
+  },
+  {
+    "matchId": 8927028174,
+    "startTime": 1785736054,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2279,
+    "radiant": [
+      86,
+      138,
+      36,
+      84,
+      104
+    ],
+    "dire": [
+      46,
+      93,
+      69,
+      9,
+      17
+    ]
+  },
+  {
+    "matchId": 8927028006,
+    "startTime": 1785736039,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2142,
+    "radiant": [
+      32,
+      30,
+      55,
+      40,
+      52
+    ],
+    "dire": [
+      101,
+      20,
+      112,
+      25,
+      42
+    ]
+  },
+  {
+    "matchId": 8927027945,
+    "startTime": 1785736039,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2354,
+    "radiant": [
+      64,
+      131,
+      86,
+      18,
+      17
+    ],
+    "dire": [
+      128,
+      136,
+      6,
+      27,
+      47
+    ]
+  },
+  {
+    "matchId": 8927027941,
+    "startTime": 1785736039,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2596,
+    "radiant": [
+      18,
+      97,
+      131,
+      19,
+      52
+    ],
+    "dire": [
+      128,
+      71,
+      2,
+      86,
+      72
+    ]
+  },
+  {
+    "matchId": 8927027887,
+    "startTime": 1785736034,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1704,
+    "radiant": [
+      59,
+      101,
+      108,
+      21,
+      8
+    ],
+    "dire": [
+      48,
+      76,
+      107,
+      71,
+      97
+    ]
+  },
+  {
+    "matchId": 8927027875,
+    "startTime": 1785736034,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2148,
+    "radiant": [
+      55,
+      83,
+      128,
+      74,
+      48
+    ],
+    "dire": [
+      12,
+      90,
+      102,
+      60,
+      110
+    ]
+  },
+  {
+    "matchId": 8927028016,
+    "startTime": 1785736033,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1893,
+    "radiant": [
+      73,
+      128,
+      16,
+      82,
+      3
+    ],
+    "dire": [
+      25,
+      74,
+      96,
+      109,
+      14
+    ]
+  },
+  {
+    "matchId": 8927027805,
+    "startTime": 1785736028,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2384,
+    "radiant": [
+      71,
+      25,
+      22,
+      20,
+      98
+    ],
+    "dire": [
+      26,
+      14,
+      8,
+      42,
+      32
+    ]
+  },
+  {
+    "matchId": 8927028024,
+    "startTime": 1785736024,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1935,
+    "radiant": [
+      119,
+      36,
+      137,
+      26,
+      48
+    ],
+    "dire": [
+      64,
+      86,
+      136,
+      52,
+      18
+    ]
+  },
+  {
+    "matchId": 8927027735,
+    "startTime": 1785736009,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1721,
+    "radiant": [
+      26,
+      128,
+      58,
+      2,
+      54
+    ],
+    "dire": [
+      20,
+      106,
+      100,
+      81,
+      110
+    ]
+  },
+  {
+    "matchId": 8927027635,
+    "startTime": 1785736009,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2255,
+    "radiant": [
+      62,
+      43,
+      114,
+      100,
+      4
+    ],
+    "dire": [
+      60,
+      6,
+      26,
+      13,
+      3
+    ]
+  },
+  {
+    "matchId": 8927027743,
+    "startTime": 1785736004,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2115,
+    "radiant": [
+      30,
+      53,
+      112,
+      25,
+      20
+    ],
+    "dire": [
+      37,
+      6,
+      135,
+      106,
+      74
+    ]
+  },
+  {
+    "matchId": 8927027575,
+    "startTime": 1785735994,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1998,
+    "radiant": [
+      114,
+      27,
+      30,
+      69,
+      52
+    ],
+    "dire": [
+      7,
+      34,
+      6,
+      86,
+      102
+    ]
+  },
+  {
+    "matchId": 8927027482,
+    "startTime": 1785735994,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2596,
+    "radiant": [
+      67,
+      25,
+      21,
+      119,
+      108
+    ],
+    "dire": [
+      35,
+      10,
+      2,
+      5,
+      71
+    ]
+  },
+  {
+    "matchId": 8927027352,
+    "startTime": 1785735984,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1851,
+    "radiant": [
+      109,
+      11,
+      51,
+      123,
+      5
+    ],
+    "dire": [
+      47,
+      6,
+      9,
+      83,
+      107
+    ]
+  },
+  {
+    "matchId": 8927027378,
+    "startTime": 1785735979,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1385,
+    "radiant": [
+      31,
+      97,
+      20,
+      11,
+      26
+    ],
+    "dire": [
+      84,
+      80,
+      70,
+      29,
+      71
+    ]
+  },
+  {
+    "matchId": 8927027331,
+    "startTime": 1785735974,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2158,
+    "radiant": [
+      87,
+      17,
+      108,
+      93,
+      7
+    ],
+    "dire": [
+      107,
+      9,
+      11,
+      64,
+      78
+    ]
+  },
+  {
+    "matchId": 8927027273,
+    "startTime": 1785735959,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1480,
+    "radiant": [
+      17,
+      31,
+      98,
+      86,
+      11
+    ],
+    "dire": [
+      114,
+      36,
+      107,
+      13,
+      128
+    ]
+  },
+  {
+    "matchId": 8927027066,
+    "startTime": 1785735959,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2092,
+    "radiant": [
+      97,
+      26,
+      135,
+      48,
+      88
+    ],
+    "dire": [
+      37,
+      29,
+      128,
+      46,
+      11
+    ]
+  },
+  {
+    "matchId": 8927027055,
+    "startTime": 1785735959,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1636,
+    "radiant": [
+      48,
+      121,
+      81,
+      128,
+      73
+    ],
+    "dire": [
+      100,
+      11,
+      123,
+      7,
+      99
+    ]
+  },
+  {
+    "matchId": 8927026895,
+    "startTime": 1785735944,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2579,
+    "radiant": [
+      20,
+      54,
+      5,
+      106,
+      51
+    ],
+    "dire": [
+      87,
+      96,
+      8,
+      15,
+      9
+    ]
+  },
+  {
+    "matchId": 8927026871,
+    "startTime": 1785735944,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2508,
+    "radiant": [
+      128,
+      60,
+      74,
+      48,
+      83
+    ],
+    "dire": [
+      111,
+      104,
+      67,
+      17,
+      86
+    ]
+  },
+  {
+    "matchId": 8927026870,
+    "startTime": 1785735939,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2376,
+    "radiant": [
+      7,
+      83,
+      20,
+      55,
+      112
+    ],
+    "dire": [
+      102,
+      74,
+      62,
+      79,
+      67
+    ]
+  },
+  {
+    "matchId": 8927027048,
+    "startTime": 1785735934,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1645,
+    "radiant": [
+      14,
+      31,
+      75,
+      10,
+      26
+    ],
+    "dire": [
+      61,
+      79,
+      46,
+      45,
+      29
+    ]
+  },
+  {
+    "matchId": 8927027007,
+    "startTime": 1785735934,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2068,
+    "radiant": [
+      62,
+      30,
+      97,
+      17,
+      138
+    ],
+    "dire": [
+      11,
+      129,
+      54,
+      14,
+      79
+    ]
+  },
+  {
+    "matchId": 8927026787,
+    "startTime": 1785735934,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2449,
+    "radiant": [
+      60,
+      106,
+      76,
+      6,
+      14
+    ],
+    "dire": [
+      59,
+      86,
+      123,
+      98,
+      67
+    ]
+  },
+  {
+    "matchId": 8927026776,
+    "startTime": 1785735934,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2197,
+    "radiant": [
+      8,
+      62,
+      31,
+      42,
+      25
+    ],
+    "dire": [
+      2,
+      5,
+      35,
+      21,
+      131
+    ]
+  },
+  {
+    "matchId": 8927026762,
+    "startTime": 1785735934,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2575,
+    "radiant": [
+      100,
+      60,
+      23,
+      94,
+      155
+    ],
+    "dire": [
+      30,
+      67,
+      57,
+      25,
+      111
+    ]
+  },
+  {
+    "matchId": 8927027021,
+    "startTime": 1785735929,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2588,
+    "radiant": [
+      94,
+      2,
+      86,
+      128,
+      85
+    ],
+    "dire": [
+      69,
+      89,
+      14,
+      46,
+      25
+    ]
+  },
+  {
+    "matchId": 8927026736,
+    "startTime": 1785735929,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2510,
+    "radiant": [
+      38,
+      98,
+      128,
+      72,
+      86
+    ],
+    "dire": [
+      51,
+      35,
+      8,
+      5,
+      74
+    ]
+  },
+  {
+    "matchId": 8927026687,
+    "startTime": 1785735924,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2385,
+    "radiant": [
+      20,
+      36,
+      72,
+      61,
+      14
+    ],
+    "dire": [
+      13,
+      50,
+      105,
+      135,
+      81
+    ]
+  },
+  {
+    "matchId": 8927026658,
+    "startTime": 1785735919,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2173,
+    "radiant": [
+      129,
+      18,
+      74,
+      21,
+      25
+    ],
+    "dire": [
+      120,
+      63,
+      64,
+      54,
+      88
+    ]
+  },
+  {
+    "matchId": 8927026641,
+    "startTime": 1785735909,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1679,
+    "radiant": [
+      10,
+      28,
+      36,
+      101,
+      110
+    ],
+    "dire": [
+      71,
+      75,
+      135,
+      11,
+      74
+    ]
+  },
+  {
+    "matchId": 8927026597,
+    "startTime": 1785735909,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1503,
+    "radiant": [
+      30,
+      109,
+      86,
+      85,
+      7
+    ],
+    "dire": [
+      26,
+      38,
+      72,
+      114,
+      128
+    ]
+  },
+  {
+    "matchId": 8927026562,
+    "startTime": 1785735909,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2683,
+    "radiant": [
+      55,
+      36,
+      69,
+      75,
+      4
+    ],
+    "dire": [
+      76,
+      128,
+      10,
+      19,
+      85
+    ]
+  },
+  {
+    "matchId": 8927026434,
+    "startTime": 1785735899,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1997,
+    "radiant": [
+      101,
+      59,
+      14,
+      19,
+      129
+    ],
+    "dire": [
+      77,
+      128,
+      1,
+      5,
+      97
+    ]
+  },
+  {
+    "matchId": 8927026418,
+    "startTime": 1785735899,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2751,
+    "radiant": [
+      7,
+      69,
+      12,
+      83,
+      131
+    ],
+    "dire": [
+      27,
+      45,
+      2,
+      21,
+      63
+    ]
+  },
+  {
+    "matchId": 8927026393,
+    "startTime": 1785735899,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2515,
+    "radiant": [
+      26,
+      84,
+      86,
+      14,
+      94
+    ],
+    "dire": [
+      11,
+      85,
+      78,
+      5,
+      69
+    ]
+  },
+  {
+    "matchId": 8927026373,
+    "startTime": 1785735894,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2577,
+    "radiant": [
+      53,
+      92,
+      69,
+      10,
+      128
+    ],
+    "dire": [
+      22,
+      21,
+      98,
+      19,
+      63
+    ]
+  },
+  {
+    "matchId": 8927026343,
+    "startTime": 1785735894,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2759,
+    "radiant": [
+      7,
+      12,
+      27,
+      57,
+      123
+    ],
+    "dire": [
+      105,
+      64,
+      46,
+      97,
+      110
+    ]
+  },
+  {
+    "matchId": 8927026312,
+    "startTime": 1785735889,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2485,
+    "radiant": [
+      32,
+      126,
+      21,
+      56,
+      14
+    ],
+    "dire": [
+      13,
+      110,
+      29,
+      67,
+      71
+    ]
+  },
+  {
+    "matchId": 8927026264,
+    "startTime": 1785735883,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2562,
+    "radiant": [
+      44,
+      7,
+      136,
+      17,
+      128
+    ],
+    "dire": [
+      8,
+      14,
+      97,
+      74,
+      137
+    ]
+  },
+  {
+    "matchId": 8927026112,
+    "startTime": 1785735869,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2528,
+    "radiant": [
+      126,
+      5,
+      84,
+      48,
+      14
+    ],
+    "dire": [
+      120,
+      18,
+      123,
+      129,
+      37
+    ]
+  },
+  {
+    "matchId": 8927026051,
+    "startTime": 1785735864,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1824,
+    "radiant": [
+      44,
+      101,
+      72,
+      88,
+      14
+    ],
+    "dire": [
+      90,
+      78,
+      97,
+      28,
+      11
+    ]
+  },
+  {
+    "matchId": 8927026041,
+    "startTime": 1785735864,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2297,
+    "radiant": [
+      75,
+      120,
+      80,
+      26,
+      69
+    ],
+    "dire": [
+      37,
+      17,
+      108,
+      22,
+      53
+    ]
+  },
+  {
+    "matchId": 8927026206,
+    "startTime": 1785735859,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2326,
+    "radiant": [
+      86,
+      107,
+      54,
+      2,
+      101
+    ],
+    "dire": [
+      145,
+      87,
+      60,
+      53,
+      27
+    ]
+  },
+  {
+    "matchId": 8927026039,
+    "startTime": 1785735859,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1789,
+    "radiant": [
+      37,
+      26,
+      59,
+      11,
+      85
+    ],
+    "dire": [
+      72,
+      103,
+      67,
+      40,
+      106
+    ]
+  },
+  {
+    "matchId": 8927025981,
+    "startTime": 1785735854,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2506,
+    "radiant": [
+      121,
+      28,
+      7,
+      128,
+      81
+    ],
+    "dire": [
+      95,
+      74,
+      120,
+      60,
+      110
+    ]
+  },
+  {
+    "matchId": 8927025915,
+    "startTime": 1785735854,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2339,
+    "radiant": [
+      86,
+      73,
+      107,
+      94,
+      56
+    ],
+    "dire": [
+      106,
+      137,
+      105,
+      44,
+      111
+    ]
+  },
+  {
+    "matchId": 8927025851,
+    "startTime": 1785735844,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2058,
+    "radiant": [
+      46,
+      3,
+      84,
+      92,
+      88
+    ],
+    "dire": [
+      31,
+      48,
+      90,
+      135,
+      86
+    ]
+  },
+  {
+    "matchId": 8927025782,
+    "startTime": 1785735838,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2867,
+    "radiant": [
+      26,
+      36,
+      56,
+      5,
+      76
+    ],
+    "dire": [
+      14,
+      22,
+      96,
+      48,
+      64
+    ]
+  },
+  {
+    "matchId": 8927025727,
+    "startTime": 1785735829,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2423,
+    "radiant": [
+      48,
+      39,
+      90,
+      26,
+      104
+    ],
+    "dire": [
+      97,
+      42,
+      63,
+      65,
+      101
+    ]
+  },
+  {
+    "matchId": 8927025571,
+    "startTime": 1785735818,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2121,
+    "radiant": [
+      36,
+      85,
+      110,
+      41,
+      26
+    ],
+    "dire": [
+      107,
+      11,
+      55,
+      105,
+      51
+    ]
+  },
+  {
+    "matchId": 8927025637,
+    "startTime": 1785735814,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1735,
+    "radiant": [
+      145,
+      135,
+      97,
+      101,
+      99
+    ],
+    "dire": [
+      45,
+      26,
+      60,
+      109,
+      28
+    ]
+  },
+  {
+    "matchId": 8927025478,
+    "startTime": 1785735814,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1706,
+    "radiant": [
+      86,
+      91,
+      81,
+      78,
+      74
+    ],
+    "dire": [
+      8,
+      59,
+      9,
+      60,
+      107
+    ]
+  },
+  {
+    "matchId": 8927025329,
+    "startTime": 1785735799,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2523,
+    "radiant": [
+      93,
+      52,
+      121,
+      155,
+      87
+    ],
+    "dire": [
+      92,
+      25,
+      81,
+      129,
+      31
+    ]
+  },
+  {
+    "matchId": 8927025273,
+    "startTime": 1785735794,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2793,
+    "radiant": [
+      105,
+      138,
+      104,
+      106,
+      9
+    ],
+    "dire": [
+      37,
+      5,
+      35,
+      36,
+      108
+    ]
+  },
+  {
+    "matchId": 8927025310,
+    "startTime": 1785735779,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1930,
+    "radiant": [
+      2,
+      67,
+      11,
+      86,
+      83
+    ],
+    "dire": [
+      26,
+      35,
+      36,
+      73,
+      70
+    ]
+  },
+  {
+    "matchId": 8927025107,
+    "startTime": 1785735779,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1423,
+    "radiant": [
+      86,
+      14,
+      69,
+      41,
+      74
+    ],
+    "dire": [
+      83,
+      137,
+      13,
+      8,
+      123
+    ]
+  },
+  {
+    "matchId": 8927025093,
+    "startTime": 1785735779,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1417,
+    "radiant": [
+      145,
+      100,
+      95,
+      26,
+      121
+    ],
+    "dire": [
+      8,
+      29,
+      91,
+      40,
+      3
+    ]
+  },
+  {
+    "matchId": 8927025291,
+    "startTime": 1785735774,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2232,
+    "radiant": [
+      93,
+      110,
+      14,
+      5,
+      90
+    ],
+    "dire": [
+      123,
+      74,
+      135,
+      32,
+      11
+    ]
+  },
+  {
+    "matchId": 8927025024,
+    "startTime": 1785735769,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2352,
+    "radiant": [
+      126,
+      14,
+      136,
+      2,
+      1
+    ],
+    "dire": [
+      7,
+      98,
+      128,
+      108,
+      10
+    ]
+  },
+  {
+    "matchId": 8927024993,
+    "startTime": 1785735764,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2795,
+    "radiant": [
+      137,
+      88,
+      32,
+      87,
+      106
+    ],
+    "dire": [
+      123,
+      85,
+      11,
+      79,
+      12
+    ]
+  },
+  {
+    "matchId": 8927024954,
+    "startTime": 1785735764,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1814,
+    "radiant": [
+      123,
+      43,
+      18,
+      53,
+      75
+    ],
+    "dire": [
+      21,
+      60,
+      26,
+      7,
+      11
+    ]
+  },
+  {
+    "matchId": 8927024938,
+    "startTime": 1785735763,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1384,
+    "radiant": [
+      123,
+      36,
+      93,
+      102,
+      75
+    ],
+    "dire": [
+      64,
+      30,
+      63,
+      2,
+      52
+    ]
+  },
+  {
+    "matchId": 8927025150,
+    "startTime": 1785735759,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1662,
+    "radiant": [
+      48,
+      69,
+      101,
+      36,
+      100
+    ],
+    "dire": [
+      126,
+      102,
+      20,
+      40,
+      42
+    ]
+  },
+  {
+    "matchId": 8927025087,
+    "startTime": 1785735754,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2166,
+    "radiant": [
+      44,
+      20,
+      7,
+      58,
+      25
+    ],
+    "dire": [
+      104,
+      100,
+      80,
+      11,
+      83
+    ]
+  },
+  {
+    "matchId": 8927024876,
+    "startTime": 1785735754,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2716,
+    "radiant": [
+      39,
+      83,
+      11,
+      90,
+      2
+    ],
+    "dire": [
+      9,
+      135,
+      6,
+      106,
+      100
+    ]
+  },
+  {
+    "matchId": 8927024805,
+    "startTime": 1785735749,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2573,
+    "radiant": [
+      6,
+      31,
+      34,
+      85,
+      28
+    ],
+    "dire": [
+      19,
+      14,
+      108,
+      86,
+      121
+    ]
+  },
+  {
+    "matchId": 8927024853,
+    "startTime": 1785735748,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2054,
+    "radiant": [
+      47,
+      21,
+      40,
+      70,
+      55
+    ],
+    "dire": [
+      10,
+      131,
+      98,
+      7,
+      107
+    ]
+  },
+  {
+    "matchId": 8927024662,
+    "startTime": 1785735739,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2654,
+    "radiant": [
+      110,
+      74,
+      8,
+      79,
+      26
+    ],
+    "dire": [
+      21,
+      17,
+      68,
+      104,
+      87
+    ]
+  },
+  {
+    "matchId": 8927024820,
+    "startTime": 1785735734,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2315,
+    "radiant": [
+      129,
+      126,
+      67,
+      37,
+      121
+    ],
+    "dire": [
+      2,
+      136,
+      131,
+      70,
+      93
+    ]
+  },
+  {
+    "matchId": 8927024658,
+    "startTime": 1785735728,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1909,
+    "radiant": [
+      98,
+      39,
+      14,
+      121,
+      54
+    ],
+    "dire": [
+      6,
+      7,
+      31,
+      25,
+      74
+    ]
+  },
+  {
+    "matchId": 8927024618,
+    "startTime": 1785735724,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1891,
+    "radiant": [
+      80,
+      104,
+      87,
+      76,
+      62
+    ],
+    "dire": [
+      41,
+      2,
+      35,
+      103,
+      75
+    ]
+  },
+  {
+    "matchId": 8927024543,
+    "startTime": 1785735724,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2144,
+    "radiant": [
+      131,
+      12,
+      106,
+      14,
+      55
+    ],
+    "dire": [
+      18,
+      13,
+      30,
+      78,
+      40
+    ]
+  },
+  {
+    "matchId": 8927024516,
+    "startTime": 1785735719,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2700,
+    "radiant": [
+      5,
+      88,
+      11,
+      55,
+      7
+    ],
+    "dire": [
+      30,
+      12,
+      37,
+      2,
+      47
+    ]
+  },
+  {
+    "matchId": 8927024450,
+    "startTime": 1785735718,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2688,
+    "radiant": [
+      108,
+      111,
+      48,
+      22,
+      74
+    ],
+    "dire": [
+      104,
+      11,
+      101,
+      54,
+      27
+    ]
+  },
+  {
+    "matchId": 8927024403,
+    "startTime": 1785735709,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2979,
+    "radiant": [
+      86,
+      108,
+      19,
+      32,
+      110
+    ],
+    "dire": [
+      71,
+      119,
+      106,
+      48,
+      129
+    ]
+  },
+  {
+    "matchId": 8927024335,
+    "startTime": 1785735704,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2439,
+    "radiant": [
+      36,
+      85,
+      126,
+      128,
+      54
+    ],
+    "dire": [
+      43,
+      12,
+      88,
+      90,
+      7
+    ]
+  },
+  {
+    "matchId": 8927024342,
+    "startTime": 1785735699,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2335,
+    "radiant": [
+      107,
+      79,
+      48,
+      88,
+      129
+    ],
+    "dire": [
+      123,
+      46,
+      47,
+      28,
+      85
+    ]
+  },
+  {
+    "matchId": 8927024332,
+    "startTime": 1785735699,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1424,
+    "radiant": [
+      128,
+      50,
+      60,
+      11,
+      91
+    ],
+    "dire": [
+      14,
+      6,
+      101,
+      17,
+      102
+    ]
+  },
+  {
+    "matchId": 8927024221,
+    "startTime": 1785735689,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2185,
+    "radiant": [
+      101,
+      3,
+      36,
+      78,
+      42
+    ],
+    "dire": [
+      86,
+      29,
+      26,
+      54,
+      43
+    ]
+  },
+  {
+    "matchId": 8927024171,
+    "startTime": 1785735684,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2324,
+    "radiant": [
+      16,
+      48,
+      86,
+      40,
+      155
+    ],
+    "dire": [
+      39,
+      8,
+      77,
+      9,
+      74
+    ]
+  },
+  {
+    "matchId": 8927024048,
+    "startTime": 1785735679,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2285,
+    "radiant": [
+      131,
+      110,
+      71,
+      53,
+      93
+    ],
+    "dire": [
+      63,
+      14,
+      128,
+      86,
+      17
+    ]
+  },
+  {
+    "matchId": 8927024105,
+    "startTime": 1785735674,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2506,
+    "radiant": [
+      16,
+      128,
+      31,
+      76,
+      8
+    ],
+    "dire": [
+      17,
+      27,
+      2,
+      48,
+      105
+    ]
+  },
+  {
+    "matchId": 8927024071,
+    "startTime": 1785735669,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2030,
+    "radiant": [
+      44,
+      20,
+      86,
+      136,
+      31
+    ],
+    "dire": [
+      35,
+      29,
+      131,
+      15,
+      100
+    ]
+  },
+  {
+    "matchId": 8927023888,
+    "startTime": 1785735664,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2213,
+    "radiant": [
+      9,
+      40,
+      135,
+      106,
+      1
+    ],
+    "dire": [
+      86,
+      128,
+      37,
+      129,
+      145
+    ]
+  },
+  {
+    "matchId": 8927023856,
+    "startTime": 1785735659,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1747,
+    "radiant": [
+      28,
+      64,
+      67,
+      59,
+      119
+    ],
+    "dire": [
+      35,
+      22,
+      69,
+      14,
+      101
+    ]
+  },
+  {
+    "matchId": 8927023832,
+    "startTime": 1785735659,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1405,
+    "radiant": [
+      126,
+      10,
+      135,
+      75,
+      83
+    ],
+    "dire": [
+      79,
+      42,
+      102,
+      44,
+      23
+    ]
+  },
+  {
+    "matchId": 8927023784,
+    "startTime": 1785735653,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2627,
+    "radiant": [
+      28,
+      119,
+      91,
+      105,
+      18
+    ],
+    "dire": [
+      38,
+      42,
+      10,
+      14,
+      22
+    ]
+  },
+  {
+    "matchId": 8927023974,
+    "startTime": 1785735649,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1638,
+    "radiant": [
+      20,
+      92,
+      85,
+      74,
+      86
+    ],
+    "dire": [
+      60,
+      19,
+      48,
+      47,
+      26
+    ]
+  },
+  {
+    "matchId": 8927023747,
+    "startTime": 1785735649,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2661,
+    "radiant": [
+      86,
+      100,
+      25,
+      78,
+      12
+    ],
+    "dire": [
+      17,
+      83,
+      129,
+      101,
+      56
+    ]
+  },
+  {
+    "matchId": 8927024055,
+    "startTime": 1785735644,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1668,
+    "radiant": [
+      26,
+      59,
+      19,
+      22,
+      61
+    ],
+    "dire": [
+      6,
+      35,
+      128,
+      126,
+      47
+    ]
+  },
+  {
+    "matchId": 8927023703,
+    "startTime": 1785735644,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1875,
+    "radiant": [
+      77,
+      6,
+      52,
+      21,
+      14
+    ],
+    "dire": [
+      5,
+      29,
+      16,
+      93,
+      31
+    ]
+  },
+  {
+    "matchId": 8927023632,
+    "startTime": 1785735629,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2550,
+    "radiant": [
+      21,
+      109,
+      107,
+      11,
+      14
+    ],
+    "dire": [
+      10,
+      108,
+      26,
+      106,
+      40
+    ]
+  },
+  {
+    "matchId": 8927023588,
+    "startTime": 1785735629,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2992,
+    "radiant": [
+      102,
+      21,
+      85,
+      155,
+      128
+    ],
+    "dire": [
+      11,
+      50,
+      8,
+      33,
+      136
+    ]
+  },
+  {
+    "matchId": 8927023494,
+    "startTime": 1785735624,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1780,
+    "radiant": [
+      22,
+      38,
+      128,
+      27,
+      11
+    ],
+    "dire": [
+      13,
+      20,
+      9,
+      104,
+      85
+    ]
+  },
+  {
+    "matchId": 8927023468,
+    "startTime": 1785735624,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2446,
+    "radiant": [
+      39,
+      97,
+      26,
+      128,
+      1
+    ],
+    "dire": [
+      44,
+      23,
+      9,
+      88,
+      101
+    ]
+  },
+  {
+    "matchId": 8927023443,
+    "startTime": 1785735624,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2380,
+    "radiant": [
+      83,
+      53,
+      97,
+      74,
+      6
+    ],
+    "dire": [
+      17,
+      131,
+      93,
+      96,
+      26
+    ]
+  },
+  {
+    "matchId": 8927023431,
+    "startTime": 1785735619,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1974,
+    "radiant": [
+      25,
+      71,
+      135,
+      67,
+      128
+    ],
+    "dire": [
+      7,
+      39,
+      19,
+      22,
+      155
+    ]
+  },
+  {
+    "matchId": 8927023378,
+    "startTime": 1785735614,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2776,
+    "radiant": [
+      123,
+      6,
+      119,
+      1,
+      38
+    ],
+    "dire": [
+      40,
+      93,
+      14,
+      128,
+      20
+    ]
+  },
+  {
+    "matchId": 8927023362,
+    "startTime": 1785735614,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1850,
+    "radiant": [
+      47,
+      48,
+      15,
+      45,
+      100
+    ],
+    "dire": [
+      2,
+      43,
+      74,
+      107,
+      20
+    ]
+  },
+  {
+    "matchId": 8927023369,
+    "startTime": 1785735613,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1263,
+    "radiant": [
+      11,
+      3,
+      78,
+      75,
+      74
+    ],
+    "dire": [
+      98,
+      101,
+      46,
+      90,
+      26
+    ]
+  },
+  {
+    "matchId": 8927023315,
+    "startTime": 1785735609,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1900,
+    "radiant": [
+      119,
+      93,
+      21,
+      78,
+      22
+    ],
+    "dire": [
+      11,
+      14,
+      39,
+      75,
+      33
+    ]
+  },
+  {
+    "matchId": 8927023312,
+    "startTime": 1785735609,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 3025,
+    "radiant": [
+      90,
+      30,
+      22,
+      11,
+      60
+    ],
+    "dire": [
+      33,
+      21,
+      112,
+      76,
+      18
+    ]
+  },
+  {
+    "matchId": 8927023230,
+    "startTime": 1785735604,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2658,
+    "radiant": [
+      107,
+      99,
+      105,
+      31,
+      48
+    ],
+    "dire": [
+      97,
+      131,
+      54,
+      87,
+      69
+    ]
+  },
+  {
+    "matchId": 8927023275,
+    "startTime": 1785735599,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1806,
+    "radiant": [
+      37,
+      70,
+      91,
+      69,
+      71
+    ],
+    "dire": [
+      131,
+      54,
+      39,
+      110,
+      129
+    ]
+  },
+  {
+    "matchId": 8927023224,
+    "startTime": 1785735599,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2260,
+    "radiant": [
+      39,
+      43,
+      74,
+      36,
+      67
+    ],
+    "dire": [
+      85,
+      28,
+      90,
+      21,
+      25
+    ]
+  },
+  {
+    "matchId": 8927023031,
+    "startTime": 1785735584,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1400,
+    "radiant": [
+      41,
+      74,
+      73,
+      60,
+      17
+    ],
+    "dire": [
+      98,
+      43,
+      105,
+      145,
+      100
+    ]
+  },
+  {
+    "matchId": 8927023029,
+    "startTime": 1785735584,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2101,
+    "radiant": [
+      25,
+      27,
+      145,
+      75,
+      38
+    ],
+    "dire": [
+      71,
+      11,
+      74,
+      136,
+      2
+    ]
+  },
+  {
+    "matchId": 8927022973,
+    "startTime": 1785735578,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2334,
+    "radiant": [
+      137,
+      60,
+      119,
+      32,
+      3
+    ],
+    "dire": [
+      11,
+      36,
+      85,
+      86,
+      52
+    ]
+  },
+  {
+    "matchId": 8927022896,
+    "startTime": 1785735573,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2653,
+    "radiant": [
+      107,
+      32,
+      96,
+      85,
+      6
+    ],
+    "dire": [
+      98,
+      84,
+      7,
+      35,
+      11
+    ]
+  },
+  {
+    "matchId": 8927022790,
+    "startTime": 1785735564,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2314,
+    "radiant": [
+      109,
+      37,
+      97,
+      11,
+      9
+    ],
+    "dire": [
+      104,
+      112,
+      84,
+      75,
+      8
+    ]
+  },
+  {
+    "matchId": 8927022789,
+    "startTime": 1785735564,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2467,
+    "radiant": [
+      135,
+      123,
+      88,
+      5,
+      12
+    ],
+    "dire": [
+      8,
+      50,
+      74,
+      60,
+      26
+    ]
+  },
+  {
+    "matchId": 8927022768,
+    "startTime": 1785735564,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2539,
+    "radiant": [
+      56,
+      86,
+      121,
+      96,
+      72
+    ],
+    "dire": [
+      107,
+      19,
+      80,
+      26,
+      39
+    ]
+  },
+  {
+    "matchId": 8927022884,
+    "startTime": 1785735554,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2196,
+    "radiant": [
+      86,
+      25,
+      3,
+      27,
+      18
+    ],
+    "dire": [
+      128,
+      113,
+      36,
+      107,
+      48
+    ]
+  },
+  {
+    "matchId": 8927022721,
+    "startTime": 1785735554,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1914,
+    "radiant": [
+      11,
+      85,
+      86,
+      126,
+      108
+    ],
+    "dire": [
+      75,
+      2,
+      31,
+      44,
+      26
+    ]
+  },
+  {
+    "matchId": 8927022677,
+    "startTime": 1785735553,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2325,
+    "radiant": [
+      65,
+      11,
+      28,
+      39,
+      83
+    ],
+    "dire": [
+      86,
+      128,
+      21,
+      68,
+      1
+    ]
+  },
+  {
+    "matchId": 8927022850,
+    "startTime": 1785735549,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2018,
+    "radiant": [
+      22,
+      86,
+      27,
+      44,
+      135
+    ],
+    "dire": [
+      29,
+      25,
+      121,
+      57,
+      6
+    ]
+  },
+  {
+    "matchId": 8927022818,
+    "startTime": 1785735549,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1903,
+    "radiant": [
+      26,
+      108,
+      12,
+      105,
+      106
+    ],
+    "dire": [
+      31,
+      137,
+      48,
+      113,
+      30
+    ]
+  },
+  {
+    "matchId": 8927022617,
+    "startTime": 1785735549,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2278,
+    "radiant": [
+      108,
+      107,
+      120,
+      123,
+      56
+    ],
+    "dire": [
+      100,
+      119,
+      67,
+      104,
+      16
+    ]
+  },
+  {
+    "matchId": 8927022489,
+    "startTime": 1785735534,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2183,
+    "radiant": [
+      61,
+      21,
+      86,
+      119,
+      78
+    ],
+    "dire": [
+      111,
+      136,
+      25,
+      2,
+      14
+    ]
+  },
+  {
+    "matchId": 8927022413,
+    "startTime": 1785735529,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2399,
+    "radiant": [
+      7,
+      27,
+      48,
+      96,
+      126
+    ],
+    "dire": [
+      2,
+      86,
+      106,
+      131,
+      54
+    ]
+  },
+  {
+    "matchId": 8927022457,
+    "startTime": 1785735524,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2953,
+    "radiant": [
+      74,
+      110,
+      12,
+      39,
+      101
+    ],
+    "dire": [
+      83,
+      120,
+      75,
+      60,
+      11
+    ]
+  },
+  {
+    "matchId": 8927022408,
+    "startTime": 1785735524,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2169,
+    "radiant": [
+      8,
+      38,
+      87,
+      88,
+      5
+    ],
+    "dire": [
+      9,
+      31,
+      93,
+      17,
+      42
+    ]
+  },
+  {
+    "matchId": 8927022362,
+    "startTime": 1785735524,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2516,
+    "radiant": [
+      102,
+      26,
+      21,
+      35,
+      42
+    ],
+    "dire": [
+      36,
+      86,
+      131,
+      76,
+      39
+    ]
+  },
+  {
+    "matchId": 8927022484,
+    "startTime": 1785735519,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1664,
+    "radiant": [
+      14,
+      110,
+      100,
+      8,
+      29
+    ],
+    "dire": [
+      11,
+      62,
+      26,
+      36,
+      55
+    ]
+  },
+  {
+    "matchId": 8927022406,
+    "startTime": 1785735519,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2159,
+    "radiant": [
+      98,
+      83,
+      110,
+      107,
+      46
+    ],
+    "dire": [
+      29,
+      126,
+      5,
+      71,
+      109
+    ]
+  },
+  {
+    "matchId": 8927022385,
+    "startTime": 1785735514,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2597,
+    "radiant": [
+      6,
+      103,
+      5,
+      131,
+      145
+    ],
+    "dire": [
+      30,
+      42,
+      62,
+      104,
+      93
+    ]
+  },
+  {
+    "matchId": 8927022332,
+    "startTime": 1785735514,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2102,
+    "radiant": [
+      9,
+      53,
+      55,
+      56,
+      88
+    ],
+    "dire": [
+      36,
+      2,
+      109,
+      86,
+      101
+    ]
+  },
+  {
+    "matchId": 8927022313,
+    "startTime": 1785735514,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 3107,
+    "radiant": [
+      119,
+      84,
+      6,
+      7,
+      23
+    ],
+    "dire": [
+      5,
+      12,
+      27,
+      97,
+      59
+    ]
+  },
+  {
+    "matchId": 8927022221,
+    "startTime": 1785735509,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1847,
+    "radiant": [
+      105,
+      54,
+      76,
+      30,
+      2
+    ],
+    "dire": [
+      21,
+      114,
+      129,
+      22,
+      131
+    ]
+  },
+  {
+    "matchId": 8927022243,
+    "startTime": 1785735504,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2965,
+    "radiant": [
+      9,
+      41,
+      101,
+      37,
+      96
+    ],
+    "dire": [
+      36,
+      93,
+      58,
+      11,
+      87
+    ]
+  },
+  {
+    "matchId": 8927022194,
+    "startTime": 1785735504,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1933,
+    "radiant": [
+      5,
+      108,
+      8,
+      19,
+      45
+    ],
+    "dire": [
+      67,
+      110,
+      39,
+      71,
+      31
+    ]
+  },
+  {
+    "matchId": 8927022156,
+    "startTime": 1785735499,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2562,
+    "radiant": [
+      15,
+      119,
+      27,
+      101,
+      4
+    ],
+    "dire": [
+      12,
+      49,
+      85,
+      21,
+      2
+    ]
+  },
+  {
+    "matchId": 8927022109,
+    "startTime": 1785735499,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1998,
+    "radiant": [
+      110,
+      19,
+      137,
+      74,
+      9
+    ],
+    "dire": [
+      26,
+      18,
+      32,
+      20,
+      60
+    ]
+  },
+  {
+    "matchId": 8927022124,
+    "startTime": 1785735494,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1585,
+    "radiant": [
+      7,
+      97,
+      22,
+      96,
+      67
+    ],
+    "dire": [
+      28,
+      39,
+      5,
+      44,
+      27
+    ]
+  },
+  {
+    "matchId": 8927022105,
+    "startTime": 1785735494,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2734,
+    "radiant": [
+      64,
+      16,
+      20,
+      26,
+      8
+    ],
+    "dire": [
+      22,
+      39,
+      69,
+      54,
+      65
+    ]
+  },
+  {
+    "matchId": 8927021935,
+    "startTime": 1785735479,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 3098,
+    "radiant": [
+      64,
+      1,
+      73,
+      13,
+      2
+    ],
+    "dire": [
+      14,
+      86,
+      7,
+      112,
+      44
+    ]
+  },
+  {
+    "matchId": 8927022005,
+    "startTime": 1785735474,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1745,
+    "radiant": [
+      8,
+      74,
+      2,
+      69,
+      101
+    ],
+    "dire": [
+      48,
+      42,
+      106,
+      37,
+      107
+    ]
+  },
+  {
+    "matchId": 8927021861,
+    "startTime": 1785735474,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1337,
+    "radiant": [
+      155,
+      101,
+      93,
+      65,
+      71
+    ],
+    "dire": [
+      91,
+      19,
+      111,
+      7,
+      72
+    ]
+  },
+  {
+    "matchId": 8927021826,
+    "startTime": 1785735474,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1738,
+    "radiant": [
+      87,
+      16,
+      52,
+      113,
+      155
+    ],
+    "dire": [
+      80,
+      43,
+      93,
+      45,
+      5
+    ]
+  },
+  {
+    "matchId": 8927021731,
+    "startTime": 1785735464,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2024,
+    "radiant": [
+      20,
+      1,
+      27,
+      93,
+      25
+    ],
+    "dire": [
+      34,
+      97,
+      101,
+      26,
+      73
+    ]
+  },
+  {
+    "matchId": 8927021659,
+    "startTime": 1785735459,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1791,
+    "radiant": [
+      107,
+      5,
+      3,
+      48,
+      129
+    ],
+    "dire": [
+      128,
+      43,
+      54,
+      111,
+      21
+    ]
+  },
+  {
+    "matchId": 8927021654,
+    "startTime": 1785735459,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 2434,
+    "radiant": [
+      3,
+      11,
+      69,
+      71,
+      101
+    ],
+    "dire": [
+      34,
+      109,
+      155,
+      83,
+      64
+    ]
+  },
+  {
+    "matchId": 8927021645,
+    "startTime": 1785735459,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 925,
+    "radiant": [
+      111,
+      145,
+      2,
+      7,
+      17
+    ],
+    "dire": [
+      9,
+      25,
+      75,
+      60,
+      19
+    ]
+  },
+  {
+    "matchId": 8927021689,
+    "startTime": 1785735449,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1744,
+    "radiant": [
+      14,
+      93,
+      106,
+      121,
+      114
+    ],
+    "dire": [
+      97,
+      136,
+      128,
+      44,
+      5
+    ]
+  },
+  {
+    "matchId": 8927021507,
+    "startTime": 1785735444,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2998,
+    "radiant": [
+      83,
+      100,
+      71,
+      19,
+      38
+    ],
+    "dire": [
+      32,
+      114,
+      36,
+      21,
+      26
+    ]
+  },
+  {
+    "matchId": 8927021471,
+    "startTime": 1785735439,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1804,
+    "radiant": [
+      9,
+      120,
+      65,
+      111,
+      8
+    ],
+    "dire": [
+      15,
+      75,
+      30,
+      13,
+      109
+    ]
+  },
+  {
+    "matchId": 8927021438,
+    "startTime": 1785735434,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1784,
+    "radiant": [
+      19,
+      7,
+      97,
+      74,
+      5
+    ],
+    "dire": [
+      2,
+      93,
+      35,
+      87,
+      96
+    ]
+  },
+  {
+    "matchId": 8927021446,
+    "startTime": 1785735424,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2350,
+    "radiant": [
+      29,
+      79,
+      14,
+      11,
+      25
+    ],
+    "dire": [
+      36,
+      108,
+      74,
+      109,
+      83
+    ]
+  },
+  {
+    "matchId": 8927021331,
+    "startTime": 1785735424,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1256,
+    "radiant": [
+      18,
+      86,
+      5,
+      110,
+      105
+    ],
+    "dire": [
+      87,
+      48,
+      83,
+      36,
+      106
+    ]
+  },
+  {
+    "matchId": 8927021301,
+    "startTime": 1785735424,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 1498,
+    "radiant": [
+      110,
+      36,
+      22,
+      20,
+      8
+    ],
+    "dire": [
+      2,
+      86,
+      54,
+      37,
+      107
+    ]
+  },
+  {
+    "matchId": 8927021300,
+    "startTime": 1785735424,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2331,
+    "radiant": [
+      69,
+      104,
+      53,
+      36,
+      42
+    ],
+    "dire": [
+      41,
+      7,
+      76,
+      93,
+      86
+    ]
+  },
+  {
+    "matchId": 8927021237,
+    "startTime": 1785735414,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1931,
+    "radiant": [
+      69,
+      8,
+      39,
+      128,
+      135
+    ],
+    "dire": [
+      26,
+      42,
+      68,
+      41,
+      19
+    ]
+  },
+  {
+    "matchId": 8927021172,
+    "startTime": 1785735408,
+    "radiantWin": false,
+    "avgRankTier": 75,
+    "duration": 2933,
+    "radiant": [
+      123,
+      69,
+      8,
+      53,
+      13
+    ],
+    "dire": [
+      74,
+      88,
+      129,
+      110,
+      42
+    ]
+  },
+  {
+    "matchId": 8927021266,
+    "startTime": 1785735399,
+    "radiantWin": true,
+    "avgRankTier": 75,
+    "duration": 1871,
+    "radiant": [
+      16,
+      46,
+      87,
+      23,
+      85
+    ],
+    "dire": [
+      11,
+      60,
+      101,
+      36,
+      21
+    ]
+  },
+  {
     "matchId": 8925242263,
     "startTime": 1785649578,
     "radiantWin": true,
