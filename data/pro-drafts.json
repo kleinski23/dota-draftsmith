@@ -1,5 +1,1813 @@
 [
   {
+    "matchId": 8934279386,
+    "startTime": 1786130337,
+    "radiantWin": true,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2565,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 19,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 106,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 25,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 69,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 13,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 59,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 90,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 155,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 17,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 112,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 38,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 9,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 123,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 36,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 128,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 74,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 100,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 41,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 77,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 6,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 2,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 96,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 54,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 54,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 74,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 155,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 128,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 9,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 36,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 90,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 100,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 123,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 96,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "matchId": 8934184387,
+    "startTime": 1786126790,
+    "radiantWin": false,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 1894,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 25,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 128,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 59,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 11,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 13,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 3,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 47,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 107,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 96,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 126,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 155,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 119,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 9,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 21,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 19,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 77,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 131,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 98,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 110,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 112,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 55,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 21,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 126,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 55,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 3,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 9,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 19,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 13,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 119,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 155,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 112,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": true,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "matchId": 8933988979,
+    "startTime": 1786118955,
+    "radiantWin": true,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2799,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 25,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 128,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 100,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 11,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 55,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 6,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 51,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 69,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 119,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 3,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 107,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 36,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 155,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 33,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 72,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 79,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 48,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 131,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 13,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 106,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 36,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 106,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 155,
+        "team": 0,
+        "laneRole": 4,
+        "roaming": true,
+        "position": 5
+      },
+      {
+        "heroId": 55,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 119,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 11,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 3,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": true,
+        "position": 5
+      },
+      {
+        "heroId": 13,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 33,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 107,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "matchId": 8933879286,
+    "startTime": 1786115427,
+    "radiantWin": false,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 1895,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 25,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 128,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 55,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 11,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 90,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 13,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 155,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 100,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 107,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 123,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 87,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 120,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 36,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 131,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 69,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 109,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 138,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 96,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 6,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 48,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 18,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 18,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 36,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 13,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 123,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 131,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 48,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 120,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 87,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 69,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 90,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": true,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "matchId": 8933704579,
+    "startTime": 1786109421,
+    "radiantWin": false,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2951,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 0,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 120,
+        "team": 0,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 1,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 1,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 53,
+        "team": 0,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 74,
+        "team": 1,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 1,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 13,
+        "team": 0,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 107,
+        "team": 1,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 60,
+        "team": 0,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 11,
+        "team": 0,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 77,
+        "team": 1,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 123,
+        "team": 1,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 9,
+        "team": 0,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 3,
+        "team": 0,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 96,
+        "team": 1,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 75,
+        "team": 1,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 54,
+        "team": 0,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 145,
+        "team": 0,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 38,
+        "team": 1,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 109,
+        "team": 0,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 2,
+        "team": 1,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 135,
+        "team": 0,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 48,
+        "team": 1,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 54,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 3,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 13,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 9,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 135,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 107,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 96,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 123,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 48,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 75,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "matchId": 8933575351,
+    "startTime": 1786105035,
+    "radiantWin": false,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2517,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 74,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 80,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 77,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 120,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 53,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 123,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 38,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 13,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 106,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 25,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 107,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 21,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 155,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 51,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 96,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 54,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 3,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 36,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 58,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 112,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 19,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 19,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 25,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 155,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 123,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 51,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 96,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 112,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 21,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": true,
+        "position": 4
+      },
+      {
+        "heroId": 53,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 107,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "matchId": 8933453728,
+    "startTime": 1786098441,
+    "radiantWin": true,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2584,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 36,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 155,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 83,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 74,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 96,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 25,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 80,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 106,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 9,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 123,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 47,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 121,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 3,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 7,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 100,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 135,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 77,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 109,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 119,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 12,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 26,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 86,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 19,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 106,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 121,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 135,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 100,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 19,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 80,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 7,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 77,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 86,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 3,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "matchId": 8933374169,
+    "startTime": 1786094239,
+    "radiantWin": false,
+    "patch": 60,
+    "leagueId": 19944,
+    "duration": 2173,
+    "picksBans": [
+      {
+        "is_pick": false,
+        "hero_id": 25,
+        "team": 1,
+        "order": 0
+      },
+      {
+        "is_pick": false,
+        "hero_id": 74,
+        "team": 1,
+        "order": 1
+      },
+      {
+        "is_pick": false,
+        "hero_id": 90,
+        "team": 0,
+        "order": 2
+      },
+      {
+        "is_pick": false,
+        "hero_id": 85,
+        "team": 0,
+        "order": 3
+      },
+      {
+        "is_pick": false,
+        "hero_id": 69,
+        "team": 1,
+        "order": 4
+      },
+      {
+        "is_pick": false,
+        "hero_id": 123,
+        "team": 0,
+        "order": 5
+      },
+      {
+        "is_pick": false,
+        "hero_id": 155,
+        "team": 0,
+        "order": 6
+      },
+      {
+        "is_pick": true,
+        "hero_id": 83,
+        "team": 1,
+        "order": 7
+      },
+      {
+        "is_pick": true,
+        "hero_id": 80,
+        "team": 0,
+        "order": 8
+      },
+      {
+        "is_pick": false,
+        "hero_id": 33,
+        "team": 1,
+        "order": 9
+      },
+      {
+        "is_pick": false,
+        "hero_id": 112,
+        "team": 1,
+        "order": 10
+      },
+      {
+        "is_pick": false,
+        "hero_id": 13,
+        "team": 0,
+        "order": 11
+      },
+      {
+        "is_pick": true,
+        "hero_id": 9,
+        "team": 0,
+        "order": 12
+      },
+      {
+        "is_pick": true,
+        "hero_id": 96,
+        "team": 1,
+        "order": 13
+      },
+      {
+        "is_pick": true,
+        "hero_id": 105,
+        "team": 1,
+        "order": 14
+      },
+      {
+        "is_pick": true,
+        "hero_id": 30,
+        "team": 0,
+        "order": 15
+      },
+      {
+        "is_pick": true,
+        "hero_id": 106,
+        "team": 0,
+        "order": 16
+      },
+      {
+        "is_pick": true,
+        "hero_id": 36,
+        "team": 1,
+        "order": 17
+      },
+      {
+        "is_pick": false,
+        "hero_id": 38,
+        "team": 1,
+        "order": 18
+      },
+      {
+        "is_pick": false,
+        "hero_id": 47,
+        "team": 0,
+        "order": 19
+      },
+      {
+        "is_pick": false,
+        "hero_id": 65,
+        "team": 1,
+        "order": 20
+      },
+      {
+        "is_pick": false,
+        "hero_id": 28,
+        "team": 0,
+        "order": 21
+      },
+      {
+        "is_pick": true,
+        "hero_id": 21,
+        "team": 1,
+        "order": 22
+      },
+      {
+        "is_pick": true,
+        "hero_id": 135,
+        "team": 0,
+        "order": 23
+      }
+    ],
+    "positions": [
+      {
+        "heroId": 80,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 135,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 30,
+        "team": 0,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      },
+      {
+        "heroId": 9,
+        "team": 0,
+        "laneRole": 3,
+        "roaming": true,
+        "position": 4
+      },
+      {
+        "heroId": 106,
+        "team": 0,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 21,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 1
+      },
+      {
+        "heroId": 36,
+        "team": 1,
+        "laneRole": 2,
+        "roaming": false,
+        "position": 2
+      },
+      {
+        "heroId": 96,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 3
+      },
+      {
+        "heroId": 105,
+        "team": 1,
+        "laneRole": 3,
+        "roaming": false,
+        "position": 4
+      },
+      {
+        "heroId": 83,
+        "team": 1,
+        "laneRole": 1,
+        "roaming": false,
+        "position": 5
+      }
+    ]
+  },
+  {
     "matchId": 8932835800,
     "startTime": 1786050589,
     "radiantWin": true,
