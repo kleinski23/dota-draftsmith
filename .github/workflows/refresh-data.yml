@@ -1,9 +1,7 @@
 name: Refresh OpenDota snapshots
 
 on:
-  schedule:
-    # Once daily, off the hour, to avoid API and Actions traffic spikes.
-    - cron: '17 3 * * *'
+  # Daily schedule disabled: snapshots refresh only when run manually.
   workflow_dispatch:
 
 permissions:
